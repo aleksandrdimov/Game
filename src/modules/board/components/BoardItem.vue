@@ -49,13 +49,6 @@ onMounted(() => {
   grid-column: v-bind(positionColumn);
   grid-row: v-bind(positionRow);
 
-  &__picture {
-    // object-fit: cover;
-    //    min-width: 72px;
-    width: 100%;
-    // height: 72px;
-  }
-
   &__label {
     --color-bg: white;
 

@@ -9,21 +9,21 @@
         :class="`board__item-${index}`"
       />
       <div class="board__player"></div>
-      
-        <div class="board__dice-wrap">
-          <p class="board__dice-item">{{ dice1 }}</p>
-          <p class="board__dice-item">{{ dice2 }}</p>
-        </div>
-        <button class="board__button" @click="clickBtn">Roll Dice</button>
-      
+
+      <div class="board__dice-wrap">
+        <p class="board__dice-item">{{ dice1 }}</p>
+        <p class="board__dice-item">{{ dice2 }}</p>
+      </div>
+      <button class="board__button" @click="clickBtn">Roll Dice</button>
     </div>
+    <ModalCard  :items="testArr"/>
   </section>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import BoardItem from './components/BoardItem.vue'
-
+import ModalCard from '../modal/ModalCard.vue'
 const dataItem = ref([
   {
     count: '20',
@@ -709,6 +709,47 @@ const dataItem = ref([
   }
 ])
 
+const testArr = ref([
+  {
+    owner: null,
+    count: '26',
+    img: 'fitness_girl_img',
+    text: '26',
+    color: 'rgb(190, 190, 190)',
+    rent: '23',
+    price: '230',
+    update: '',
+    position: 'top',
+    row: '1/2',
+    column: '7/8'
+  },
+  {
+    owner: 'player 1',
+    count: '20',
+    img: 'casino_img',
+    text: '20',
+    color: 'orange',
+    rent: ' 10',
+    price: '100',
+    update: '',
+    position: null,
+    row: '1/2',
+    column: '1/2'
+  },{
+    owner:null,
+    count: '23',
+    img: 'sea_terminal_img',
+    text: '23',
+    color: 'transparent',
+    rent: '45',
+    price: '315',
+    update: '',
+    position: 'top',
+    row: '1/2',
+    column: '4/5'
+  }
+])
+
 const player = ref({ row: '11/12', column: '11/12', positionNumber: 0 })
 
 const playerColumn = ref('11/12')
@@ -770,6 +811,7 @@ function clickBtn() {
 }
 
 .board {
+  position: relative;
   &__wrap {
     position: relative;
     display: grid;
@@ -800,10 +842,9 @@ function clickBtn() {
   &__button-box {
     grid-column: 8/10;
     grid-row: 9/11;
-   
   }
 
-  &__button{
+  &__button {
     width: 100px;
     height: 50px;
     grid-column: 8/10;
@@ -823,13 +864,12 @@ function clickBtn() {
     gap: 16px;
   }
 
-  &__dice-item{
+  &__dice-item {
     width: 50px;
 
     text-align: center;
     font-weight: 600;
     font-size: 36px;
-  
 
     background-color: white;
     border: 1px solid black;
