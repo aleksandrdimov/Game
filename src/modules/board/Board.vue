@@ -8,6 +8,14 @@
         :item="item"
         :class="`board__item-${index}`"
       />
+      <div class="board__player"></div>
+      
+        <div class="board__dice-wrap">
+          <p class="board__dice-item">{{ dice1 }}</p>
+          <p class="board__dice-item">{{ dice2 }}</p>
+        </div>
+        <button class="board__button" @click="clickBtn">Roll Dice</button>
+      
     </div>
   </section>
 </template>
@@ -19,53 +27,63 @@ import BoardItem from './components/BoardItem.vue'
 const dataItem = ref([
   {
     count: '20',
-    img: ' ',
+    img: 'surprise_img',
     text: '20',
     color: null,
     rent: '',
     price: '',
     update: '',
     position: null,
+    row: '1/2',
+    column: '1/2'
   },
   {
     count: '21',
-    img: ' ',
+    img: 'puma_img',
     text: '21',
-    color: '  ',
+    color: 'rgb(32, 32, 219)',
     rent: '',
     price: '',
     update: '',
-    position: 'top'
+    position: 'top',
+    row: '1/2',
+    column: '2/3'
   },
   {
     count: '22',
-    img: ' ',
+    img: 'reebok_img',
     text: '22',
-    color: '  ',
+    color: 'rgb(32, 32, 219)',
     rent: '',
     price: '',
     update: '',
-    position: 'top'
+    position: 'top',
+    row: '1/2',
+    column: '3/4'
   },
   {
     count: '23',
     img: 'sea_terminal_img',
     text: '23',
-    color: "transparent",
+    color: 'transparent',
     rent: '',
     price: '',
     update: '',
-    position: 'top'
+    position: 'top',
+    row: '1/2',
+    column: '4/5'
   },
   {
     count: '24',
-    img: ' ',
+    img: 'fitness_dream_img',
     text: '24',
-    color: '  ',
+    color: 'rgb(190, 190, 190)',
     rent: '',
     price: '',
     update: '',
-    position: 'top'
+    position: 'top',
+    row: '1/2',
+    column: '5/6'
   },
   {
     count: '25',
@@ -75,211 +93,253 @@ const dataItem = ref([
     rent: '',
     price: '',
     update: '',
-    position: null
+    position: null,
+    row: '1/2',
+    column: '6/7'
   },
   {
     count: '26',
-    img: ' ',
+    img: 'fitness_girl_img',
     text: '26',
-    color: '  ',
+    color: 'rgb(190, 190, 190)',
     rent: '',
     price: '',
     update: '',
-    position: 'top'
+    position: 'top',
+    row: '1/2',
+    column: '7/8'
   },
   {
     count: '27',
-    img: ' ',
+    img: 'surprise_img',
     text: '27',
     color: '  ',
     rent: '',
     price: '',
     update: '',
-    position: 'top'
+    position: 'top',
+    row: '1/2',
+    column: '8/9'
   },
   {
     count: '28',
-    img: ' ',
+    img: 'sushi_bar_img',
     text: '28',
-    color: '  ',
+    color: '#573d3f',
     rent: '',
     price: '',
     update: '',
-    position: 'top'
+    position: 'top',
+    row: '1/2',
+    column: '9/10'
   },
   {
     count: '29',
-    img: ' ',
+    img: 'steak_house_img',
     text: '29',
-    color: '  ',
+    color: '#573d3f',
     rent: '',
     price: '',
     update: '',
-    position: 'top'
+    position: 'top',
+    row: '1/2',
+    column: '10/11'
   },
   {
     count: '30',
-    img: ' ',
+    img: 'police_img',
     text: '30',
     color: null,
     rent: '',
     price: '',
     update: '',
-    position: null
+    position: null,
+    row: '1/2',
+    column: '11/12'
   },
 
   {
     count: '19',
-    img: ' ',
+    img: 'adidas_img',
     text: '19',
-    color: '  ',
+    color: 'rgb(32, 32, 219)',
     rent: '',
     price: '',
     update: '',
-    position: 'left'
+    position: 'left',
+    row: '2/3',
+    column: '1/2'
   },
   {
-    count: '26',
-    img: ' ',
+    count: '',
+    img: 'fitness_men_img',
     text: '26s',
-    color: '  ',
+    color: 'rgb(190, 190, 190)',
     rent: '',
     price: '',
     update: '',
-    position: 'top'
+    position: 'top',
+    row: '2/3',
+    column: '6/7'
   },
   {
     count: '31',
-    img: ' ',
+    img: 'burger_house_img',
     text: '31',
-    color: '  ',
+    color: '#573d3f',
     rent: '',
     price: '',
     update: '',
-    position: 'right'
+    position: 'right',
+    row: '2/3',
+    column: '11/12'
   },
 
   {
     count: '18',
-    img: ' ',
+    img: 'pc_shop_img',
     text: '18',
-    color: '  ',
+    color: 'mediumorchid',
     rent: '',
     price: '',
     update: '',
-    position: 'left'
+    position: 'left',
+    row: '3/4',
+    column: '1/2'
   },
   {
-    count: '27',
-    img: ' ',
+    count: '',
+    img: 'bessarabian_shop_img',
     text: '27s',
-    color: '  ',
+    color: 'rgb(238, 151, 151)',
     rent: '',
     price: '',
     update: '',
-    position: 'top'
+    position: 'top',
+    row: '3/4',
+    column: '6/7'
   },
   {
     count: '32',
-    img: ' ',
+    img: 'go_to_casino_img',
     text: '32',
-    color: '  ',
+    color: null,
     rent: '',
     price: '',
     update: '',
-    position: 'right'
+    position: 'right',
+    row: '3/4',
+    column: '11/12'
   },
 
   {
     count: '17',
-    img: ' ',
+    img: 'mobile_shop_img',
     text: '17',
-    color: '  ',
+    color: 'mediumorchid',
     rent: '',
     price: '',
     update: '',
-    position: 'left'
+    position: 'left',
+    row: '4/5',
+    column: '1/2'
   },
   {
-    count: '28',
-    img: ' ',
+    count: '',
+    img: 'surprise_img',
     text: '28s',
     color: null,
     rent: '',
     price: '',
     update: '',
-    position: null
+    position: null,
+    row: '4/5',
+    column: '6/7'
   },
   {
-    count: '29',
-    img: ' ',
+    count: '',
+    img: 'wine_valley_img',
     text: '29s',
-    color: '  ',
+    color: 'rgb(238, 151, 151)',
     rent: '',
     price: '',
     update: '',
-    position: 'top'
+    position: 'top',
+    row: '4/5',
+    column: '7/8'
   },
   {
-    count: '30',
+    count: '',
     img: 'teleport_img',
     text: '30s',
     color: null,
     rent: '',
     price: '',
     update: '',
-    position: null
+    position: null,
+    row: '4/5',
+    column: '8/9'
   },
   {
     count: '33',
-    img: ' ',
+    img: 'fashion_girl_img',
     text: '33',
-    color: '  ',
+    color: 'rgb(167, 218, 218',
     rent: '',
     price: '',
     update: '',
-    position: 'right'
+    position: 'right',
+    row: '4/5',
+    column: '11/12'
   },
 
   {
     count: '16',
-    img: ' ',
+    img: 'appliances_shop_img',
     text: '16',
-    color: '  ',
+    color: 'mediumorchid',
     rent: '',
     price: '',
     update: '',
-    position: 'left'
+    position: 'left',
+    row: '5/6',
+    column: '1/2'
   },
   {
-    count: '31',
+    count: '',
     img: 'electric_power_img',
     text: '31s',
     color: 'transparent',
     rent: '',
     price: '',
     update: '',
-    position: 'top'
+    position: 'top',
+    row: '5/6',
+    column: '8/9'
   },
   {
-    count: '32',
-    img: ' ',
+    count: '',
+    img: 'bessarabian_tour_img',
     text: '32s',
-    color: '  ',
+    color: 'rgb(238, 151, 151)',
     rent: '',
     price: '',
     update: '',
-    position: 'top'
+    position: 'top',
+    row: '5/6',
+    column: '9/10'
   },
   {
-    count: '33',
-    img: ' ',
+    count: '',
+    img: 'kids_clothes_img',
     text: '33s',
-    color: '  ',
+    color: 'rgb(167, 218, 218',
     rent: '',
     price: '',
     update: '',
-    position: 'top'
+    position: 'top',
+    row: '5/6',
+    column: '10/11'
   },
   {
     count: '34',
@@ -289,28 +349,34 @@ const dataItem = ref([
     rent: '',
     price: '',
     update: '',
-    position: null
+    position: null,
+    row: '5/6',
+    column: '11/12'
   },
 
   {
     count: '15',
-    img: ' ',
+    img: 'grocery_family_img',
     text: '15',
-    color: '  ',
+    color: 'rgb(194, 1, 1)',
     rent: '',
     price: '',
     update: '',
-    position: 'left'
+    position: 'left',
+    row: '6/7',
+    column: '1/2'
   },
   {
     count: '35',
-    img: ' ',
+    img: 'mens_clothes_img',
     text: '35',
-    color: '  ',
+    color: 'rgb(167, 218, 218',
     rent: '',
     price: '',
     update: '',
-    position: 'right'
+    position: 'right',
+    row: '6/7',
+    column: '11/12'
   },
 
   {
@@ -321,129 +387,155 @@ const dataItem = ref([
     rent: '',
     price: '',
     update: '',
-    position: 'left'
+    position: 'left',
+    row: '7/8',
+    column: '1/2'
   },
   {
     count: '13',
-    img: ' ',
+    img: 'grocery_organic_img',
     text: '13s',
-    color: '  ',
+    color: 'rgb(194, 1, 1)',
     rent: '',
     price: '',
     update: '',
-    position: 'bottom'
+    position: 'bottom',
+    row: '7/8',
+    column: '2/3'
   },
   {
-    count: '12',
-    img: ' ',
+    count: '',
+    img: 'smoke_shop_img',
     text: '12s',
-    color: '  ',
+    color: 'rgb(182, 182, 0)',
     rent: '',
     price: '',
     update: '',
-    position: 'bottom'
+    position: 'bottom',
+    row: '7/8',
+    column: '3/4'
   },
   {
-    count: '11',
+    count: '',
     img: 'water_energy_img',
     text: '11s',
     color: 'transparent',
     rent: '',
     price: '',
     update: '',
-    position: 'bottom'
+    position: 'bottom',
+    row: '7/8',
+    column: '4/5'
   },
   {
     count: '36',
-    img: ' ',
+    img: 'las_vegas_1_img',
     text: '36',
-    color: '  ',
+    color: 'orange',
     rent: '',
     price: '',
     update: '',
-    position: 'right'
+    position: 'right',
+    row: '7/8',
+    column: '11/12'
   },
 
   {
     count: '13',
-    img: ' ',
+    img: 'grocery_img',
     text: '13',
-    color: '  ',
+    color: 'rgb(194, 1, 1)',
     rent: '',
     price: '',
     update: '',
-    position: 'left'
+    position: 'left',
+    row: '8/9',
+    column: '1/2'
   },
   {
-    count: '10',
+    count: '',
     img: 'teleport_img',
     text: '10s',
     color: null,
     rent: '',
     price: '',
     update: '',
-    position: null
+    position: null,
+    row: '8/9',
+    column: '4/5'
   },
   {
-    count: '9',
-    img: ' ',
+    count: '',
+    img: 'vape_shop_img',
     text: '9s',
-    color: '  ',
+    color: 'rgb(182, 182, 0)',
     rent: '',
     price: '',
     update: '',
-    position: 'bottom'
+    position: 'bottom',
+    row: '8/9',
+    column: '5/6'
   },
   {
-    count: '8',
-    img: ' ',
+    count: '',
+    img: 'surprise_img',
     text: '8s',
     color: null,
     rent: '',
     price: '',
     update: '',
-    position: null
+    position: null,
+    row: '8/9',
+    column: '6/7'
   },
   {
     count: '37',
-    img: ' ',
+    img: 'surprise_img',
     text: '37',
     color: '  ',
     rent: '',
     price: '',
     update: '',
-    position: 'right'
+    position: 'right',
+    row: '8/9',
+    column: '11/12'
   },
 
   {
     count: '12',
-    img: ' ',
+    img: 'surprise_img',
     text: '12',
     color: '  ',
     rent: '',
     price: '',
     update: '',
-    position: 'left'
+    position: 'left',
+    row: '9/10',
+    column: '1/2'
   },
   {
-    count: '7',
-    img: ' ',
+    count: '',
+    img: 'hookah_shop_img',
     text: '7s',
-    color: '  ',
+    color: 'rgb(182, 182, 0)',
     rent: '',
     price: '',
     update: '',
-    position: 'bottom'
+    position: 'bottom',
+    row: '9/10',
+    column: '6/7'
   },
   {
     count: '38',
-    img: ' ',
+    img: 'casino_img',
     text: '38',
-    color: '  ',
+    color: 'orange',
     rent: '',
     price: '',
     update: '',
-    position: 'right'
+    position: 'right',
+    row: '9/10',
+    column: '11/12'
   },
 
   {
@@ -454,27 +546,33 @@ const dataItem = ref([
     rent: '',
     price: '',
     update: '',
-    position: 'left'
+    position: 'left',
+    row: '10/11',
+    column: '1/2'
   },
   {
-    count: '6',
-    img: ' ',
+    count: '',
+    img: 'kids_barber_img',
     text: '6s',
     color: 'rgb(132, 156, 224)',
     rent: '',
     price: '',
     update: '',
-    position: 'bottom'
+    position: 'bottom',
+    row: '10/11',
+    column: '6/7'
   },
   {
     count: '39',
-    img: ' ',
+    img: 'hotel_royal_img',
     text: '39',
-    color: '  ',
+    color: 'orange',
     rent: '',
     price: '',
     update: '',
-    position: 'right'
+    position: 'right',
+    row: '10/11',
+    column: '11/12'
   },
 
   {
@@ -485,7 +583,9 @@ const dataItem = ref([
     rent: '',
     price: '',
     update: '',
-    position: null
+    position: null,
+    row: '11/12',
+    column: '1/2'
   },
   {
     count: '9',
@@ -495,7 +595,9 @@ const dataItem = ref([
     rent: '',
     price: '',
     update: '',
-    position: 'bottom'
+    position: 'bottom',
+    row: '11/12',
+    column: '2/3'
   },
   {
     count: '8',
@@ -505,7 +607,9 @@ const dataItem = ref([
     rent: '',
     price: '',
     update: '',
-    position: 'bottom'
+    position: 'bottom',
+    row: '11/12',
+    column: '3/4'
   },
   {
     count: '7',
@@ -515,17 +619,21 @@ const dataItem = ref([
     rent: '',
     price: '',
     update: '',
-    position: 'bottom'
+    position: 'bottom',
+    row: '11/12',
+    column: '4/5'
   },
   {
     count: '6',
-    img: '',
+    img: 'barber_shop_img',
     text: '6',
     color: 'rgb(132, 156, 224)',
     rent: '',
     price: '',
     update: '',
-    position: 'bottom'
+    position: 'bottom',
+    row: '11/12',
+    column: '5/6'
   },
   {
     count: '5',
@@ -535,17 +643,21 @@ const dataItem = ref([
     rent: '',
     price: '',
     update: '',
-    position: null
+    position: null,
+    row: '11/12',
+    column: '6/7'
   },
   {
     count: '4',
-    img: '',
+    img: 'hair_salon_img',
     text: '4',
     color: 'rgb(132, 156, 224)',
     rent: '',
     price: '',
     update: '',
-    position: 'bottom'
+    position: 'bottom',
+    row: '11/12',
+    column: '7/8'
   },
   {
     count: '3',
@@ -555,7 +667,9 @@ const dataItem = ref([
     rent: '',
     price: '',
     update: '',
-    position: 'bottom'
+    position: 'bottom',
+    row: '11/12',
+    column: '8/9'
   },
   {
     count: '2',
@@ -565,7 +679,9 @@ const dataItem = ref([
     rent: '',
     price: '',
     update: '',
-    position: 'bottom'
+    position: 'bottom',
+    row: '11/12',
+    column: '9/10'
   },
   {
     count: '1',
@@ -575,61 +691,67 @@ const dataItem = ref([
     rent: '',
     price: '',
     update: '',
-    position: 'bottom'
+    position: 'bottom',
+    row: '11/12',
+    column: '10/11'
   },
   {
-    count: '0',
+    count: '40',
     img: 'start_img',
     text: '0',
     color: null,
     rent: null,
     price: null,
     update: null,
-    position: null
+    position: null,
+    row: '11/12',
+    column: '11/12'
   }
 ])
+
+const player = ref({ row: '11/12', column: '11/12', positionNumber: 0 })
+
+const playerColumn = ref('11/12')
+const playerRow = ref('11/12')
+
+const dice1 = ref(0)
+const dice2 = ref(0)
+
+function clickBtn() {
+  dice1.value = Math.floor(Math.random() * 6) + 1
+  dice2.value = Math.floor(Math.random() * 6) + 1
+  const total = dice1.value + dice2.value
+
+  player.value.positionNumber + total >= 40
+    ? (player.value.positionNumber = player.value.positionNumber + total - 40)
+    : (player.value.positionNumber = player.value.positionNumber + total)
+
+  dataItem.value.forEach((el) => {
+    if (el.count == player.value.positionNumber) {
+      playerColumn.value = el.column
+      playerRow.value = el.row
+
+      player.value.row = playerRow.value
+      player.value.column = playerColumn.value
+    }
+  })
+  console.log(total, playerColumn.value, playerRow.value, player.value.positionNumber)
+}
 </script>
 
 <style lang="scss" scoped>
 #board {
-  // display: none;
   border: 1px solid black;
-  //   border-spacing: 10px;
+
+  background-color: rgba(209, 247, 209, 0.295);
   padding: 25px;
-  //   float: left;
-  color: rgb(132, 156, 224);
+
+  color: #573d3f;
 }
 
 .cell {
   height: 100%;
   vertical-align: top;
-  //   background-repeat: no-repeat;
-  //   background-size: auto 40px;
-
-  //   &.row {
-  //     display: flex;
-  //     flex-direction: row;
-
-  //     &.left{
-  //        flex-direction: row-reverse;
-  //     }
-  //   }
-  //   &.column {
-  //     display: flex;
-  //     flex-direction: column;
-
-  //     &.bottom{
-  //         flex-direction: column-reverse;
-  //     }
-  //   }
-}
-
-.board-center {
-  width: 675px;
-  border: none;
-  vertical-align: bottom;
-  background-repeat: no-repeat;
-  background-size: auto 40px;
 }
 
 .board-top {
@@ -649,6 +771,7 @@ const dataItem = ref([
 
 .board {
   &__wrap {
+    position: relative;
     display: grid;
     grid-template-columns: repeat(11, 75px);
     grid-template-rows: repeat(11, 75px);
@@ -656,79 +779,60 @@ const dataItem = ref([
     gap: 1px 1px;
   }
 
-  &__item-12 {
-    grid-auto-rows: 2/3;
-    grid-column: 6/7;
+  &__player {
+    position: absolute;
+    z-index: 10;
+
+    width: 20px;
+    height: 20px;
+    background-color: greenyellow;
+    border-radius: 50%;
+
+    grid-column: v-bind(playerColumn);
+    grid-row: v-bind(playerRow);
+
+    justify-self: center;
+    align-self: center;
+
+    transition: all 1s linear;
   }
 
-  &__item-13 {
-    grid-auto-rows: 2/3;
-    grid-column: 11/12;
+  &__button-box {
+    grid-column: 8/10;
+    grid-row: 9/11;
+   
   }
 
-  &__item-15 {
-    grid-auto-rows: 3/4;
-    grid-column: 6/7;
+  &__button{
+    width: 100px;
+    height: 50px;
+    grid-column: 8/10;
+    grid-row: 10/11;
+
+    margin: auto;
   }
 
-  &__item-16 {
-    grid-auto-rows: 3/4;
-    grid-column: 11/12;
+  &__dice-wrap {
+    grid-column: 8/10;
+    grid-row: 9/10;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
   }
 
-  &__item-18 {
-    grid-auto-rows: 4/5;
-    grid-column: 6/7;
-  }
+  &__dice-item{
+    width: 50px;
 
-  &__item-21 {
-    grid-auto-rows: 5/6;
-    grid-column: 11/12;
-  }
+    text-align: center;
+    font-weight: 600;
+    font-size: 36px;
+  
 
-  &__item-23 {
-    grid-auto-rows: 6/7;
-    grid-column: 8/9;
-  }
-
-  &__item-28 {
-    grid-auto-rows: 7/8;
-    grid-column: 11/12;
-  }
-
-  &__item-33 {
-    grid-auto-rows: 8/9;
-    grid-column: 11/12;
-  }
-
-  &__item-35 {
-    grid-auto-rows: 9/10;
-    grid-column: 4/5;
-  }
-
-  &__item-38 {
-    grid-auto-rows: 9/10;
-    grid-column: 11/12;
-  }
-
-  &__item-40 {
-    grid-auto-rows: 10/11;
-    grid-column: 6/7;
-  }
-
-  &__item-41 {
-    grid-auto-rows: 10/11;
-    grid-column: 11/12;
-  }
-
-  &__item-43 {
-    grid-auto-rows: 10/11;
-    grid-column: 6/7;
-  }
-
-  &__item-44 {
-    grid-auto-rows: 10/11;
-    grid-column: 11/12;
+    background-color: white;
+    border: 1px solid black;
   }
 }
 </style>

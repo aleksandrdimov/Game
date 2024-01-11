@@ -15,14 +15,19 @@ import { onMounted, ref } from 'vue'
 
 const props = defineProps({
   item: { type: Object, required: false },
-  column: { type: Boolean, required: true }
+  column: { type: Boolean, required: false }
 })
 
 const bgImage = ref('white')
-const classLabelPosition = ref(null)
+const classLabelPosition = ref(null);
+
+const positionRow=ref('');
+const positionColumn=ref('');
 
 function getSliderValues() {
-  bgImage.value = `url('/images/${props.item.img}.png')`
+  bgImage.value = `url('/images/${props.item.img}.png')`;
+  positionColumn.value=props.item.column;
+  positionRow.value=props.item.row;
   null !== props.item.position ? (classLabelPosition.value = props.item.position) : ''
 }
 
@@ -40,6 +45,9 @@ onMounted(() => {
   background-image: v-bind(bgImage);
   background-size: contain;
   background-repeat: no-repeat;
+
+  grid-column: v-bind(positionColumn);
+  grid-row: v-bind(positionRow);
 
   &__picture {
     // object-fit: cover;
