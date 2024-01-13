@@ -1,16 +1,42 @@
 <template>
   <section class="modal-item">
     <div class="modal-item__wrap">
-      <img v-if="items.length===1 && !items[0].owner" src="/images/close.png" alt="close" class="modal-item__close">
-      <CardItem v-for="(item, index) in items" :key="index" :item="item" :go-to="items.length>1"/>
+      <img
+        v-if="items.length === 1 && !items[0].owner"
+        src="/images/close.png"
+        alt="close"
+        class="modal-item__close"
+        @click="closeModal"
+        
+      />
+      <CardItem
+        v-for="(item, index) in items"
+        :key="index"
+        :item="item"
+        :go-to="items.length > 1"
+        @choose="chooseCard"
+      />
     </div>
   </section>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import CardItem from './components/CardItem.vue'
 
 const props = defineProps({ items: { type: Array, required: true } })
+
+const emit =defineEmits(['close','choose'])
+
+function closeModal() {
+  emit('close')
+}
+
+function chooseCard(data) {
+  emit('choose',data)
+}
+
+
 
 </script>
 
@@ -37,15 +63,17 @@ const props = defineProps({ items: { type: Array, required: true } })
     gap: 36px;
 
     background-color: white;
+    border-radius: 5px;
+
     padding: 50px 25px;
   }
 
-  &__close{
+  &__close {
     cursor: pointer;
     position: absolute;
     z-index: 15;
     top: 5px;
-    right:5px;
+    right: 5px;
   }
 }
 </style>

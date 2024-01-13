@@ -4,7 +4,7 @@
         <p class="card__owner">Owner : {{ item.owner ? item.owner : 'No' }}</p>
       </div>
       <div class="card__body"></div>
-      <button v-if="goTo" class="card__button" :class="item.owner !== null ? 'rent' : 'buy'">
+      <button v-if="goTo" class="card__button" :class="item.owner !== null ? 'rent' : 'buy'" @click="chooseCard">
         GO TO {{ item.owner !== null ? `and RENT ${item.rent}$` : `or BUY ${item.price}$` }}
       </button>
       <button v-else class="card__button" :class="item.owner !== null ? 'rent' : 'buy'">
@@ -17,6 +17,12 @@
 import { onMounted, ref } from 'vue'
 
 const props = defineProps({ item: { type: Object, required: true },goTo: { type: Boolean, required: true } })
+
+const emit =defineEmits('choose')
+
+function chooseCard() {
+  emit('choose',props.item.id)
+}
 
 const lineColor = ref('')
 const bgCard = ref('white')
