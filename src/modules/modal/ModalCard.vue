@@ -1,6 +1,6 @@
 <template>
   <section class="modal-item">
-    <div class="modal-item__wrap">
+    <div class="modal-item__wrap" :class="{go:items.length > 1}">
       <img
         v-if="items.length === 1 && !items[0].owner"
         src="/images/close.png"
@@ -15,6 +15,7 @@
         :item="item"
         :go-to="items.length > 1"
         @choose="chooseCard"
+        @buy="buyCard"
       />
     </div>
   </section>
@@ -24,9 +25,9 @@
 import { ref } from 'vue';
 import CardItem from './components/CardItem.vue'
 
-const props = defineProps({ items: { type: Array, required: true } })
+const props = defineProps({ items: { type: Array, required: true }, })
 
-const emit =defineEmits(['close','choose'])
+const emit =defineEmits(['close','choose','buy'])
 
 function closeModal() {
   emit('close')
@@ -34,6 +35,10 @@ function closeModal() {
 
 function chooseCard(data) {
   emit('choose',data)
+}
+
+function buyCard(data) {
+  emit('buy',data)
 }
 
 
@@ -50,7 +55,7 @@ function chooseCard(data) {
   top: 0;
   left: 0;
 
-  background-color: rgba(0, 0, 0, 0.5);
+  // background-color: rgba(0, 0, 0, 0.5);
 
   &__wrap {
     position: absolute;
@@ -62,10 +67,16 @@ function chooseCard(data) {
     flex-direction: row;
     gap: 36px;
 
-    background-color: white;
+    // background-color: white;
+  background-color: rgba(0, 0, 0, 0.5);
+
     border-radius: 5px;
 
     padding: 50px 25px;
+
+    &.go{
+      padding-bottom: 100px;
+    }
   }
 
   &__close {

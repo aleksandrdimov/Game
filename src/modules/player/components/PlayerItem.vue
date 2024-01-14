@@ -39,16 +39,14 @@
 </template>
 
 <script setup>
-import { onMounted, onUpdated, ref } from 'vue'
+import { onMounted, onUpdated, ref, watch } from 'vue'
 
 const props = defineProps({
   player: { type: Object, required: true },
   groups: { type: Array, required: true }
 })
 
-console.log(props.groups)
-
-const emit = defineEmits('open')
+const emit = defineEmits(['open'])
 
 const playerColor = ref(props.player.color)
 const moneyColor = ref('')
@@ -88,6 +86,7 @@ onUpdated(() => {
     gap: 12px;
 
     padding: 3px 10px;
+    overflow: hidden;
   }
 
   &__name {
@@ -141,10 +140,10 @@ onUpdated(() => {
 
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 38px);
 
-    padding: 0 2px;
-    gap: 5px 30px;
+    padding: 0px 5px;
+    gap: 10px 30px;
   }
 
   &__group {
@@ -153,11 +152,11 @@ onUpdated(() => {
     justify-content: space-between;
   }
 
-  &__group-2 {
-    grid-column: 2/4;
+  &__group-13 {
+    grid-column: 1/3;
 
     justify-self: start;
-    gap: 7px;
+    gap: 8px;
   }
 
   &__group-item {
@@ -179,6 +178,7 @@ onUpdated(() => {
     position: relative;
 
     background-color: var(--color-bg);
+    border-radius: 1px;
   }
 
   &__group-owner-line {
@@ -204,6 +204,7 @@ onUpdated(() => {
 }
 .details-leave-to {
   height: 0px;
+  opacity: 0;
   transition: all 0.4s ease-in;
 }
 </style>

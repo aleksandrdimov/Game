@@ -1,42 +1,63 @@
 <template>
   <section id="board" class="board">
     <div class="board__wrap">
-      <BoardItem v-for="(item, index) in dataItem" :key="index" class="cell" :item="item"
-        :class="`board__item-${index}`" />
+      <BoardItem
+        v-for="(item, index) in dataItem"
+        :key="index"
+        class="cell"
+        :item="item"
+        :class="`board__item-${index}`"
+      />
       <PlayerToken v-for="player in players" :key="player.id" :player="player"></PlayerToken>
 
       <div class="board__dice-wrap">
         <p class="board__dice-item">{{ dice1 }}</p>
         <p class="board__dice-item">{{ dice2 }}</p>
       </div>
-      <button class="board__button" @click="clickBtn">Roll Dice</button>
+      <button v-if="buttonRoll" class="board__button" @click="rollDice">Roll Dice</button>
+      <button v-else class="board__button" @click="finishedRound">Finished Round</button>
 
-      <Players class="board__players" :players="players" @open="openDetails" :groups="sortGroupItems" />
+      <Players
+        class="board__players"
+        :players="players"
+        @open="openDetails"
+        :groups="sortGroupItems"
+      />
     </div>
-    <Transition name="card">
-      <ModalCard v-if="showChoose" :items="itemsChoose" @close="closeModal" @choose="isChooseCard" />
-    </Transition>
+    <TransitionGroup name="card">
+      <ModalCard
+        v-if="showChoose && itemsChoose[0].type !== 'corner'"
+        :items="itemsChoose"
+        @close="closeModal"
+        @choose="isChooseCard"
+        @buy="buyCard"
+      />
+  
+      <ModalError v-if="enoughMoney" />
+    </TransitionGroup>
   </section>
 </template>
 
 <script setup>
-import { onBeforeMount, onMounted, ref } from 'vue'
+import { onBeforeMount, onBeforeUpdate, onMounted, onUpdated, ref, watch } from 'vue'
 import BoardItem from './components/BoardItem.vue'
 import ModalCard from '../modal/ModalCard.vue'
+import ModalError from '../modal/ModalError.vue'
 import Players from '../player/Players.vue'
 import PlayerToken from '../player/components/PlayerToken.vue'
 
 const dataItem = ref([
   {
     id: 1,
+    type: 'surprise',
     owner: null,
     count: '20',
     img: 'surprise_img',
     text: '20',
     color: null,
-    rent: '',
-    price: '',
-    update: '',
+    rent: null,
+    price: null,
+    update: null,
     position: null,
     row: '1/2',
     column: '1/2',
@@ -44,13 +65,14 @@ const dataItem = ref([
   },
   {
     id: 2,
-    owner: "Player 1",
+    type: 'card',
+    owner: null,
     count: '21',
     img: 'puma_img',
     text: '21',
     color: 'rgb(32, 32, 219)',
-    rent: '',
-    price: '',
+    rent: 60,
+    price: 300,
     update: '',
     position: 'top',
     row: '1/2',
@@ -59,13 +81,14 @@ const dataItem = ref([
   },
   {
     id: 3,
+    type: 'card',
     owner: null,
     count: '22',
     img: 'reebok_img',
     text: '22',
     color: 'rgb(32, 32, 219)',
-    rent: '',
-    price: '',
+    rent: 56,
+    price: 280,
     update: '',
     position: 'top',
     row: '1/2',
@@ -74,13 +97,14 @@ const dataItem = ref([
   },
   {
     id: 4,
-    owner: 'Player 1',
+    type: 'card',
+    owner: null,
     count: '23',
     img: 'sea_terminal_img',
     text: '23',
     color: 'transparent',
-    rent: '',
-    price: '',
+    rent: 45,
+    price: 225,
     update: '',
     position: 'top',
     row: '1/2',
@@ -89,13 +113,14 @@ const dataItem = ref([
   },
   {
     id: 5,
+    type: 'card',
     owner: null,
     count: '24',
     img: 'fitness_dream_img',
     text: '24',
     color: 'rgb(190, 190, 190)',
-    rent: '',
-    price: '',
+    rent: 46,
+    price: 230,
     update: '',
     position: 'top',
     row: '1/2',
@@ -104,14 +129,15 @@ const dataItem = ref([
   },
   {
     id: 6,
+    type: 'corner',
     owner: null,
     count: '25',
     img: 'street_corner',
     text: '25',
     color: null,
-    rent: '',
-    price: '',
-    update: '',
+    rent: null,
+    price: null,
+    update: null,
     position: null,
     row: '1/2',
     column: '6/7',
@@ -119,13 +145,14 @@ const dataItem = ref([
   },
   {
     id: 7,
-    owner: "Player 1",
+    type: 'card',
+    owner: null,
     count: '26',
     img: 'fitness_girl_img',
     text: '26',
     color: 'rgb(190, 190, 190)',
-    rent: '',
-    price: '',
+    rent: 55,
+    price: 275,
     update: '',
     position: 'top',
     row: '1/2',
@@ -134,14 +161,15 @@ const dataItem = ref([
   },
   {
     id: 8,
+    type: 'surprise',
     owner: null,
     count: '27',
     img: 'surprise_img',
     text: '27',
     color: null,
-    rent: '',
-    price: '',
-    update: '',
+    rent: null,
+    price: null,
+    update: null,
     position: 'top',
     row: '1/2',
     column: '8/9',
@@ -149,13 +177,14 @@ const dataItem = ref([
   },
   {
     id: 9,
-    owner:null,
+    type: 'card',
+    owner: null,
     count: '28',
     img: 'sushi_bar_img',
     text: '28',
     color: '#573d3f',
-    rent: '',
-    price: '',
+    rent: 53,
+    price: 265,
     update: '',
     position: 'top',
     row: '1/2',
@@ -164,13 +193,14 @@ const dataItem = ref([
   },
   {
     id: 10,
+    type: 'card',
     owner: null,
     count: '29',
     img: 'steak_house_img',
     text: '29',
     color: '#573d3f',
-    rent: '',
-    price: '',
+    rent: 56,
+    price: 280,
     update: '',
     position: 'top',
     row: '1/2',
@@ -179,14 +209,15 @@ const dataItem = ref([
   },
   {
     id: 11,
+    type: 'police',
     owner: null,
     count: '30',
     img: 'police_img',
     text: '30',
     color: null,
-    rent: '',
-    price: '',
-    update: '',
+    rent: null,
+    price: null,
+    update: null,
     position: null,
     row: '1/2',
     column: '11/12',
@@ -195,13 +226,14 @@ const dataItem = ref([
 
   {
     id: 12,
+    type: 'card',
     owner: null,
     count: '19',
     img: 'adidas_img',
     text: '19',
     color: 'rgb(32, 32, 219)',
-    rent: '',
-    price: '',
+    rent: 58,
+    price: 290,
     update: '',
     position: 'left',
     row: '2/3',
@@ -210,13 +242,14 @@ const dataItem = ref([
   },
   {
     id: 13,
+    type: 'card',
     owner: null,
     count: '26',
     img: 'fitness_men_img',
     text: '26s',
     color: 'rgb(190, 190, 190)',
-    rent: '',
-    price: '',
+    rent: 50,
+    price: 250,
     update: '',
     position: 'top',
     row: '2/3',
@@ -225,13 +258,14 @@ const dataItem = ref([
   },
   {
     id: 14,
+    type: 'card',
     owner: null,
     count: '31',
     img: 'burger_house_img',
     text: '31',
     color: '#573d3f',
-    rent: '',
-    price: '',
+    rent: 55,
+    price: 275,
     update: '',
     position: 'right',
     row: '2/3',
@@ -241,13 +275,14 @@ const dataItem = ref([
 
   {
     id: 15,
+    type: 'card',
     owner: null,
     count: '18',
     img: 'pc_shop_img',
     text: '18',
     color: 'mediumorchid',
-    rent: '',
-    price: '',
+    rent: 52,
+    price: 260,
     update: '',
     position: 'left',
     row: '3/4',
@@ -256,13 +291,14 @@ const dataItem = ref([
   },
   {
     id: 16,
+    type: 'card',
     owner: null,
     count: '27',
     img: 'bessarabian_shop_img',
     text: '27s',
     color: 'rgb(238, 151, 151)',
-    rent: '',
-    price: '',
+    rent: 57,
+    price: 285,
     update: '',
     position: 'top',
     row: '3/4',
@@ -271,14 +307,15 @@ const dataItem = ref([
   },
   {
     id: 17,
+    type: 'go',
     owner: null,
     count: '32',
     img: 'go_to_casino_img',
     text: '32',
     color: null,
-    rent: '',
-    price: '',
-    update: '',
+    rent: null,
+    price: null,
+    update: null,
     position: 'right',
     row: '3/4',
     column: '11/12',
@@ -287,13 +324,14 @@ const dataItem = ref([
 
   {
     id: 18,
+    type: 'card',
     owner: null,
     count: '17',
     img: 'mobile_shop_img',
     text: '17',
     color: 'mediumorchid',
-    rent: '',
-    price: '',
+    rent: 48,
+    price: 240,
     update: '',
     position: 'left',
     row: '4/5',
@@ -302,14 +340,15 @@ const dataItem = ref([
   },
   {
     id: 19,
+    type: 'surprise',
     owner: null,
     count: '28',
     img: 'surprise_img',
     text: '28s',
     color: null,
-    rent: '',
-    price: '',
-    update: '',
+    rent: null,
+    price: null,
+    update: null,
     position: null,
     row: '4/5',
     column: '6/7',
@@ -317,13 +356,14 @@ const dataItem = ref([
   },
   {
     id: 20,
+    type: 'card',
     owner: null,
     count: '29',
     img: 'wine_valley_img',
     text: '29s',
     color: 'rgb(238, 151, 151)',
-    rent: '',
-    price: '',
+    rent: 64,
+    price: 320,
     update: '',
     position: 'top',
     row: '4/5',
@@ -332,14 +372,15 @@ const dataItem = ref([
   },
   {
     id: 21,
+    type: 'teleport',
     owner: null,
     count: '30',
     img: 'teleport_img',
     text: '30s',
     color: null,
-    rent: '',
-    price: '',
-    update: '',
+    rent: null,
+    price: null,
+    update: null,
     position: null,
     row: '4/5',
     column: '8/9',
@@ -347,13 +388,14 @@ const dataItem = ref([
   },
   {
     id: 22,
+    type: 'card',
     owner: null,
     count: '33',
     img: 'fashion_girl_img',
     text: '33',
     color: 'rgb(167, 218, 218',
-    rent: '',
-    price: '',
+    rent: 66,
+    price: 330,
     update: '',
     position: 'right',
     row: '4/5',
@@ -363,13 +405,14 @@ const dataItem = ref([
 
   {
     id: 23,
+    type: 'card',
     owner: null,
     count: '16',
     img: 'appliances_shop_img',
     text: '16',
     color: 'mediumorchid',
-    rent: '',
-    price: '',
+    rent: 55,
+    price: 275,
     update: '',
     position: 'left',
     row: '5/6',
@@ -378,13 +421,14 @@ const dataItem = ref([
   },
   {
     id: 24,
+    type: 'card',
     owner: null,
     count: '31',
     img: 'electric_power_img',
     text: '31s',
     color: 'transparent',
-    rent: '',
-    price: '',
+    rent: 45,
+    price: 225,
     update: '',
     position: 'top',
     row: '5/6',
@@ -393,13 +437,14 @@ const dataItem = ref([
   },
   {
     id: 25,
+    type: 'card',
     owner: null,
     count: '32',
     img: 'bessarabian_tour_img',
     text: '32s',
     color: 'rgb(238, 151, 151)',
-    rent: '',
-    price: '',
+    rent: 60,
+    price: 300,
     update: '',
     position: 'top',
     row: '5/6',
@@ -408,13 +453,14 @@ const dataItem = ref([
   },
   {
     id: 26,
+    type: 'card',
     owner: null,
     count: '33',
     img: 'kids_clothes_img',
     text: '33s',
     color: 'rgb(167, 218, 218',
-    rent: '',
-    price: '',
+    rent: 58,
+    price: 290,
     update: '',
     position: 'top',
     row: '5/6',
@@ -423,13 +469,14 @@ const dataItem = ref([
   },
   {
     id: 27,
+    type: 'card',
     owner: null,
     count: '34',
     img: 'railway_station_img',
     text: '34',
     color: 'transparent',
-    rent: '',
-    price: '',
+    rent: 45,
+    price: 225,
     update: '',
     position: null,
     row: '5/6',
@@ -439,13 +486,14 @@ const dataItem = ref([
 
   {
     id: 28,
+    type: 'card',
     owner: null,
     count: '15',
     img: 'grocery_family_img',
     text: '15',
     color: 'rgb(194, 1, 1)',
-    rent: '',
-    price: '',
+    rent: 44,
+    price: 220,
     update: '',
     position: 'left',
     row: '6/7',
@@ -454,13 +502,14 @@ const dataItem = ref([
   },
   {
     id: 29,
+    type: 'card',
     owner: null,
     count: '35',
     img: 'mens_clothes_img',
     text: '35',
     color: 'rgb(167, 218, 218',
-    rent: '',
-    price: '',
+    rent: 62,
+    price: 310,
     update: '',
     position: 'right',
     row: '6/7',
@@ -470,13 +519,14 @@ const dataItem = ref([
 
   {
     id: 30,
+    type: 'card',
     owner: null,
     count: '14',
     img: 'bus_station_img',
     text: '14',
     color: 'transparent',
-    rent: '',
-    price: '',
+    rent: 45,
+    price: 225,
     update: '',
     position: 'left',
     row: '7/8',
@@ -485,13 +535,14 @@ const dataItem = ref([
   },
   {
     id: 31,
+    type: 'card',
     owner: null,
     count: '13',
     img: 'grocery_organic_img',
     text: '13s',
     color: 'rgb(194, 1, 1)',
-    rent: '',
-    price: '',
+    rent: 43,
+    price: 215,
     update: '',
     position: 'bottom',
     row: '7/8',
@@ -500,13 +551,14 @@ const dataItem = ref([
   },
   {
     id: 32,
+    type: 'card',
     owner: null,
     count: '12',
     img: 'smoke_shop_img',
     text: '12s',
     color: 'rgb(182, 182, 0)',
-    rent: '',
-    price: '',
+    rent: 38,
+    price: 190,
     update: '',
     position: 'bottom',
     row: '7/8',
@@ -515,13 +567,14 @@ const dataItem = ref([
   },
   {
     id: 33,
+    type: 'card',
     owner: null,
     count: '11',
     img: 'water_energy_img',
     text: '11s',
     color: 'transparent',
-    rent: '',
-    price: '',
+    rent: 45,
+    price: 225,
     update: '',
     position: 'bottom',
     row: '7/8',
@@ -530,13 +583,14 @@ const dataItem = ref([
   },
   {
     id: 34,
+    type: 'card',
     owner: null,
     count: '36',
     img: 'las_vegas_1_img',
     text: '36',
     color: 'orange',
-    rent: '',
-    price: '',
+    rent: 75,
+    price: 375,
     update: '',
     position: 'right',
     row: '7/8',
@@ -546,13 +600,14 @@ const dataItem = ref([
 
   {
     id: 35,
+    type: 'card',
     owner: null,
     count: '13',
     img: 'grocery_img',
     text: '13',
     color: 'rgb(194, 1, 1)',
-    rent: '',
-    price: '',
+    rent: 46,
+    price: 230,
     update: '',
     position: 'left',
     row: '8/9',
@@ -561,13 +616,14 @@ const dataItem = ref([
   },
   {
     id: 36,
+    type: 'teleport',
     owner: null,
     count: '10',
     img: 'teleport_img',
     text: '10s',
     color: null,
-    rent: '',
-    price: '',
+    rent: null,
+    price: null,
     update: '',
     position: null,
     row: '8/9',
@@ -576,13 +632,14 @@ const dataItem = ref([
   },
   {
     id: 37,
+    type: 'card',
     owner: null,
     count: '9',
     img: 'vape_shop_img',
     text: '9s',
     color: 'rgb(182, 182, 0)',
-    rent: '',
-    price: '',
+    rent: 42,
+    price: 210,
     update: '',
     position: 'bottom',
     row: '8/9',
@@ -591,13 +648,14 @@ const dataItem = ref([
   },
   {
     id: 38,
+    type: 'surprise',
     owner: null,
     count: '8',
     img: 'surprise_img',
     text: '8s',
     color: null,
-    rent: '',
-    price: '',
+    rent: null,
+    price: null,
     update: '',
     position: null,
     row: '8/9',
@@ -606,13 +664,14 @@ const dataItem = ref([
   },
   {
     id: 39,
+    type: 'surprise',
     owner: null,
     count: '37',
     img: 'surprise_img',
     text: '37',
     color: null,
-    rent: '',
-    price: '',
+    rent: null,
+    price: null,
     update: '',
     position: 'right',
     row: '8/9',
@@ -622,13 +681,14 @@ const dataItem = ref([
 
   {
     id: 40,
+    type: 'surprise',
     owner: null,
     count: '12',
     img: 'surprise_img',
     text: '12',
     color: null,
-    rent: '',
-    price: '',
+    rent: null,
+    price: null,
     update: '',
     position: 'left',
     row: '9/10',
@@ -637,13 +697,14 @@ const dataItem = ref([
   },
   {
     id: 41,
+    type: 'card',
     owner: null,
     count: '7',
     img: 'hookah_shop_img',
     text: '7s',
     color: 'rgb(182, 182, 0)',
-    rent: '',
-    price: '',
+    rent: 40,
+    price: 200,
     update: '',
     position: 'bottom',
     row: '9/10',
@@ -652,13 +713,14 @@ const dataItem = ref([
   },
   {
     id: 42,
+    type: 'card',
     owner: null,
     count: '38',
     img: 'casino_img',
     text: '38',
     color: 'orange',
-    rent: '',
-    price: '',
+    rent: 80,
+    price: 400,
     update: '',
     position: 'right',
     row: '9/10',
@@ -668,13 +730,14 @@ const dataItem = ref([
 
   {
     id: 43,
+    type: 'card',
     owner: null,
     count: '11',
     img: 'coffee_shop_img',
     text: '11',
     color: 'rgb(148, 100, 55)',
-    rent: '',
-    price: '',
+    rent: 35,
+    price: 175,
     update: '',
     position: 'left',
     row: '10/11',
@@ -683,13 +746,14 @@ const dataItem = ref([
   },
   {
     id: 44,
+    type: 'card',
     owner: null,
     count: '6',
     img: 'kids_barber_img',
     text: '6s',
     color: 'rgb(132, 156, 224)',
-    rent: '',
-    price: '',
+    rent: 28,
+    price: 140,
     update: '',
     position: 'bottom',
     row: '10/11',
@@ -698,13 +762,14 @@ const dataItem = ref([
   },
   {
     id: 45,
+    type: 'card',
     owner: null,
     count: '39',
     img: 'hotel_royal_img',
     text: '39',
     color: 'orange',
-    rent: '',
-    price: '',
+    rent: 70,
+    price: 350,
     update: '',
     position: 'right',
     row: '10/11',
@@ -714,13 +779,14 @@ const dataItem = ref([
 
   {
     id: 46,
+    type: 'jail',
     owner: null,
     count: '10',
     img: 'jail_img',
     text: '10',
     color: null,
-    rent: '',
-    price: '',
+    rent: null,
+    price: null,
     update: '',
     position: null,
     row: '11/12',
@@ -729,13 +795,14 @@ const dataItem = ref([
   },
   {
     id: 47,
+    type: 'card',
     owner: null,
     count: '9',
     img: 'hot_dogs_img',
     text: '9',
     color: 'rgb(148, 100, 55)',
-    rent: '',
-    price: '',
+    rent: 34,
+    price: 170,
     update: '',
     position: 'bottom',
     row: '11/12',
@@ -744,13 +811,14 @@ const dataItem = ref([
   },
   {
     id: 48,
+    type: 'card',
     owner: null,
     count: '8',
     img: 'airport_img',
     text: '8',
     color: 'transparent',
-    rent: '',
-    price: '',
+    rent: 45,
+    price: 225,
     update: '',
     position: 'bottom',
     row: '11/12',
@@ -759,13 +827,14 @@ const dataItem = ref([
   },
   {
     id: 49,
+    type: 'card',
     owner: null,
     count: '7',
     img: 'croissant_bakehouse_img',
     text: '7',
     color: 'rgb(148, 100, 55)',
-    rent: '',
-    price: '',
+    rent: 36,
+    price: 180,
     update: '',
     position: 'bottom',
     row: '11/12',
@@ -774,13 +843,14 @@ const dataItem = ref([
   },
   {
     id: 50,
+    type: 'card',
     owner: null,
     count: '6',
     img: 'barber_shop_img',
     text: '6',
     color: 'rgb(132, 156, 224)',
-    rent: '',
-    price: '',
+    rent: 32,
+    price: 160,
     update: '',
     position: 'bottom',
     row: '11/12',
@@ -789,14 +859,15 @@ const dataItem = ref([
   },
   {
     id: 51,
+    type: 'corner',
     owner: null,
     count: '5',
     img: 'street_corner',
     text: '5',
     color: null,
-    rent: '',
-    price: '',
-    update: '',
+    rent: null,
+    price: null,
+    update: null,
     position: null,
     row: '11/12',
     column: '6/7',
@@ -804,13 +875,14 @@ const dataItem = ref([
   },
   {
     id: 52,
+    type: 'card',
     owner: null,
     count: '4',
     img: 'hair_salon_img',
     text: '4',
     color: 'rgb(132, 156, 224)',
-    rent: '',
-    price: '',
+    rent: 35,
+    price: 175,
     update: '',
     position: 'bottom',
     row: '11/12',
@@ -819,13 +891,14 @@ const dataItem = ref([
   },
   {
     id: 53,
+    type: 'card',
     owner: null,
     count: '3',
     img: 'continantal_avenue_img',
     text: '3',
     color: 'rgb(68, 177, 68)',
-    rent: '',
-    price: '',
+    rent: 20,
+    price: 100,
     update: '',
     position: 'bottom',
     row: '11/12',
@@ -834,13 +907,14 @@ const dataItem = ref([
   },
   {
     id: 54,
+    type: 'card',
     owner: null,
     count: '2',
     img: 'old_avenue_img',
     text: '2',
     color: 'rgb(68, 177, 68)',
-    rent: '',
-    price: '',
+    rent: '30',
+    price: 150,
     update: '',
     position: 'bottom',
     row: '11/12',
@@ -849,13 +923,14 @@ const dataItem = ref([
   },
   {
     id: 55,
+    type: 'card',
     owner: null,
     count: '1',
     img: 'main_avenue_img',
     text: '1',
     color: 'rgb(68, 177, 68)',
-    rent: '',
-    price: '',
+    rent: 24,
+    price: 120,
     update: '',
     position: 'bottom',
     row: '11/12',
@@ -864,6 +939,7 @@ const dataItem = ref([
   },
   {
     id: 56,
+    type: 'start',
     owner: null,
     count: '40',
     img: 'start_img',
@@ -897,7 +973,7 @@ const players = ref([
   {
     id: 2,
     name: 'Player 2',
-    money: 1000,
+    money: 1500,
     color: 'green',
     img: '',
     row: '11/12',
@@ -907,50 +983,66 @@ const players = ref([
     direction: 'main',
     active: false,
     details: false
-  },
-  {
-    id: 3,
-    name: 'Player 3',
-    money: 700,
-    color: 'blue',
-    img: '',
-    row: '11/12',
-    column: '11/12',
-    positionStart: 0,
-    positionGoTo: 0,
-    direction: 'main',
-    active: false,
-    details: false
-  },
-  {
-    id: 4,
-    name: 'Player 4',
-    money: 500,
-    color: 'yellow',
-    img: '',
-    row: '11/12',
-    column: '11/12',
-    positionStart: 0,
-    positionGoTo: 0,
-    direction: 'main',
-    active: false,
-    details: false
   }
+  // {
+  //   id: 3,
+  //   name: 'Player 3',
+  //   money: 700,
+  //   color: 'blue',
+  //   img: '',
+  //   row: '11/12',
+  //   column: '11/12',
+  //   positionStart: 0,
+  //   positionGoTo: 0,
+  //   direction: 'main',
+  //   active: false,
+  //   details: false
+  // },
+  // {
+  //   id: 4,
+  //   name: 'Player 4',
+  //   money: 200,
+  //   color: 'yellow',
+  //   img: '',
+  //   row: '11/12',
+  //   column: '11/12',
+  //   positionStart: 0,
+  //   positionGoTo: 0,
+  //   direction: 'main',
+  //   active: false,
+  //   details: false
+  // }
 ])
+
+const buttonRoll = ref(true)
+const enoughMoney = ref(false)
+
+function finishedRound() {
+  playerActiveIndex.value < players.value.length - 1
+    ? playerActiveIndex.value++
+    : (playerActiveIndex.value = 0)
+
+  players.value.forEach((el) => {
+    el.id === playerActiveIndex.value + 1 ? (el.active = true) : (el.active = false)
+    el.id === playerActiveIndex.value + 1 ? (el.details = true) : (el.details = false)
+  })
+
+  buttonRoll.value = true
+}
 
 const sortGroupItems = ref([])
 
 function checkItemValue(el, array) {
-  const checkItem = (x) => x.items[0].color === el.color;
+  const checkItem = (x) => x.items[0].color === el.color
   const resultIndex = array.findIndex(checkItem)
 
   resultIndex >= 0 ? array[resultIndex].items.push(el) : ''
 }
 
 function sortItems() {
-  const array = dataItem.value
-    .filter((el) => el.color !== null)
- 
+  sortGroupItems.value = []
+  const array = dataItem.value.filter((el) => el.color !== null)
+
   array.forEach((el) => {
     const newItem = {
       items: [{ ...el }]
@@ -959,13 +1051,16 @@ function sortItems() {
     const result = sortGroupItems.value.find((item) => item.items[0].color == el.color)
 
     result
-    ? checkItemValue(el, sortGroupItems.value)
-    : (sortGroupItems.value = [...sortGroupItems.value, { ...newItem }])
+      ? checkItemValue(el, sortGroupItems.value)
+      : (sortGroupItems.value = [...sortGroupItems.value, { ...newItem }])
   })
+
+  sortGroupItems.value.sort((a, b) => a.items.length - b.items.length)
 }
 
-const playerColumn = ref('11/12')
-const playerRow = ref('11/12')
+// const playerColumn = ref('11/12')
+// const playerRow = ref('11/12')
+const playerActiveIndex = ref(0)
 
 const dice1 = ref(0)
 const dice2 = ref(0)
@@ -974,35 +1069,47 @@ const itemsChoose = ref([])
 
 const showChoose = ref(false)
 
-function closeModal() {
-  showChoose.value = !showChoose.value
-}
-
-function clickBtn() {
+function rollDice() {
   dice1.value = Math.floor(Math.random() * 6) + 1
   dice2.value = Math.floor(Math.random() * 6) + 1
   const total = dice1.value + dice2.value
 
-  player.value.positionStart = player.value.positionGoTo
+  players.value[playerActiveIndex.value].positionStart =
+    players.value[playerActiveIndex.value].positionGoTo
 
-  player.value.positionGoTo + total >= 40
-    ? (player.value.positionGoTo = player.value.positionGoTo + total - 40)
-    : (player.value.positionGoTo = player.value.positionGoTo + total)
+  if (players.value[playerActiveIndex.value].positionGoTo + total >= 40) {
+    players.value[playerActiveIndex.value].positionGoTo =
+      players.value[playerActiveIndex.value].positionGoTo + total - 40
+
+    players.value[playerActiveIndex.value].money =
+      players.value[playerActiveIndex.value].money + 200
+  } else {
+    players.value[playerActiveIndex.value].positionGoTo =
+      players.value[playerActiveIndex.value].positionGoTo + total
+  }
 
   filterItem()
 
   showChoose.value = true
+
+  buttonRoll.value = dice1.value === dice2.value
 }
 
 function filterItem() {
-  itemsChoose.value = dataItem.value.filter((el) => el.count == player.value.positionGoTo)
+  itemsChoose.value = dataItem.value.filter(
+    (el) => el.count == players.value[playerActiveIndex.value].positionGoTo
+  )
 
   if (itemsChoose.value.length > 1) {
     if (
-      (player.value.positionStart > 5 && player.value.positionStart < 14) ||
-      (player.value.positionStart > 25 && player.value.positionStart < 34)
+      (players.value[playerActiveIndex.value].positionStart > 5 &&
+        players.value[playerActiveIndex.value].positionStart < 14) ||
+      (players.value[playerActiveIndex.value].positionStart > 25 &&
+        players.value[playerActiveIndex.value].positionStart < 34)
     ) {
-      itemsChoose.value = itemsChoose.value.filter((el) => el.direction === player.value.direction)
+      itemsChoose.value = itemsChoose.value.filter(
+        (el) => el.direction === players.value[playerActiveIndex.value].direction
+      )
       goTo()
     }
   } else {
@@ -1011,35 +1118,77 @@ function filterItem() {
 }
 
 function goTo() {
-  playerColumn.value = itemsChoose.value[0].column
-  playerRow.value = itemsChoose.value[0].row
+  players.value[playerActiveIndex.value].row = itemsChoose.value[0].row
+  players.value[playerActiveIndex.value].column = itemsChoose.value[0].column
+  players.value[playerActiveIndex.value].direction = itemsChoose.value[0].direction
+}
 
-  player.value.row = playerRow.value
-  player.value.column = playerColumn.value
-  player.value.direction = itemsChoose.value[0].direction
+function closeModal() {
+  showChoose.value = !showChoose.value
 }
 
 function isChooseCard(data) {
-  showChoose.value = false
   itemsChoose.value = dataItem.value.filter((el) => el.id === data)
 
   goTo()
+  showChoose.value = false
+}
 
-  setTimeout(() => {
-    showChoose.value = true
-  }, 200)
+function buyCard(data) {
+  let item = players.value[playerActiveIndex.value]
+  if (players.value[playerActiveIndex.value].money >= dataItem.value[data - 1].price) {
+    if (null === dataItem.value[data - 1].owner) {
+      players.value[playerActiveIndex.value] = {
+        ...item,
+        money: item.money - dataItem.value[data - 1].price
+      }
+      dataItem.value[data - 1] = { ...dataItem.value[data - 1], owner: item.name }
+    } else {
+      if (players.value[playerActiveIndex.value].money >= dataItem.value[data - 1].rent) {
+        players.value[playerActiveIndex.value] = {
+          ...item,
+          money: item.money - dataItem.value[data - 1].rent
+        }
+
+        players.value.forEach((el, index) => {
+          if (el.name === dataItem.value[data - 1].owner) {
+            players.value[index] = {
+              ...players.value[index],
+              money: players.value[index].money + dataItem.value[data - 1].rent
+            }
+          }
+        })
+      }
+    }
+  } else {
+    enoughMoney.value = true
+    showChoose.value=false
+
+    setTimeout(() => {
+      enoughMoney.value = false
+
+      showChoose.value=true
+     
+    }, 3000)
+  }
+
+  isChooseCard(data)
+  sortItems()
 }
 
 function openDetails(data) {
   players.value.forEach((el) => {
     el.id === data ? (el.details = true) : (el.details = false)
   })
-  console.log(data)
 }
 
-onBeforeMount(() => {
+watch(players, () => {
+})
+
+onMounted(() => {
   sortItems()
 })
+
 </script>
 
 <style lang="scss" scoped>

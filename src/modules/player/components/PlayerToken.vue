@@ -3,15 +3,34 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onBeforeUpdate, onMounted, onUpdated, ref, watch } from 'vue'
 
 const props = defineProps({
   player: { type: Object, required: true }
 })
 
 const playerColor = props.player.color
-const playerColumn = ref(props.player.column)
-const playerRow = ref(props.player.row)
+const playerColumn = ref('')
+const playerRow = ref('')
+
+function getPosition(){
+  playerColumn.value=props.player.column
+  playerRow.value=props.player.row
+}
+
+
+watch(props,()=>{
+  getPosition()
+})
+
+onMounted(()=>{
+  getPosition()
+})
+
+onBeforeUpdate(()=>{
+  getPosition()
+})
+
 </script>
 
 <style lang="scss" scoped>

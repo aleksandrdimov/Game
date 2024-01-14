@@ -7,17 +7,19 @@
 </template>
 
 <script setup>
+import { watch } from 'vue';
 import PlayerItem from './components/PlayerItem.vue'
 const props = defineProps({
   players: { type: Array, required: true },
   groups: { type: Array, required: true }
 })
 
-const emit = defineEmits('open')
+const emit = defineEmits(['open'])
 
 function openDetails(data) {
   emit('open', data)
 }
+
 </script>
 
 <style lang="scss" scoped>
@@ -27,6 +29,8 @@ function openDetails(data) {
     display: flex;
     flex-direction: column;
     gap: 3px;
+
+    overflow: hidden;
   }
 }
 </style>
