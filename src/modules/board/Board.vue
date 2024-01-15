@@ -992,7 +992,7 @@ const players = ref([
     active: false,
     details: false,
     skipMove: false
-  },
+  }
   // {
   //   id: 3,
   //   name: 'Player 3',
@@ -1145,20 +1145,20 @@ function isTeleport() {
     showChoose.value = false
     teleport.value = true
 
-    setTimeout(()=>{
+    setTimeout(() => {
       if (itemsChoose.value[0].id === 36) {
         players.value[playerActiveIndex.value].row = '4/5'
         players.value[playerActiveIndex.value].column = '8/9'
-      }else{
+      } else {
         players.value[playerActiveIndex.value].row = '8/9'
         players.value[playerActiveIndex.value].column = '4/5'
       }
-    },2300)
+    }, 2300)
     players.value[playerActiveIndex.value].direction = 'branch'
 
-    setTimeout(()=>{
-    teleport.value = false
-    },2000)
+    setTimeout(() => {
+      teleport.value = false
+    }, 2000)
   }
 }
 
@@ -1233,7 +1233,11 @@ function buyCard(data) {
 
 function openDetails(data) {
   players.value.forEach((el) => {
-    el.id === data ? (el.details = true) : (el.details = false)
+    if (el.id === data) {
+      players.value[data - 1].details ? (el.details = false) : (el.details = true)
+    } else {
+      el.details = false
+    }
   })
 }
 
@@ -1244,7 +1248,7 @@ function payMoney() {
 
     jail.value = false
     buttonRoll.value = false
-    showChoose.value=false
+    showChoose.value = false
   } else {
     jail.value = false
     enoughMoney.value = true
