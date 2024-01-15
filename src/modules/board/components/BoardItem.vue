@@ -25,7 +25,7 @@ const positionRow=ref('');
 const positionColumn=ref('');
 
 function getSliderValues() {
-  bgImage.value = `url('/images/${props.item.img}.png')`;
+  bgImage.value = `url('../images/${props.item.img}.png')`;
   positionColumn.value=props.item.column;
   positionRow.value=props.item.row;
   null !== props.item.position ? (classLabelPosition.value = props.item.position) : ''

@@ -65,7 +65,7 @@ const bgCard = ref('white')
 
 function getInit() {
   lineColor.value = props.item.color
-  bgCard.value = `url('/images/${props.item.img}.png')`
+  bgCard.value = `url('../images/${props.item.img}.png')`
 }
 
 onMounted(() => {
