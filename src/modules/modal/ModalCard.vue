@@ -16,6 +16,7 @@
         :go-to="items.length > 1"
         @choose="chooseCard"
         @buy="buyCard"
+        @surprise="getSurprise"
       />
     </div>
   </section>
@@ -35,6 +36,10 @@ function closeModal() {
 
 function chooseCard(data) {
   emit('choose',data)
+}
+
+function getSurprise(){
+  emit('surprise')
 }
 
 function buyCard(data) {

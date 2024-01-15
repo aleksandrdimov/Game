@@ -31,9 +31,13 @@
         @close="closeModal"
         @choose="isChooseCard"
         @buy="buyCard"
+        @surprise="getSurprise"
       />
-  
+
       <ModalError v-if="enoughMoney" />
+
+      <ModalJail v-if="jail" @pay="payMoney" @skip="skipMove" />
+      <ModalTeleport v-if="teleport" :player="players[playerActiveIndex]" />
     </TransitionGroup>
   </section>
 </template>
@@ -43,6 +47,9 @@ import { onBeforeMount, onBeforeUpdate, onMounted, onUpdated, ref, watch } from 
 import BoardItem from './components/BoardItem.vue'
 import ModalCard from '../modal/ModalCard.vue'
 import ModalError from '../modal/ModalError.vue'
+import ModalJail from '../modal/ModalJail.vue'
+import ModalTeleport from '../modal/ModalTeleport.vue'
+import ModalSurprise from '../modal/ModalSurprise.vue'
 import Players from '../player/Players.vue'
 import PlayerToken from '../player/components/PlayerToken.vue'
 
@@ -968,7 +975,8 @@ const players = ref([
     positionGoTo: 0,
     direction: 'main',
     active: true,
-    details: true
+    details: true,
+    skipMove: false
   },
   {
     id: 2,
@@ -982,12 +990,13 @@ const players = ref([
     positionGoTo: 0,
     direction: 'main',
     active: false,
-    details: false
-  }
+    details: false,
+    skipMove: false
+  },
   // {
   //   id: 3,
   //   name: 'Player 3',
-  //   money: 700,
+  //   money: 1500,
   //   color: 'blue',
   //   img: '',
   //   row: '11/12',
@@ -996,13 +1005,14 @@ const players = ref([
   //   positionGoTo: 0,
   //   direction: 'main',
   //   active: false,
-  //   details: false
+  //   details: false,
+  //   skipMove: false
   // },
   // {
   //   id: 4,
   //   name: 'Player 4',
-  //   money: 200,
-  //   color: 'yellow',
+  //   money: 1500,
+  //   color: 'grey',
   //   img: '',
   //   row: '11/12',
   //   column: '11/12',
@@ -1010,24 +1020,31 @@ const players = ref([
   //   positionGoTo: 0,
   //   direction: 'main',
   //   active: false,
-  //   details: false
+  //   details: false,
+  //   skipMove: false
   // }
 ])
 
 const buttonRoll = ref(true)
 const enoughMoney = ref(false)
+const jail = ref(false)
+const teleport = ref(false)
 
 function finishedRound() {
   playerActiveIndex.value < players.value.length - 1
     ? playerActiveIndex.value++
     : (playerActiveIndex.value = 0)
 
+  players.value[playerActiveIndex.value].skipMove
+    ? (buttonRoll.value = false)
+    : (buttonRoll.value = true)
+
+  players.value[playerActiveIndex.value].skipMove = false
+
   players.value.forEach((el) => {
     el.id === playerActiveIndex.value + 1 ? (el.active = true) : (el.active = false)
     el.id === playerActiveIndex.value + 1 ? (el.details = true) : (el.details = false)
   })
-
-  buttonRoll.value = true
 }
 
 const sortGroupItems = ref([])
@@ -1058,8 +1075,6 @@ function sortItems() {
   sortGroupItems.value.sort((a, b) => a.items.length - b.items.length)
 }
 
-// const playerColumn = ref('11/12')
-// const playerRow = ref('11/12')
 const playerActiveIndex = ref(0)
 
 const dice1 = ref(0)
@@ -1110,6 +1125,7 @@ function filterItem() {
       itemsChoose.value = itemsChoose.value.filter(
         (el) => el.direction === players.value[playerActiveIndex.value].direction
       )
+
       goTo()
     }
   } else {
@@ -1117,10 +1133,50 @@ function filterItem() {
   }
 }
 
+function isJail() {
+  if (itemsChoose.value[0].type === 'jail') {
+    showChoose.value = false
+    jail.value = true
+  }
+}
+
+function isTeleport() {
+  if (itemsChoose.value[0].type === 'teleport') {
+    showChoose.value = false
+    teleport.value = true
+
+    setTimeout(()=>{
+      if (itemsChoose.value[0].id === 36) {
+        players.value[playerActiveIndex.value].row = '4/5'
+        players.value[playerActiveIndex.value].column = '8/9'
+      }else{
+        players.value[playerActiveIndex.value].row = '8/9'
+        players.value[playerActiveIndex.value].column = '4/5'
+      }
+    },2300)
+    players.value[playerActiveIndex.value].direction = 'branch'
+
+    setTimeout(()=>{
+    teleport.value = false
+    },2000)
+  }
+}
+
 function goTo() {
   players.value[playerActiveIndex.value].row = itemsChoose.value[0].row
   players.value[playerActiveIndex.value].column = itemsChoose.value[0].column
   players.value[playerActiveIndex.value].direction = itemsChoose.value[0].direction
+
+  isJail()
+
+  if (itemsChoose.value[0].type === 'police') {
+    players.value[playerActiveIndex.value].row = '11/12'
+    players.value[playerActiveIndex.value].column = '1/2'
+    players.value[playerActiveIndex.value].direction = 'main'
+    isJail()
+  }
+
+  isTeleport()
 }
 
 function closeModal() {
@@ -1162,13 +1218,12 @@ function buyCard(data) {
     }
   } else {
     enoughMoney.value = true
-    showChoose.value=false
+    showChoose.value = false
 
     setTimeout(() => {
       enoughMoney.value = false
 
-      showChoose.value=true
-     
+      showChoose.value = true
     }, 3000)
   }
 
@@ -1182,13 +1237,39 @@ function openDetails(data) {
   })
 }
 
-watch(players, () => {
-})
+function payMoney() {
+  if (players.value[playerActiveIndex.value].money - 150 >= 0) {
+    players.value[playerActiveIndex.value].money =
+      players.value[playerActiveIndex.value].money - 150
+
+    jail.value = false
+    buttonRoll.value = false
+    showChoose.value=false
+  } else {
+    jail.value = false
+    enoughMoney.value = true
+
+    setTimeout(() => {
+      enoughMoney.value = false
+
+      jail.value = true
+    }, 3000)
+  }
+}
+
+function skipMove() {
+  players.value[playerActiveIndex.value].skipMove = true
+  jail.value = false
+  buttonRoll.value = false
+}
+
+function getSurprise() {}
+
+watch(players, () => {})
 
 onMounted(() => {
   sortItems()
 })
-
 </script>
 
 <style lang="scss" scoped>
@@ -1239,6 +1320,7 @@ onMounted(() => {
   }
 
   &__button {
+    cursor: pointer;
     width: 100px;
     height: 50px;
     grid-column: 8/10;

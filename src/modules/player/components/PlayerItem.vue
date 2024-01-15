@@ -143,7 +143,7 @@ onUpdated(() => {
     grid-template-rows: repeat(5, 38px);
 
     padding: 0px 5px;
-    gap: 10px 30px;
+    gap: 10px 33px;
   }
 
   &__group {
@@ -156,7 +156,7 @@ onUpdated(() => {
     grid-column: 1/3;
 
     justify-self: start;
-    gap: 8px;
+    gap: 6px;
   }
 
   &__group-item {

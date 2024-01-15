@@ -5,6 +5,7 @@
     </div>
     <div class="card__body"></div>
 
+    <button v-if="item.type === 'surprise'" class="card__button surprise" @click="getSurprise">Get surprise</button>
     <button
       v-if="item.type === 'card'"
       class="card__button"
@@ -18,8 +19,17 @@
         {{ item.owner !== null ? `RENT ${item.rent} $` : `BUY ${item.price} $` }}
       </button> -->
     <button
-      v-if="(null === item.owner && goTo) || item.type !== 'card'"
+      v-if="goTo&&item.type === 'card'"
       class="card__button-go"
+      :class="item.owner !== null ? 'rent' : 'buy'"
+      @click="chooseCard"
+    >
+      GO TO
+    </button>
+
+    <button
+      v-if=" item.type === 'jail'|| item.type === 'teleport'"
+      class="card__button"
       :class="item.owner !== null ? 'rent' : 'buy'"
       @click="chooseCard"
     >
@@ -36,7 +46,11 @@ const props = defineProps({
   goTo: { type: Boolean, required: true }
 })
 
-const emit = defineEmits(['choose', 'buy'])
+const emit = defineEmits(['choose', 'buy','surprise'])
+
+function getSurprise(){
+  emit('surprise')
+}
 
 function chooseCard() {
   emit('choose', props.item.id)
@@ -63,7 +77,7 @@ onMounted(() => {
 .card {
   position: relative;
   width: 175px;
-  height: 250px;
+  height: max-content;
 
   display: flex;
   flex-direction: column;
@@ -112,6 +126,8 @@ onMounted(() => {
     width: 100%;
     height: 40px;
 
+    text-transform: uppercase;
+
     border: none;
     border-radius: 0 0 4px 4px;
 
@@ -123,6 +139,12 @@ onMounted(() => {
     &.rent {
       background-color: rgb(126, 197, 245);
       color: white;
+    }
+
+    &.surprise{
+      background-color: rgb(126, 197, 245);
+      color: white;
+      letter-spacing: 1.5px;
     }
   }
 

@@ -83,7 +83,6 @@
     font-weight: 600;
     color: black;
 
-
     animation: title .4s ease-in-out forwards 1.2s;
   }
 }
