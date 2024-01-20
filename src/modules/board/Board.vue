@@ -73,7 +73,7 @@ const dataItem = ref([
   {
     id: 2,
     type: 'card',
-    owner: null,
+    owner: 'Player 1',
     count: '21',
     img: 'puma_img',
     text: '21',
@@ -89,7 +89,7 @@ const dataItem = ref([
   {
     id: 3,
     type: 'card',
-    owner: null,
+    owner: 'Player 1',
     count: '22',
     img: 'reebok_img',
     text: '22',
@@ -105,7 +105,7 @@ const dataItem = ref([
   {
     id: 4,
     type: 'card',
-    owner: null,
+    owner: 'Player 1',
     count: '23',
     img: 'sea_terminal_img',
     text: '23',
@@ -185,7 +185,7 @@ const dataItem = ref([
   {
     id: 9,
     type: 'card',
-    owner: null,
+    owner: 'Player 1',
     count: '28',
     img: 'sushi_bar_img',
     text: '28',
@@ -201,7 +201,7 @@ const dataItem = ref([
   {
     id: 10,
     type: 'card',
-    owner: null,
+    owner: 'Player 1',
     count: '29',
     img: 'steak_house_img',
     text: '29',
@@ -234,7 +234,7 @@ const dataItem = ref([
   {
     id: 12,
     type: 'card',
-    owner: null,
+    owner: 'Player 1',
     count: '19',
     img: 'adidas_img',
     text: '19',
@@ -266,7 +266,7 @@ const dataItem = ref([
   {
     id: 14,
     type: 'card',
-    owner: null,
+    owner: 'Player 1',
     count: '31',
     img: 'burger_house_img',
     text: '31',
@@ -429,7 +429,7 @@ const dataItem = ref([
   {
     id: 24,
     type: 'card',
-    owner: null,
+    owner: 'Player 1',
     count: '31',
     img: 'electric_power_img',
     text: '31s',
@@ -477,7 +477,7 @@ const dataItem = ref([
   {
     id: 27,
     type: 'card',
-    owner: null,
+    owner: 'Player 1',
     count: '34',
     img: 'railway_station_img',
     text: '34',
@@ -527,7 +527,7 @@ const dataItem = ref([
   {
     id: 30,
     type: 'card',
-    owner: null,
+    owner: 'Player 1',
     count: '14',
     img: 'bus_station_img',
     text: '14',
@@ -575,7 +575,7 @@ const dataItem = ref([
   {
     id: 33,
     type: 'card',
-    owner: null,
+    owner: 'Player 1',
     count: '11',
     img: 'water_energy_img',
     text: '11s',
@@ -819,7 +819,7 @@ const dataItem = ref([
   {
     id: 48,
     type: 'card',
-    owner: null,
+    owner: 'Player 1',
     count: '8',
     img: 'airport_img',
     text: '8',
@@ -1280,7 +1280,7 @@ onMounted(() => {
 #board {
   border: 1px solid black;
 
-  background-color: rgba(209, 247, 209, 0.295);
+  background-color: rgba(207, 247, 207, 0.294);
   padding: 25px;
 
   color: #573d3f;

@@ -4,7 +4,10 @@
       <div class="player__header">
         <h3 class="player__name">{{ player.name }}</h3>
         <span class="player__money">{{ player.money }} $</span>
-        <img v-if="player.active" src="/images/game_dice.png" alt="dice" class="player__active" />
+        <div v-if="player.active" class="player__active-wrap">
+          <button class="player__trade">trade</button>
+          <img src="/images/game_dice.png" alt="dice" class="player__active" />
+        </div>
         <div class="player__arrow" :class="{ active: player.details }" @click="clickArrow">
           <img src="/images/arrow.svg" alt="arrow" />
         </div>
@@ -24,7 +27,7 @@
               :style="{ '--color': item.color === 'transparent' ? 'black' : item.color }"
             >
               <div
-              v-if="item.owner===player.name"
+                v-if="item.owner === player.name"
                 class="player__group-owner"
                 :style="{ '--color-bg': item.color === 'transparent' ? 'black' : item.color }"
               >
@@ -32,13 +35,25 @@
               </div>
             </div>
           </div>
+
+          <button
+            v-if="upgradeGroups.length && player.active"
+            class="player__upgrade"
+            @click="getUpgradeGroups"
+          >
+            upgrade
+          </button>
         </div>
       </Transition>
     </div>
+    <Transition>
+      <ModalUpgrade v-if="upgrade" :groups="upgradeGroups" :player="player" />
+    </Transition>
   </div>
 </template>
 
 <script setup>
+import ModalUpgrade from '@/modules/modal/ModalUpgrade.vue'
 import { onMounted, onUpdated, ref, watch } from 'vue'
 
 const props = defineProps({
@@ -48,8 +63,14 @@ const props = defineProps({
 
 const emit = defineEmits(['open'])
 
+function clickArrow() {
+  emit('open', props.player.id)
+}
+
 const playerColor = ref(props.player.color)
 const moneyColor = ref('')
+const upgrade = ref(false)
+const upgradeGroups = ref([])
 
 function getColor() {
   if (props.player.money > 700) {
@@ -59,16 +80,27 @@ function getColor() {
   } else moneyColor.value = 'rgb(240, 24, 24)'
 }
 
-function clickArrow() {
-  emit('open', props.player.id)
+function isUpgrade() {
+  upgradeGroups.value = []
+  props.groups.forEach((group) => {
+    let result
+    group.items.find((item) => (item.owner !== props.player.name ? '' : (result = true)))
+    result ? (upgradeGroups.value = [...upgradeGroups.value, { ...group }]) : ''
+  })
+}
+
+function getUpgradeGroups() {
+  upgrade.value = true
 }
 
 onMounted(() => {
   getColor()
+  isUpgrade()
 })
 
 onUpdated(() => {
   getColor()
+  isUpgrade()
 })
 </script>
 
@@ -80,7 +112,7 @@ onUpdated(() => {
 
   &__header {
     display: grid;
-    grid-template-columns: repeat(3, 1fr) 30px;
+    grid-template-columns: repeat(2, 1fr) 2fr 30px;
     align-items: center;
     justify-items: center;
     gap: 12px;
@@ -102,6 +134,27 @@ onUpdated(() => {
     font-size: 12px;
     font-weight: 700;
     color: v-bind(moneyColor);
+  }
+
+  &__active-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__trade {
+    cursor: pointer;
+    height: 20px;
+
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 12px;
+    color: white;
+
+    background-color: rgb(247, 172, 172);
+    border-radius: 3px;
+    border: 1px solid rgb(241, 84, 84);
   }
 
   &__active {
@@ -192,6 +245,20 @@ onUpdated(() => {
     transform: translate(-50%);
 
     background-color: white;
+  }
+
+  &__upgrade {
+    height: 35px;
+
+    text-transform: uppercase;
+    font-size: 12px;
+    color: white;
+
+    background-color: rgb(247, 172, 172);
+    border-radius: 3px;
+    border: 1px solid rgb(241, 84, 84);
+
+    padding: 0;
   }
 }
 
