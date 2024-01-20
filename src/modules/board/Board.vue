@@ -77,7 +77,7 @@ const dataItem = ref([
     count: '21',
     img: 'puma_img',
     text: '21',
-    color: 'rgb(32, 32, 219)',
+    color: '#4D9FFF',
     rent: 60,
     price: 300,
     update: '',
@@ -93,7 +93,7 @@ const dataItem = ref([
     count: '22',
     img: 'reebok_img',
     text: '22',
-    color: 'rgb(32, 32, 219)',
+    color: '#4D9FFF',
     rent: 56,
     price: 280,
     update: '',
@@ -125,7 +125,7 @@ const dataItem = ref([
     count: '24',
     img: 'fitness_dream_img',
     text: '24',
-    color: 'rgb(190, 190, 190)',
+    color: '#FF8965',
     rent: 46,
     price: 230,
     update: '',
@@ -157,7 +157,7 @@ const dataItem = ref([
     count: '26',
     img: 'fitness_girl_img',
     text: '26',
-    color: 'rgb(190, 190, 190)',
+    color: '#FF8965',
     rent: 55,
     price: 275,
     update: '',
@@ -189,7 +189,7 @@ const dataItem = ref([
     count: '28',
     img: 'sushi_bar_img',
     text: '28',
-    color: '#573d3f',
+    color: '#7CD65C',
     rent: 53,
     price: 265,
     update: '',
@@ -205,7 +205,7 @@ const dataItem = ref([
     count: '29',
     img: 'steak_house_img',
     text: '29',
-    color: '#573d3f',
+    color: '#7CD65C',
     rent: 56,
     price: 280,
     update: '',
@@ -238,7 +238,7 @@ const dataItem = ref([
     count: '19',
     img: 'adidas_img',
     text: '19',
-    color: 'rgb(32, 32, 219)',
+    color: '#4D9FFF',
     rent: 58,
     price: 290,
     update: '',
@@ -254,7 +254,7 @@ const dataItem = ref([
     count: '26',
     img: 'fitness_men_img',
     text: '26s',
-    color: 'rgb(190, 190, 190)',
+    color: '#FF8965',
     rent: 50,
     price: 250,
     update: '',
@@ -270,7 +270,7 @@ const dataItem = ref([
     count: '31',
     img: 'burger_house_img',
     text: '31',
-    color: '#573d3f',
+    color: '#7CD65C',
     rent: 55,
     price: 275,
     update: '',
@@ -287,7 +287,7 @@ const dataItem = ref([
     count: '18',
     img: 'pc_shop_img',
     text: '18',
-    color: 'mediumorchid',
+    color: '#FF65DB',
     rent: 52,
     price: 260,
     update: '',
@@ -300,15 +300,15 @@ const dataItem = ref([
     id: 16,
     type: 'card',
     owner: null,
-    count: '27',
+    count: '28',
     img: 'bessarabian_shop_img',
     text: '27s',
-    color: 'rgb(238, 151, 151)',
+    color: '#33CFFF',
     rent: 57,
     price: 285,
     update: '',
     position: 'top',
-    row: '3/4',
+    row: '4/5',
     column: '6/7',
     direction: 'branch'
   },
@@ -336,7 +336,7 @@ const dataItem = ref([
     count: '17',
     img: 'mobile_shop_img',
     text: '17',
-    color: 'mediumorchid',
+    color: '#FF65DB',
     rent: 48,
     price: 240,
     update: '',
@@ -349,7 +349,7 @@ const dataItem = ref([
     id: 19,
     type: 'surprise',
     owner: null,
-    count: '28',
+    count: '31',
     img: 'surprise_img',
     text: '28s',
     color: null,
@@ -357,23 +357,23 @@ const dataItem = ref([
     price: null,
     update: null,
     position: null,
-    row: '4/5',
-    column: '6/7',
+    row: '5/6',
+    column: '8/9',
     direction: 'branch'
   },
   {
     id: 20,
     type: 'card',
     owner: null,
-    count: '29',
+    count: '30',
     img: 'wine_valley_img',
     text: '29s',
-    color: 'rgb(238, 151, 151)',
+    color: '#33CFFF',
     rent: 64,
     price: 320,
     update: '',
     position: 'top',
-    row: '4/5',
+    row: '5/6',
     column: '7/8',
     direction: 'branch'
   },
@@ -381,7 +381,7 @@ const dataItem = ref([
     id: 21,
     type: 'teleport',
     owner: null,
-    count: '30',
+    count: '29',
     img: 'teleport_img',
     text: '30s',
     color: null,
@@ -389,8 +389,8 @@ const dataItem = ref([
     price: null,
     update: null,
     position: null,
-    row: '4/5',
-    column: '8/9',
+    row: '5/6',
+    column: '6/7',
     direction: 'branch'
   },
   {
@@ -400,7 +400,7 @@ const dataItem = ref([
     count: '33',
     img: 'fashion_girl_img',
     text: '33',
-    color: 'rgb(167, 218, 218',
+    color: '#FFBB00',
     rent: 66,
     price: 330,
     update: '',
@@ -417,7 +417,7 @@ const dataItem = ref([
     count: '16',
     img: 'appliances_shop_img',
     text: '16',
-    color: 'mediumorchid',
+    color: '#FF65DB',
     rent: 55,
     price: 275,
     update: '',
@@ -430,7 +430,7 @@ const dataItem = ref([
     id: 24,
     type: 'card',
     owner: 'Player 1',
-    count: '31',
+    count: '27',
     img: 'electric_power_img',
     text: '31s',
     color: 'transparent',
@@ -438,8 +438,8 @@ const dataItem = ref([
     price: 225,
     update: '',
     position: 'top',
-    row: '5/6',
-    column: '8/9',
+    row: '3/4',
+    column: '6/7',
     direction: 'branch'
   },
   {
@@ -449,7 +449,7 @@ const dataItem = ref([
     count: '32',
     img: 'bessarabian_tour_img',
     text: '32s',
-    color: 'rgb(238, 151, 151)',
+    color: '#33CFFF',
     rent: 60,
     price: 300,
     update: '',
@@ -465,7 +465,7 @@ const dataItem = ref([
     count: '33',
     img: 'kids_clothes_img',
     text: '33s',
-    color: 'rgb(167, 218, 218',
+    color: '#FFBB00',
     rent: 58,
     price: 290,
     update: '',
@@ -498,7 +498,7 @@ const dataItem = ref([
     count: '15',
     img: 'grocery_family_img',
     text: '15',
-    color: 'rgb(194, 1, 1)',
+    color: '#C5D65C',
     rent: 44,
     price: 220,
     update: '',
@@ -514,7 +514,7 @@ const dataItem = ref([
     count: '35',
     img: 'mens_clothes_img',
     text: '35',
-    color: 'rgb(167, 218, 218',
+    color: '#FFBB00',
     rent: 62,
     price: 310,
     update: '',
@@ -547,7 +547,7 @@ const dataItem = ref([
     count: '13',
     img: 'grocery_organic_img',
     text: '13s',
-    color: 'rgb(194, 1, 1)',
+    color: '#C5D65C',
     rent: 43,
     price: 215,
     update: '',
@@ -563,7 +563,7 @@ const dataItem = ref([
     count: '12',
     img: 'smoke_shop_img',
     text: '12s',
-    color: 'rgb(182, 182, 0)',
+    color: '#D665FF',
     rent: 38,
     price: 190,
     update: '',
@@ -576,7 +576,7 @@ const dataItem = ref([
     id: 33,
     type: 'card',
     owner: 'Player 1',
-    count: '11',
+    count: '7',
     img: 'water_energy_img',
     text: '11s',
     color: 'transparent',
@@ -584,8 +584,8 @@ const dataItem = ref([
     price: 225,
     update: '',
     position: 'bottom',
-    row: '7/8',
-    column: '4/5',
+    row: '9/19',
+    column: '6/7',
     direction: 'branch'
   },
   {
@@ -595,7 +595,7 @@ const dataItem = ref([
     count: '36',
     img: 'las_vegas_1_img',
     text: '36',
-    color: 'orange',
+    color: '#E83061',
     rent: 75,
     price: 375,
     update: '',
@@ -612,7 +612,7 @@ const dataItem = ref([
     count: '13',
     img: 'grocery_img',
     text: '13',
-    color: 'rgb(194, 1, 1)',
+    color: '#C5D65C',
     rent: 46,
     price: 230,
     update: '',
@@ -625,7 +625,7 @@ const dataItem = ref([
     id: 36,
     type: 'teleport',
     owner: null,
-    count: '10',
+    count: '9',
     img: 'teleport_img',
     text: '10s',
     color: null,
@@ -633,23 +633,23 @@ const dataItem = ref([
     price: null,
     update: '',
     position: null,
-    row: '8/9',
-    column: '4/5',
+    row: '7/8',
+    column: '6/7',
     direction: 'branch'
   },
   {
     id: 37,
     type: 'card',
     owner: null,
-    count: '9',
+    count: '10',
     img: 'vape_shop_img',
     text: '9s',
-    color: 'rgb(182, 182, 0)',
+    color: '#D665FF',
     rent: 42,
     price: 210,
     update: '',
     position: 'bottom',
-    row: '8/9',
+    row: '7/8',
     column: '5/6',
     direction: 'branch'
   },
@@ -657,7 +657,7 @@ const dataItem = ref([
     id: 38,
     type: 'surprise',
     owner: null,
-    count: '8',
+    count: '11',
     img: 'surprise_img',
     text: '8s',
     color: null,
@@ -665,8 +665,8 @@ const dataItem = ref([
     price: null,
     update: '',
     position: null,
-    row: '8/9',
-    column: '6/7',
+    row: '7/8',
+    column: '4/5',
     direction: 'branch'
   },
   {
@@ -706,15 +706,15 @@ const dataItem = ref([
     id: 41,
     type: 'card',
     owner: null,
-    count: '7',
+    count: '8',
     img: 'hookah_shop_img',
     text: '7s',
-    color: 'rgb(182, 182, 0)',
+    color: '#D665FF',
     rent: 40,
     price: 200,
     update: '',
     position: 'bottom',
-    row: '9/10',
+    row: '8/9',
     column: '6/7',
     direction: 'branch'
   },
@@ -725,7 +725,7 @@ const dataItem = ref([
     count: '38',
     img: 'casino_img',
     text: '38',
-    color: 'orange',
+    color: '#E83061',
     rent: 80,
     price: 400,
     update: '',
@@ -742,7 +742,7 @@ const dataItem = ref([
     count: '11',
     img: 'coffee_shop_img',
     text: '11',
-    color: 'rgb(148, 100, 55)',
+    color: '#8D33FF',
     rent: 35,
     price: 175,
     update: '',
@@ -758,7 +758,7 @@ const dataItem = ref([
     count: '6',
     img: 'kids_barber_img',
     text: '6s',
-    color: 'rgb(132, 156, 224)',
+    color: '#FF658E',
     rent: 28,
     price: 140,
     update: '',
@@ -774,7 +774,7 @@ const dataItem = ref([
     count: '39',
     img: 'hotel_royal_img',
     text: '39',
-    color: 'orange',
+    color: '#E83061',
     rent: 70,
     price: 350,
     update: '',
@@ -807,7 +807,7 @@ const dataItem = ref([
     count: '9',
     img: 'hot_dogs_img',
     text: '9',
-    color: 'rgb(148, 100, 55)',
+    color: '#8D33FF',
     rent: 34,
     price: 170,
     update: '',
@@ -839,7 +839,7 @@ const dataItem = ref([
     count: '7',
     img: 'croissant_bakehouse_img',
     text: '7',
-    color: 'rgb(148, 100, 55)',
+    color: '#8D33FF',
     rent: 36,
     price: 180,
     update: '',
@@ -855,7 +855,7 @@ const dataItem = ref([
     count: '6',
     img: 'barber_shop_img',
     text: '6',
-    color: 'rgb(132, 156, 224)',
+    color: '#FF658E',
     rent: 32,
     price: 160,
     update: '',
@@ -887,7 +887,7 @@ const dataItem = ref([
     count: '4',
     img: 'hair_salon_img',
     text: '4',
-    color: 'rgb(132, 156, 224)',
+    color: '#FF658E',
     rent: 35,
     price: 175,
     update: '',
@@ -903,7 +903,7 @@ const dataItem = ref([
     count: '3',
     img: 'continantal_avenue_img',
     text: '3',
-    color: 'rgb(68, 177, 68)',
+    color: '#5CD6B6',
     rent: 20,
     price: 100,
     update: '',
@@ -919,7 +919,7 @@ const dataItem = ref([
     count: '2',
     img: 'old_avenue_img',
     text: '2',
-    color: 'rgb(68, 177, 68)',
+    color: '#5CD6B6',
     rent: '30',
     price: 150,
     update: '',
@@ -935,7 +935,7 @@ const dataItem = ref([
     count: '1',
     img: 'main_avenue_img',
     text: '1',
-    color: 'rgb(68, 177, 68)',
+    color: '#5CD6B6',
     rent: 24,
     price: 120,
     update: '',
@@ -1278,10 +1278,9 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 #board {
-  border: 1px solid black;
-
-  background-color: rgba(207, 247, 207, 0.294);
-  padding: 25px;
+  background-color: #EBF4EB;
+  border-radius: 8px;
+  padding: 12px;
 
   color: #573d3f;
 }
@@ -1289,21 +1288,6 @@ onMounted(() => {
 .cell {
   height: 100%;
   vertical-align: top;
-}
-
-.board-top {
-  max-width: 72px;
-  height: 87px;
-}
-
-.board-corner {
-  width: 87px;
-  height: 87px;
-}
-
-.board-left {
-  width: 72px;
-  height: 72px;
 }
 
 .board {
@@ -1325,10 +1309,15 @@ onMounted(() => {
 
   &__button {
     cursor: pointer;
-    width: 100px;
-    height: 50px;
+    width: 108px;
+    height:40px;
     grid-column: 8/10;
     grid-row: 10/11;
+
+    color:white;
+
+    background-color: #0D3B10;
+    border-radius: 4px;
 
     margin: auto;
   }
@@ -1341,11 +1330,13 @@ onMounted(() => {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 16px;
+    gap: 20px;
   }
 
   &__dice-item {
-    width: 50px;
+    
+    width: 44px;
+    height: 44px;
 
     text-align: center;
     font-weight: 600;
