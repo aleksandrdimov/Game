@@ -1,13 +1,8 @@
 <template>
-  <section id="board" class="board">
+  <section class="board">
     <div class="board__wrap">
-      <BoardItem
-        v-for="(item, index) in dataItem"
-        :key="index"
-        class="cell"
-        :item="item"
-        :class="`board__item-${index}`"
-      />
+      <BoardItem v-for="(item, index) in dataItem" :key="index" :players="players" class="cell" :item="item"
+        :class="`board__item-${index}`" />
       <PlayerToken v-for="player in players" :key="player.id" :player="player"></PlayerToken>
 
       <div class="board__dice-wrap">
@@ -17,22 +12,13 @@
       <button v-if="buttonRoll" class="board__button" @click="rollDice">Roll Dice</button>
       <button v-else class="board__button" @click="finishedRound">Finished Round</button>
 
-      <Players
-        class="board__players"
-        :players="players"
-        @open="openDetails"
-        :groups="sortGroupItems"
-      />
+
     </div>
+
+    <Players class="board__players" :players="players" @open="openDetails" :groups="sortGroupItems" />
     <TransitionGroup name="card">
-      <ModalCard
-        v-if="showChoose && itemsChoose[0].type !== 'corner'"
-        :items="itemsChoose"
-        @close="closeModal"
-        @choose="isChooseCard"
-        @buy="buyCard"
-        @surprise="getSurprise"
-      />
+      <ModalCard v-if="showChoose && itemsChoose[0].type !== 'corner'" :items="itemsChoose" @close="closeModal"
+        @choose="isChooseCard" @buy="buyCard" @surprise="getSurprise" />
 
       <ModalError v-if="enoughMoney" />
 
@@ -89,7 +75,7 @@ const dataItem = ref([
   {
     id: 3,
     type: 'card',
-    owner: 'Player 1',
+    owner: null,
     count: '22',
     img: 'reebok_img',
     text: '22',
@@ -105,7 +91,7 @@ const dataItem = ref([
   {
     id: 4,
     type: 'card',
-    owner: 'Player 1',
+    owner: null,
     count: '23',
     img: 'sea_terminal_img',
     text: '23',
@@ -185,7 +171,7 @@ const dataItem = ref([
   {
     id: 9,
     type: 'card',
-    owner: 'Player 1',
+    owner: null,
     count: '28',
     img: 'sushi_bar_img',
     text: '28',
@@ -201,7 +187,7 @@ const dataItem = ref([
   {
     id: 10,
     type: 'card',
-    owner: 'Player 1',
+    owner: null,
     count: '29',
     img: 'steak_house_img',
     text: '29',
@@ -234,7 +220,7 @@ const dataItem = ref([
   {
     id: 12,
     type: 'card',
-    owner: 'Player 1',
+    owner: null,
     count: '19',
     img: 'adidas_img',
     text: '19',
@@ -258,7 +244,7 @@ const dataItem = ref([
     rent: 50,
     price: 250,
     update: '',
-    position: 'top',
+    position: 'left',
     row: '2/3',
     column: '6/7',
     direction: 'branch'
@@ -266,7 +252,7 @@ const dataItem = ref([
   {
     id: 14,
     type: 'card',
-    owner: 'Player 1',
+    owner: null,
     count: '31',
     img: 'burger_house_img',
     text: '31',
@@ -307,7 +293,7 @@ const dataItem = ref([
     rent: 57,
     price: 285,
     update: '',
-    position: 'top',
+    position: 'left',
     row: '4/5',
     column: '6/7',
     direction: 'branch'
@@ -429,7 +415,7 @@ const dataItem = ref([
   {
     id: 24,
     type: 'card',
-    owner: 'Player 1',
+    owner: null,
     count: '27',
     img: 'electric_power_img',
     text: '31s',
@@ -437,7 +423,7 @@ const dataItem = ref([
     rent: 45,
     price: 225,
     update: '',
-    position: 'top',
+    position: 'left',
     row: '3/4',
     column: '6/7',
     direction: 'branch'
@@ -477,7 +463,7 @@ const dataItem = ref([
   {
     id: 27,
     type: 'card',
-    owner: 'Player 1',
+    owner: null,
     count: '34',
     img: 'railway_station_img',
     text: '34',
@@ -527,7 +513,7 @@ const dataItem = ref([
   {
     id: 30,
     type: 'card',
-    owner: 'Player 1',
+    owner: null,
     count: '14',
     img: 'bus_station_img',
     text: '14',
@@ -574,71 +560,22 @@ const dataItem = ref([
   },
   {
     id: 33,
-    type: 'card',
-    owner: 'Player 1',
-    count: '7',
-    img: 'water_energy_img',
-    text: '11s',
-    color: 'transparent',
-    rent: 45,
-    price: 225,
-    update: '',
-    position: 'bottom',
-    row: '9/19',
-    column: '6/7',
-    direction: 'branch'
-  },
-  {
-    id: 34,
-    type: 'card',
+    type: 'surprise',
     owner: null,
-    count: '36',
-    img: 'las_vegas_1_img',
-    text: '36',
-    color: '#E83061',
-    rent: 75,
-    price: 375,
-    update: '',
-    position: 'right',
-    row: '7/8',
-    column: '11/12',
-    direction: 'main'
-  },
-
-  {
-    id: 35,
-    type: 'card',
-    owner: null,
-    count: '13',
-    img: 'grocery_img',
-    text: '13',
-    color: '#C5D65C',
-    rent: 46,
-    price: 230,
-    update: '',
-    position: 'left',
-    row: '8/9',
-    column: '1/2',
-    direction: 'main'
-  },
-  {
-    id: 36,
-    type: 'teleport',
-    owner: null,
-    count: '9',
-    img: 'teleport_img',
-    text: '10s',
+    count: '11',
+    img: 'surprise_img',
+    text: '8s',
     color: null,
     rent: null,
     price: null,
     update: '',
     position: null,
     row: '7/8',
-    column: '6/7',
+    column: '4/5',
     direction: 'branch'
   },
   {
-    id: 37,
+    id: 34,
     type: 'card',
     owner: null,
     count: '10',
@@ -654,21 +591,70 @@ const dataItem = ref([
     direction: 'branch'
   },
   {
-    id: 38,
-    type: 'surprise',
+    id: 35,
+    type: 'teleport',
     owner: null,
-    count: '11',
-    img: 'surprise_img',
-    text: '8s',
+    count: '9',
+    img: 'teleport_img',
+    text: '10s',
     color: null,
     rent: null,
     price: null,
     update: '',
     position: null,
     row: '7/8',
-    column: '4/5',
+    column: '6/7',
     direction: 'branch'
   },
+  {
+    id: 36,
+    type: 'card',
+    owner: null,
+    count: '36',
+    img: 'las_vegas_1_img',
+    text: '36',
+    color: '#E83061',
+    rent: 75,
+    price: 375,
+    update: '',
+    position: 'right',
+    row: '7/8',
+    column: '11/12',
+    direction: 'main'
+  },
+  {
+    id: 37,
+    type: 'card',
+    owner: null,
+    count: '13',
+    img: 'grocery_img',
+    text: '13',
+    color: '#C5D65C',
+    rent: 46,
+    price: 230,
+    update: '',
+    position: 'left',
+    row: '8/9',
+    column: '1/2',
+    direction: 'main'
+  },
+  {
+    id: 38,
+    type: 'card',
+    owner: null,
+    count: '8',
+    img: 'hookah_shop_img',
+    text: '7s',
+    color: '#D665FF',
+    rent: 40,
+    price: 200,
+    update: '',
+    position: 'right',
+    row: '8/9',
+    column: '6/7',
+    direction: 'branch'
+  },
+
   {
     id: 39,
     type: 'surprise',
@@ -706,18 +692,19 @@ const dataItem = ref([
     id: 41,
     type: 'card',
     owner: null,
-    count: '8',
-    img: 'hookah_shop_img',
-    text: '7s',
-    color: '#D665FF',
-    rent: 40,
-    price: 200,
+    count: '7',
+    img: 'water_energy_img',
+    text: '11s',
+    color: 'transparent',
+    rent: 45,
+    price: 225,
     update: '',
-    position: 'bottom',
-    row: '8/9',
+    position: 'right',
+    row: '9/10',
     column: '6/7',
     direction: 'branch'
   },
+
   {
     id: 42,
     type: 'card',
@@ -762,7 +749,7 @@ const dataItem = ref([
     rent: 28,
     price: 140,
     update: '',
-    position: 'bottom',
+    position: 'right',
     row: '10/11',
     column: '6/7',
     direction: 'branch'
@@ -819,7 +806,7 @@ const dataItem = ref([
   {
     id: 48,
     type: 'card',
-    owner: 'Player 1',
+    owner: null,
     count: '8',
     img: 'airport_img',
     text: '8',
@@ -968,7 +955,7 @@ const players = ref([
     name: 'Player 1',
     money: 1500,
     color: 'red',
-    img: '',
+    img: 'square',
     row: '11/12',
     column: '11/12',
     positionStart: 0,
@@ -982,8 +969,38 @@ const players = ref([
     id: 2,
     name: 'Player 2',
     money: 1500,
-    color: 'green',
-    img: '',
+    color: '#00DDEB',
+    img: 'circle',
+    row: '11/12',
+    column: '11/12',
+    positionStart: 0,
+    positionGoTo: 0,
+    direction: 'main',
+    active: false,
+    details: false,
+    skipMove: false
+  },
+  {
+    id: 3,
+    name: 'Player 3',
+    money: 1500,
+    color: '#00CC08',
+    img: 'triangle',
+    row: '11/12',
+    column: '11/12',
+    positionStart: 0,
+    positionGoTo: 0,
+    direction: 'main',
+    active: false,
+    details: false,
+    skipMove: false
+  },
+  {
+    id: 4,
+    name: 'Player 4',
+    money: 1500,
+    color: '#A300CC',
+    img: 'star',
     row: '11/12',
     column: '11/12',
     positionStart: 0,
@@ -993,36 +1010,6 @@ const players = ref([
     details: false,
     skipMove: false
   }
-  // {
-  //   id: 3,
-  //   name: 'Player 3',
-  //   money: 1500,
-  //   color: 'blue',
-  //   img: '',
-  //   row: '11/12',
-  //   column: '11/12',
-  //   positionStart: 0,
-  //   positionGoTo: 0,
-  //   direction: 'main',
-  //   active: false,
-  //   details: false,
-  //   skipMove: false
-  // },
-  // {
-  //   id: 4,
-  //   name: 'Player 4',
-  //   money: 1500,
-  //   color: 'grey',
-  //   img: '',
-  //   row: '11/12',
-  //   column: '11/12',
-  //   positionStart: 0,
-  //   positionGoTo: 0,
-  //   direction: 'main',
-  //   active: false,
-  //   details: false,
-  //   skipMove: false
-  // }
 ])
 
 const buttonRoll = ref(true)
@@ -1267,9 +1254,9 @@ function skipMove() {
   buttonRoll.value = false
 }
 
-function getSurprise() {}
+function getSurprise() { }
 
-watch(players, () => {})
+watch(players, () => { })
 
 onMounted(() => {
   sortItems()
@@ -1277,14 +1264,6 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-#board {
-  background-color: #EBF4EB;
-  border-radius: 8px;
-  padding: 12px;
-
-  color: #573d3f;
-}
-
 .cell {
   height: 100%;
   vertical-align: top;
@@ -1293,13 +1272,23 @@ onMounted(() => {
 .board {
   position: relative;
 
+  display: flex;
+  gap: 60px;
+
+  padding: 24px;
+
+
   &__wrap {
     position: relative;
     display: grid;
     grid-template-columns: repeat(11, 75px);
     grid-template-rows: repeat(11, 75px);
 
-    gap: 1px 1px;
+    background-color: #EBF4EB;
+    border-radius: 8px;
+    padding: 28px;
+
+    gap: 4px 4px;
   }
 
   &__button-box {
@@ -1310,11 +1299,11 @@ onMounted(() => {
   &__button {
     cursor: pointer;
     width: 108px;
-    height:40px;
+    height: 40px;
     grid-column: 8/10;
     grid-row: 10/11;
 
-    color:white;
+    color: white;
 
     background-color: #0D3B10;
     border-radius: 4px;
@@ -1334,7 +1323,7 @@ onMounted(() => {
   }
 
   &__dice-item {
-    
+
     width: 44px;
     height: 44px;
 

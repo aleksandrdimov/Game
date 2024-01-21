@@ -1,48 +1,58 @@
 <template>
   <div class="player">
     <div class="player__wrap">
-      <div class="player__header">
-        <h3 class="player__name">{{ player.name }}</h3>
-        <span class="player__money">{{ player.money }} $</span>
-        <div v-if="player.active" class="player__active-wrap">
-          <button class="player__trade">trade</button>
-          <img src="/images/game_dice.png" alt="dice" class="player__active" />
+      <div v-if="player.name !== 'Bank'" class="player__header" @click="clickArrow">
+        <div>1</div>
+        <div class="player__wrap-name">
+          <h3 class="player__name">{{ player.name }}</h3>
+          <img v-if="player.active" src="/images/game_dice.svg" alt="dice" class="player__active" />
         </div>
-        <div class="player__arrow" :class="{ active: player.details }" @click="clickArrow">
+
+        <div class="player__arrow" :class="{ active: player.details }">
           <img src="/images/arrow.svg" alt="arrow" />
         </div>
       </div>
+      <h3 v-else class="player__name" :class="{ bank: player.name === 'Bank' }">
+        {{ player.name }}
+      </h3>
+
       <Transition name="details">
-        <div v-if="player.details" class="player__content">
-          <div
-            class="player__group"
-            :class="`player__group-${index + 1}`"
-            v-for="(group, index) in groups"
-            :key="index"
-          >
-            <div
-              class="player__group-item"
-              v-for="(item, idx) in group.items"
-              :key="idx"
-              :style="{ '--color': item.color === 'transparent' ? 'black' : item.color }"
-            >
-              <div
-                v-if="item.owner === player.name"
-                class="player__group-owner"
-                :style="{ '--color-bg': item.color === 'transparent' ? 'black' : item.color }"
-              >
-                <p class="player__group-owner-line"></p>
+        <div v-if="player.details" class="player__container" :class="{ bank: player.name === 'Bank' }">
+          <div class="player__content">
+            <div class="player__group" :class="`player__group-${index + 1}`" v-for="(group, index) in groups"
+              :key="index">
+              <div v-if="player.name !== 'Bank'" class="player__group-item"
+                :class="{ active: item.owner === player.name }" v-for="(item, idx) in group.items" :key="idx"
+                :style="{ '--color': item.color === 'transparent' ? '#B3B3B3' : item.color }">
+                <p class="player__group-owner-line"
+                  :style="{ '--color': item.color === 'transparent' ? '#B3B3B3' : item.color }"></p>
+              </div>
+
+              <div v-else class="player__group-item" :class="{ active: item.owner }" v-for="(item, i) in group.items"
+                :key="i" :style="{ '--color': item.color === 'transparent' ? '#B3B3B3' : item.color }">
+                <p class="player__group-owner-line"
+                  :style="{ '--color': item.color === 'transparent' ? '#B3B3B3' : item.color }"></p>
               </div>
             </div>
           </div>
 
-          <button
-            v-if="upgradeGroups.length && player.active"
-            class="player__upgrade"
-            @click="getUpgradeGroups"
-          >
-            upgrade
-          </button>
+          <div v-if="player.name !== 'Bank'" class="player__footer">
+            <span class="player__money">{{ player.money }} $</span>
+
+            <button class="player__button">upgrade</button>
+
+            <button class="player__button">trade</button>
+          </div>
+          <div v-else class="player__bank">
+            <div class="player__bank-owner">
+              <span class="player__no-owner">{{ 42 - ownerNumber }}</span>
+              <img src="/images/icon_no_owner.svg" alt="item" />
+            </div>
+            <div class="player__bank-owner">
+              <span class="player__has-owner">{{ ownerNumber }}</span>
+              <img src="/images/icon_has_owner.svg" alt="item" />
+            </div>
+          </div>
         </div>
       </Transition>
     </div>
@@ -68,9 +78,16 @@ function clickArrow() {
 }
 
 const playerColor = ref(props.player.color)
+const playerBg = ref('')
+const playerHover = ref('')
 const moneyColor = ref('')
 const upgrade = ref(false)
 const upgradeGroups = ref([])
+
+function getPlayerColors(bg, hover) {
+  playerBg.value = bg
+  playerHover.value = hover
+}
 
 function getColor() {
   if (props.player.money > 700) {
@@ -78,6 +95,18 @@ function getColor() {
   } else if (props.player.money <= 700 && props.player.money > 250) {
     moneyColor.value = 'orange'
   } else moneyColor.value = 'rgb(240, 24, 24)'
+
+  if (props.player.color === 'red') {
+    getPlayerColors('#FFF5F5', '#F8E2E2')
+  } else if (props.player.color === '#00DDEB') {
+    getPlayerColors('#F5FEFF', '#E2F8E3')
+  } else if (props.player.color === '#00CC08') {
+    getPlayerColors('#F5FFF5', '#E2F7F8')
+  } else if (props.player.color === '#A300CC') {
+    getPlayerColors('#FDF5FF', '#F4E2F8')
+  } else {
+    getPlayerColors('#FAFAFA', '#FAFAFA')
+  }
 }
 
 function isUpgrade() {
@@ -89,6 +118,20 @@ function isUpgrade() {
   })
 }
 
+const ownerNumber = ref(0)
+
+function calcOwnerCard() {
+  ownerNumber.value = 0
+  if (props.player.name === 'Bank') {
+    props.groups.forEach(group => {
+      group.items.forEach(el => {
+        el.owner ? ownerNumber.value++ : ''
+        return ownerNumber.value
+      })
+    })
+  }
+}
+
 function getUpgradeGroups() {
   upgrade.value = true
 }
@@ -96,79 +139,73 @@ function getUpgradeGroups() {
 onMounted(() => {
   getColor()
   isUpgrade()
+  calcOwnerCard()
 })
 
 onUpdated(() => {
   getColor()
   isUpgrade()
+  calcOwnerCard()
 })
 </script>
 
 <style lang="scss" scoped>
 .player {
+  width: 100%;
+
   &__wrap {
-    border: 1px solid grey;
+    background-color: v-bind(playerBg);
+    border-radius: 4px;
+    border: 1px solid v-bind(playerColor);
+
+    transition: background-color 0.3s ease-in-out;
   }
 
   &__header {
     display: grid;
-    grid-template-columns: repeat(2, 1fr) 2fr 30px;
+    grid-template-columns: 24px 1fr 44px;
     align-items: center;
-    justify-items: center;
+
     gap: 12px;
 
-    padding: 3px 10px;
+    padding: 3px 16px 0;
     overflow: hidden;
+
+    &:hover {
+      background-color: v-bind(playerHover);
+    }
+  }
+
+  &__wrap-name {
+    display: flex;
+    gap: 12px;
   }
 
   &__name {
     justify-self: start;
 
-    text-transform: uppercase;
-    font-size: 12px;
+    text-transform: capitalize;
+    font-size: 16x;
     font-weight: 600;
-    color: v-bind(playerColor);
+    color: black;
+
+    &.bank {
+      padding: 16px 16px 0;
+    }
   }
 
   &__money {
-    font-size: 12px;
+    font-size: 18px;
     font-weight: 700;
     color: v-bind(moneyColor);
   }
 
-  &__active-wrap {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-  }
-
-  &__trade {
-    cursor: pointer;
-    height: 20px;
-
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-size: 12px;
-    color: white;
-
-    background-color: rgb(247, 172, 172);
-    border-radius: 3px;
-    border: 1px solid rgb(241, 84, 84);
-  }
-
-  &__active {
-    grid-column: 3/4;
-
-    width: 24px;
-  }
-
   &__arrow {
     cursor: pointer;
-    width: 24px;
-    height: 24px;
+    width: 44px;
+    height: 44px;
 
-    grid-column: 4/5;
+    grid-column: 3/4;
 
     display: flex;
     justify-content: center;
@@ -186,89 +223,146 @@ onUpdated(() => {
     }
   }
 
-  &__content {
-    width: 100%;
-    height: 230px;
+  &__container {
+    height: 318px;
+    // width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 20px;
     overflow: hidden;
 
+    &.bank {
+      height: max-content;
+    }
+  }
+
+  &__content {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(5, 38px);
 
-    padding: 0px 5px;
-    gap: 10px 33px;
+    gap: 8px 32px;
+    padding: 20px 16px 0px;
   }
 
   &__group {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    gap: 4px;
   }
 
   &__group-13 {
     grid-column: 1/3;
 
     justify-self: start;
-    gap: 6px;
+    gap: 4px;
   }
 
   &__group-item {
+    position: relative;
     --color: black;
 
-    width: 20px;
-    height: 35px;
+    width: 24px;
+    height: 36px;
 
     border: 1px solid var(--color);
-    border-radius: 2px;
+    border-radius: 4px;
 
     padding: 2px;
-  }
 
-  &__group-owner {
-    --color-bg: black;
+    &.active {
+      background-color: var(--color);
 
-    height: 100%;
-    position: relative;
+      & .player__group-owner-line {
+        width: 20px;
+        height: 6px;
 
-    background-color: var(--color-bg);
-    border-radius: 1px;
+        top: 1px;
+        left: 1px;
+
+        background-color: white;
+        border-radius: 4px;
+      }
+    }
   }
 
   &__group-owner-line {
-    width: 10px;
-    height: 3px;
+    --color: #b3b3b3;
+    width: 100%;
+    height: 7px;
 
     position: absolute;
     z-index: 3;
-    top: 4px;
-    left: 50%;
-    transform: translate(-50%);
+    top: 0;
+    left: 0;
 
-    background-color: white;
+    background-color: var(--color);
   }
 
-  &__upgrade {
-    height: 35px;
+  &__footer {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 12px;
 
-    text-transform: uppercase;
-    font-size: 12px;
+    padding: 0px 16px;
+  }
+
+  &__button {
+    cursor: pointer;
+
+    text-transform: capitalize;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 24px;
     color: white;
 
-    background-color: rgb(247, 172, 172);
-    border-radius: 3px;
-    border: 1px solid rgb(241, 84, 84);
+    background-color: #2598a7;
+    border-radius: 4px;
+    border: 0;
 
-    padding: 0;
+    padding: 4px 12px;
   }
+
+  &__bank {
+    display: flex;
+    gap: 12px;
+
+    padding: 0 16px 16px;
+  }
+
+  &__bank-owner {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    & span {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 20px;
+    }
+  }
+
+  &__has-owner{
+    color: #CA5F63;
+  }
+  &__no-owner{
+    color: #12A11B;
+  }
+
 }
 
 .details-enter-from {
   height: 0px;
 }
+
 .details-enter-to {
-  height: 230px;
+  height: 318px;
   transition: all 0.4s ease-in;
 }
+
 .details-leave-to {
   height: 0px;
   opacity: 0;

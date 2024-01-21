@@ -13,6 +13,7 @@
         v-for="(item, index) in items"
         :key="index"
         :item="item"
+        :index="index" 
         :go-to="items.length > 1"
         @choose="chooseCard"
         @buy="buyCard"
@@ -70,12 +71,14 @@ function buyCard(data) {
 
     display: flex;
     flex-direction: row;
+    align-items: center;
     gap: 36px;
 
     // background-color: white;
-  background-color: rgba(0, 0, 0, 0.5);
-
+  background-color: rgba(4, 17, 5, 0.30);
     border-radius: 5px;
+
+    backdrop-filter: blur(5px);
 
     padding: 50px 25px;
 

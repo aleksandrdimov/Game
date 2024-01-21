@@ -5,7 +5,23 @@
     </div>
     <div class="card__body"></div>
 
-    <button v-if="item.type === 'surprise'" class="card__button surprise" @click="getSurprise">Get surprise</button>
+    <div class="card__content">
+
+      <p class="card__price">Price: {{ item.price }}$</p>
+      <p class="card__rent">Rent: {{ item.rent }}$</p>
+      <div class="card__footer">
+        <button v-if="goTo && item.type === 'card'" class="card__button go" :class="item.owner !== null ? 'rent' : 'buy'"
+          @click="chooseCard">
+          Go to
+        </button>
+        <button v-if="item.type === 'card'" class="card__button" :class="item.owner !== null ? 'rent' : 'buy'"
+          @click="buyCard">
+          {{ item.owner !== null ? 'Rent' :'Buy' }}
+        </button>
+
+      </div>
+    </div>
+    <!-- <button v-if="item.type === 'surprise'" class="card__button surprise" @click="getSurprise">Get surprise</button>
     <button
       v-if="item.type === 'card'"
       class="card__button"
@@ -15,9 +31,6 @@
       {{ item.owner !== null ? `RENT ${item.rent} $` : `BUY ${item.price} $` }}
     </button>
 
-    <!-- <button   class="card__button" :class="item.owner !== null ? 'rent' : 'buy'" @click="buyCard">
-        {{ item.owner !== null ? `RENT ${item.rent} $` : `BUY ${item.price} $` }}
-      </button> -->
     <button
       v-if="goTo&&item.type === 'card'"
       class="card__button-go"
@@ -34,8 +47,10 @@
       @click="chooseCard"
     >
       GO TO
-    </button>
+    </button> -->
   </div>
+
+  <p v-if="goTo && index===0"  class="text">OR</p>
 </template>
 
 <script setup>
@@ -43,12 +58,13 @@ import { onMounted, ref } from 'vue'
 
 const props = defineProps({
   item: { type: Object, required: true },
-  goTo: { type: Boolean, required: true }
+  goTo: { type: Boolean, required: true },
+  index: { type: Number, required: true }
 })
 
-const emit = defineEmits(['choose', 'buy','surprise'])
+const emit = defineEmits(['choose', 'buy', 'surprise'])
 
-function getSurprise(){
+function getSurprise() {
   emit('surprise')
 }
 
@@ -76,7 +92,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .card {
   position: relative;
-  width: 175px;
+  width: 200px;
   height: max-content;
 
   display: flex;
@@ -85,12 +101,12 @@ onMounted(() => {
 
   background-color: white;
   border-radius: 4px;
-  box-shadow: 0px 0px 5px;
+  box-shadow: 0px 0px 5px grey;
 
   &__line {
     position: relative;
     width: 100%;
-    height: 35px;
+    height: 24px;
 
     background-color: v-bind(lineColor);
     border-radius: 4px 4px 0 0;
@@ -115,55 +131,81 @@ onMounted(() => {
     background-repeat: no-repeat;
   }
 
-  &__button-wrap {
+  &__content{
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    align-items: center;
+
+    color:black;
+
+    gap: 4px;
+    padding: 12px;
+
   }
+
+  &__price{
+    font-style: 14px;
+    font-weight: 700;
+    line-height: 24px;
+  }
+  &__rent{
+    font-style: 12px;
+    font-weight: 400;
+    line-height: 24px;
+  }
+
+  &__footer{
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
 
   &__button {
     cursor: pointer;
     width: 100%;
-    height: 40px;
+   
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 24px;
 
-    text-transform: uppercase;
-
-    border: none;
-    border-radius: 0 0 4px 4px;
+    border-radius:  4px;
+    padding: 8px 12px;
 
     &.buy {
-      background-color: rgb(47, 206, 47);
+      background-color: #008309;
       color: white;
     }
 
     &.rent {
-      background-color: rgb(126, 197, 245);
+      background-color: #2598A7;
       color: white;
     }
 
-    &.surprise{
+    &.surprise {
       background-color: rgb(126, 197, 245);
       color: white;
       letter-spacing: 1.5px;
     }
+
+    &.go{
+      color: #CA5F63;
+
+      background-color: transparent;
+      border-color: #CA5F63;
+    }
   }
 
-  &__button-go {
-    position: absolute;
-    z-index: 3;
-    bottom: -50px;
-    left: 0;
-
-    cursor: pointer;
-    width: 100%;
-    height: 40px;
-
-    background-color: rgb(47, 206, 47);
-    color: white;
-
-    border: none;
-    border-radius: 4px;
-    box-shadow: 1px 5px 10px solid white;
-  }
+ 
 }
+
+.text{
+      font-style: 14px;
+      font-weight: 700;
+      line-height: 24px;
+      color:white;
+
+  }
 </style>
