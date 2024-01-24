@@ -39,7 +39,8 @@ onBeforeUpdate(() => {
 <style lang="scss" scoped>
 .player-token {
   // position: absolute;
-  // z-index: 10;
+  position: relative;
+  z-index: 10;
   width: 16px;
   height: 16px;
 

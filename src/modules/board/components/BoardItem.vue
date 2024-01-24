@@ -1,40 +1,25 @@
 <template>
   <div v-if="item.color === 'transparent'" class="board-item">
-    <div
-      v-if="null !== item.color"
-      class="board-item__label"
-      :class="classLabelPosition"
-      :style="{ '--color-bg': item.color }"
-    ></div>
-    <PlayerToken
-      :player="players[indexPlayerOwner]"
-      :small="true"
-      v-if="item.owner && indexPlayerOwner !== null"
-      class="board-item__owner"
-      :class="classLabelPosition"
-    />
+    <div v-if="stand" class="board-item__shadow"></div>
+    <div v-if="null !== item.color" class="board-item__label" :class="classLabelPosition"
+      :style="{ '--color-bg': item.color }"></div>
+    <PlayerToken :player="players[indexPlayerOwner]" :small="true" v-if="item.owner && indexPlayerOwner !== null"
+      class="board-item__owner" :class="classLabelPosition" />
   </div>
 
   <div v-else class="board-item" :style="{ '--color-border': item.color }">
-    <div
-      v-if="null !== item.color"
-      class="board-item__label"
-      :class="classLabelPosition"
-      :style="{ '--color-bg': item.color }"
-    ></div>
-    <PlayerToken
-      :player="players[indexPlayerOwner]"
-      :small="true"
-      v-if="item.owner && indexPlayerOwner !== null"
-      class="board-item__owner"
-      :class="classLabelPosition"
-    />
+    <div v-if="stand" class="board-item__shadow"></div>
+
+    <div v-if="null !== item.color" class="board-item__label" :class="classLabelPosition"
+      :style="{ '--color-bg': item.color }"></div>
+    <PlayerToken :player="players[indexPlayerOwner]" :small="true" v-if="item.owner && indexPlayerOwner !== null"
+      class="board-item__owner" :class="classLabelPosition" />
   </div>
 </template>
 
 <script setup>
 import PlayerToken from '@/modules/player/components/PlayerToken.vue'
-import { onMounted, onUpdated, ref } from 'vue'
+import { onMounted, onUpdated, ref, watch } from 'vue'
 
 const props = defineProps({
   item: { type: Object, required: false },
@@ -45,6 +30,8 @@ const props = defineProps({
 const bgImage = ref('white')
 const classLabelPosition = ref(null)
 const indexPlayerOwner = ref(null)
+
+const stand = ref(false)
 
 const positionRow = ref('')
 const positionColumn = ref('')
@@ -62,8 +49,22 @@ function getSliderValues() {
   }
 }
 
+function isPlayerStand() {
+  stand.value=false
+  props.players.forEach((el) => {
+    el.row === props.item.row && el.column === props.item.column ?
+      stand.value = true : ''
+
+  })
+}
+
+watch(props.players,()=>{
+  isPlayerStand()
+})
+
 onMounted(() => {
   getSliderValues()
+  isPlayerStand()
 })
 
 onUpdated(() => {
@@ -87,7 +88,18 @@ onUpdated(() => {
   grid-column: v-bind(positionColumn);
   grid-row: v-bind(positionRow);
 
-  // overflow: hidden;
+  &__shadow {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+    
+    background-color: rgba(0, 0, 0, .5);
+    border-radius: 4px;
+  }
 
   &__label {
     --color-bg: white;
@@ -103,8 +115,8 @@ onUpdated(() => {
     &.top {
       top: 0;
       border-radius: 3px 3px 0 0;
-      }
-  
+    }
+
     &.bottom {
       bottom: 0;
       border-radius: 0 0 3px 3px;
@@ -136,27 +148,27 @@ onUpdated(() => {
 
     width: 24px;
     height: 24px;
-    margin:0px;
+    margin: 0px;
 
-    &.top{
+    &.top {
       top: -18px;
       left: 50%;
       transform: translateX(-50%);
     }
 
-    &.bottom{
+    &.bottom {
       top: 77px;
       left: 50%;
       transform: translateX(-50%);
     }
 
-    &.left{
+    &.left {
       left: -18px;
       top: 50%;
       transform: translateY(-50%);
     }
 
-    &.right{
+    &.right {
       right: -77px;
       top: 50%;
       transform: translateY(-50%);
