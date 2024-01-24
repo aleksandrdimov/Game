@@ -1,14 +1,14 @@
 <template>
   <section class="modal-item">
     <div class="modal-item__wrap" :class="{go:items.length > 1}">
-      <img
+      <!-- <img
         v-if="items.length === 1 && !items[0].owner"
         src="/images/close.png"
         alt="close"
         class="modal-item__close"
         @click="closeModal"
         
-      />
+      /> -->
       <CardItem
         v-for="(item, index) in items"
         :key="index"
@@ -80,11 +80,11 @@ function buyCard(data) {
 
     backdrop-filter: blur(5px);
 
-    padding: 50px 25px;
+    padding: 32px;
 
-    &.go{
-      padding-bottom: 100px;
-    }
+    // &.go{
+    //   padding-bottom: 100px;
+    // }
   }
 
   &__close {

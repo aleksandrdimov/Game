@@ -7,16 +7,16 @@
 
     <div class="card__content">
 
-      <p class="card__price">Price: {{ item.price }}$</p>
-      <p class="card__rent">Rent: {{ item.rent }}$</p>
+      <p v-if=" item.price !== null &&item.owner === null" class="card__price">Price: {{ item.price }}$</p>
+      <p v-if="item.rent !== null" class="card__rent">Rent: {{ item.rent }}$</p>
       <div class="card__footer">
-        <button v-if="goTo && item.type === 'card'" class="card__button go" :class="item.owner !== null ? 'rent' : 'buy'"
-          @click="chooseCard">
+        <button :disabled="item.owner && item.type === 'card'" class="card__button go"
+          :class="item.owner !== null ? 'rent' : 'buy'" @click="chooseCard">
           Go to
         </button>
-        <button v-if="item.type === 'card'" class="card__button" :class="item.owner !== null ? 'rent' : 'buy'"
+        <button :disabled="item.price === null" class="card__button" :class="[item.owner !== null ? 'rent' : 'buy']"
           @click="buyCard">
-          {{ item.owner !== null ? 'Rent' :'Buy' }}
+          {{ item.owner !== null ? 'Rent' : 'Buy' }}
         </button>
 
       </div>
@@ -50,7 +50,7 @@
     </button> -->
   </div>
 
-  <p v-if="goTo && index===0"  class="text">OR</p>
+  <p v-if="goTo && index === 0" class="text">OR</p>
 </template>
 
 <script setup>
@@ -124,37 +124,38 @@ onMounted(() => {
 
   &__body {
     width: 100%;
-    height: 175px;
+    height: 200px;
 
     background-image: v-bind(bgCard);
     background-size: cover;
     background-repeat: no-repeat;
   }
 
-  &__content{
+  &__content {
     display: flex;
     flex-direction: column;
     align-items: center;
 
-    color:black;
+    color: black;
 
     gap: 4px;
     padding: 12px;
 
   }
 
-  &__price{
+  &__price {
     font-style: 14px;
     font-weight: 700;
     line-height: 24px;
   }
-  &__rent{
+
+  &__rent {
     font-style: 12px;
     font-weight: 400;
     line-height: 24px;
   }
 
-  &__footer{
+  &__footer {
     width: 100%;
 
     display: grid;
@@ -166,12 +167,12 @@ onMounted(() => {
   &__button {
     cursor: pointer;
     width: 100%;
-   
+
     font-size: 14px;
     font-weight: 700;
     line-height: 24px;
 
-    border-radius:  4px;
+    border-radius: 4px;
     padding: 8px 12px;
 
     &.buy {
@@ -190,22 +191,30 @@ onMounted(() => {
       letter-spacing: 1.5px;
     }
 
-    &.go{
+    &.go {
       color: #CA5F63;
 
       background-color: transparent;
       border-color: #CA5F63;
     }
+
+    &:disabled {
+
+      cursor: auto;
+
+      color: white;
+      background-color: #646864;
+    }
   }
 
- 
+
 }
 
-.text{
-      font-style: 14px;
-      font-weight: 700;
-      line-height: 24px;
-      color:white;
+.text {
+  font-style: 14px;
+  font-weight: 700;
+  line-height: 24px;
+  color: white;
 
-  }
+}
 </style>

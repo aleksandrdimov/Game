@@ -51,12 +51,12 @@ function skipMove(){
     border-radius: 15px;
     box-shadow: 0px 0px 10px grey;
 
-    padding: 50px 25px;
+    // padding: 50px 25px;
   }
 
   &__button {
     cursor: pointer;
-    width: 102px;
+    width: 110px;
     height: 45px;
 
     text-transform: uppercase;

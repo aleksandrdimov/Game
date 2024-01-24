@@ -1,14 +1,15 @@
 <template>
-  <div class="player-token" :class="[`player-token-${player.id}`, player.img]">
-    <div></div>
+  <div class="player-token" :class="[`player-token-${player.id}`, player.img, { small: small }, { table: table }]">
   </div>
 </template>
 
 <script setup>
-import { onBeforeUpdate, onMounted, onUpdated, ref, watch } from 'vue'
+import { onBeforeUpdate, onMounted, ref, watch } from 'vue'
 
 const props = defineProps({
-  player: { type: Object, required: false }
+  player: { type: Object, required: false },
+  small: { type: Boolean, required: false },
+  table: { type: Boolean, required: false }
 })
 
 const playerColor = props.player.color
@@ -37,11 +38,11 @@ onBeforeUpdate(() => {
 
 <style lang="scss" scoped>
 .player-token {
-  position: absolute;
-  z-index: 10;
+  // position: absolute;
+  // z-index: 10;
+  width: 16px;
+  height: 16px;
 
-  width: 24px;
-  height: 24px;
 
   grid-column: v-bind(playerColumn);
   grid-row: v-bind(playerRow);
@@ -50,25 +51,32 @@ onBeforeUpdate(() => {
 
   transition: all 1s linear;
 
-  &.player-token-2 {
-    justify-self: start;
-    align-self: end;
+  &.table {
+    grid-column: 1/2;
+    grid-row: 1/2;
+    justify-self: center;
+
+    margin: 0;
+
   }
 
-  &.player-token-3 {
-    justify-self: end;
-    align-self: start;
-  }
+  // &.player-token-2 {
+  //   justify-self: start;
+  //   align-self: end;
+  // }
 
-  &.player-token-4 {
-    justify-self: end;
-    align-self: end;
-  }
+  // &.player-token-3 {
+  //   justify-self: end;
+  //   align-self: start;
+  // }
+
+  // &.player-token-4 {
+  //   justify-self: end;
+  //   align-self: end;
+  // }
 
   &.square {
     background-color: v-bind(playerColor);
-    // margin: 10px;
-
   }
 
   &.circle {
@@ -86,55 +94,165 @@ onBeforeUpdate(() => {
     border-bottom: 24px solid v-bind(playerColor);
   }
 
-  &.star {
+  &.pacman {
     position: relative;
-    overflow: hidden;
+    width: 0px;
+    height: 0px;
+    border-left: 12px solid transparent;
+    border-top: 12px solid v-bind(playerColor);
+    border-right: 12px solid v-bind(playerColor);
+    border-bottom: 12px solid v-bind(playerColor);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
 
-    & div {
+    &::after {
+      content: '';
+      position: absolute;
+      top: -7px;
+      left: 0;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background-color: white;
+    }
 
-      margin:10px 0px;
-      
-      display: block;
-      color: v-bind(playerColor);
-      width: 0px;
-      height: 0px;
-      border-right: 13px solid transparent;
-      border-bottom:7px solid v-bind(playerColor);
-      border-left: 14px solid transparent;
-      transform: rotate(35deg);
+    &.small {
+      border-width: 8px;
+      border-radius: 8px;
 
-      // overflow: hidden;
-
-      &:before {
-        border-bottom: 12px solid v-bind(playerColor);
-        border-left:4.5px solid transparent;
-        border-right:4.5px solid transparent;
-        position: absolute;
-        height: 0;
-        width: 0;
-        top: -8px;
-        left: -10px;
-        display: block;
-        content: '';
-        transform: rotate(-35deg);
-      }
-
-      &:after {
-        position: absolute;
-        display: block;
-        color: v-bind(playerColor);
-        top: 1px;
-        left: -16px;
-        width: 0px;
-        height: 0px;
-        border-right: 13px solid transparent;
-        border-bottom: 7px solid v-bind(playerColor);
-        border-left: 14px solid transparent;
-        transform: rotate(-70deg);
-        content: '';
+      &::after {
+        top: -5px;
+        width: 2px;
+        height: 2px;
       }
     }
   }
 
+  &.yin-yang {
+    width: 22px;
+    box-sizing: content-box;
+    height: 11px;
+    background: #eee;
+    border-color: v-bind(playerColor);
+    border-style: solid;
+    border-width: 1px 1px 12px 1px;
+    border-radius: 100%;
+    position: relative;
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      background: #eee;
+      border: 4px solid v-bind(playerColor);
+      border-radius: 100%;
+      width: 3px;
+      height: 3px;
+      box-sizing: content-box;
+    }
+
+    &:after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: 0;
+      background: v-bind(playerColor);
+      border: 4px solid #eee;
+      border-radius: 100%;
+      width: 3px;
+      height: 3px;
+      box-sizing: content-box;
+    }
+
+    &.small {
+      width: 14px;
+      height: 7px;
+      border-width: 1px 1px 8px 1px;
+
+      &:before,
+      &:after {
+        border-width: 2.6px;
+        width: 2px;
+        height: 2px;
+      }
+    }
+  }
+
+  &.burst-8 {
+    background: v-bind(playerColor);
+    width: 20px;
+    height: 20px;
+    position: relative;
+    text-align: center;
+    transform: rotate(20deg);
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 20px;
+      width: 20px;
+      background: v-bind(playerColor);
+      transform: rotate(135deg);
+    }
+
+    &.small {
+      width: 12px;
+      height: 12px;
+
+      &:before {
+        height: 12px;
+        width: 12px;
+      }
+    }
+  }
+
+  &.heart {
+    position: relative;
+    width: 24px;
+    height: 24px;
+
+    &:before,
+    &:after {
+      position: absolute;
+      content: "";
+      left: 14px;
+      top: 0;
+      width: 14px;
+      height: 24px;
+      background: v-bind(playerColor);
+      border-radius: 12px 12px 0 0;
+      transform: rotate(-45deg);
+      transform-origin: 0 100%;
+    }
+
+    &:after {
+      left: 0;
+      transform: rotate(45deg);
+      transform-origin: 100% 100%;
+    }
+
+    &.small {
+      width: 16px;
+      height: 16px;
+
+      &:before,
+      &:after {
+        left: -3px;
+        width: 10px;
+        height: 16px;
+
+        border-radius: 8px 8px 0 0;
+      }
+
+      &:before {
+        left: 7px;
+      }
+    }
+  }
 }
 </style>

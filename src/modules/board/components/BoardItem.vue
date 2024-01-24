@@ -6,9 +6,9 @@
       :class="classLabelPosition"
       :style="{ '--color-bg': item.color }"
     ></div>
-    <!-- <p>{{ item.count }}</p> -->
     <PlayerToken
       :player="players[indexPlayerOwner]"
+      :small="true"
       v-if="item.owner && indexPlayerOwner !== null"
       class="board-item__owner"
       :class="classLabelPosition"
@@ -24,6 +24,7 @@
     ></div>
     <PlayerToken
       :player="players[indexPlayerOwner]"
+      :small="true"
       v-if="item.owner && indexPlayerOwner !== null"
       class="board-item__owner"
       :class="classLabelPosition"
@@ -73,8 +74,8 @@ onUpdated(() => {
 <style lang="scss" scoped>
 .board-item {
   --color-border: #B3B3B3;
-  width: 100%;
   position: relative;
+  width: 100%;
 
   background-image: v-bind(bgImage);
   background-size: contain;
@@ -103,8 +104,7 @@ onUpdated(() => {
       top: 0;
       border-radius: 3px 3px 0 0;
       }
-    
-
+  
     &.bottom {
       bottom: 0;
       border-radius: 0 0 3px 3px;
@@ -134,30 +134,30 @@ onUpdated(() => {
     position: absolute;
     z-index: 10;
 
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     margin:0px;
 
     &.top{
-      top: -25px;
+      top: -18px;
       left: 50%;
       transform: translateX(-50%);
     }
 
     &.bottom{
-      bottom: -25px;
+      top: 77px;
       left: 50%;
       transform: translateX(-50%);
     }
 
     &.left{
-      left: -25px;
+      left: -18px;
       top: 50%;
       transform: translateY(-50%);
     }
 
     &.right{
-      right: -25px;
+      right: -77px;
       top: 50%;
       transform: translateY(-50%);
     }

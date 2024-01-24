@@ -2,7 +2,7 @@
   <div class="player">
     <div class="player__wrap">
       <div v-if="player.name !== 'Bank'" class="player__header" @click="clickArrow">
-        <div>1</div>
+        <PlayerToken :player="player" :small="true" :table="true" />
         <div class="player__wrap-name">
           <h3 class="player__name">{{ player.name }}</h3>
           <img v-if="player.active" src="/images/game_dice.svg" alt="dice" class="player__active" />
@@ -63,6 +63,7 @@
 </template>
 
 <script setup>
+import PlayerToken from './PlayerToken.vue';
 import ModalUpgrade from '@/modules/modal/ModalUpgrade.vue'
 import { onMounted, onUpdated, ref, watch } from 'vue'
 
@@ -345,10 +346,11 @@ onUpdated(() => {
     }
   }
 
-  &__has-owner{
+  &__has-owner {
     color: #CA5F63;
   }
-  &__no-owner{
+
+  &__no-owner {
     color: #12A11B;
   }
 

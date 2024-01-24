@@ -13,18 +13,34 @@
       <button v-else class="board__button" @click="finishedRound">Finished Round</button>
 
 
+
+
+
+      <TransitionGroup name="card">
+        <ModalCard v-if="showChoose && itemsChoose[0].type !== 'corner'" :items="itemsChoose" @close="closeModal"
+          @choose="isChooseCard" @buy="buyCard" @surprise="getSurprise" />
+
+        <ModalError v-if="enoughMoney" />
+
+        <ModalJail v-if="jail" @pay="payMoney" @skip="skipMove" />
+        <ModalTeleport v-if="teleport" :player="players[playerActiveIndex]" />
+
+        <svg v-if="itemsChoose.length > 1" class="direction-arrow__gorizontal" :class="{ top: directionTop }"
+          xmlns="http://www.w3.org/2000/svg" width="82" height="18" viewBox="0 0 82 18" fill="none">
+          <path
+            d="M0 9L15 17.6603V0.339746L0 9ZM80 10.5C80.8284 10.5 81.5 9.82843 81.5 9C81.5 8.17157 80.8284 7.5 80 7.5V10.5ZM13.5 10.5H80V7.5H13.5V10.5Z"
+            fill="#0A6F7D" />
+        </svg>
+        <svg v-if="itemsChoose.length > 1" class="direction-arrow__vertical" :class="{ top: directionTop }"
+          xmlns="http://www.w3.org/2000/svg" width="18" height="82" viewBox="0 0 18 82" fill="none">
+          <path
+            d="M7.5 80C7.5 80.8284 8.17157 81.5 9 81.5C9.82843 81.5 10.5 80.8284 10.5 80H7.5ZM9 0L0.339746 15H17.6603L9 0ZM10.5 80L10.5 13.5H7.5L7.5 80H10.5Z"
+            fill="#0A6F7D" />
+        </svg>
+      </TransitionGroup>
     </div>
 
     <Players class="board__players" :players="players" @open="openDetails" :groups="sortGroupItems" />
-    <TransitionGroup name="card">
-      <ModalCard v-if="showChoose && itemsChoose[0].type !== 'corner'" :items="itemsChoose" @close="closeModal"
-        @choose="isChooseCard" @buy="buyCard" @surprise="getSurprise" />
-
-      <ModalError v-if="enoughMoney" />
-
-      <ModalJail v-if="jail" @pay="payMoney" @skip="skipMove" />
-      <ModalTeleport v-if="teleport" :player="players[playerActiveIndex]" />
-    </TransitionGroup>
   </section>
 </template>
 
@@ -59,7 +75,7 @@ const dataItem = ref([
   {
     id: 2,
     type: 'card',
-    owner: 'Player 1',
+    owner: null,
     count: '21',
     img: 'puma_img',
     text: '21',
@@ -471,7 +487,7 @@ const dataItem = ref([
     rent: 45,
     price: 225,
     update: '',
-    position: null,
+    position: 'right',
     row: '5/6',
     column: '11/12',
     direction: 'main'
@@ -955,7 +971,7 @@ const players = ref([
     name: 'Player 1',
     money: 1500,
     color: 'red',
-    img: 'square',
+    img: 'burst-8',
     row: '11/12',
     column: '11/12',
     positionStart: 0,
@@ -970,7 +986,7 @@ const players = ref([
     name: 'Player 2',
     money: 1500,
     color: '#00DDEB',
-    img: 'circle',
+    img: 'heart',
     row: '11/12',
     column: '11/12',
     positionStart: 0,
@@ -985,7 +1001,7 @@ const players = ref([
     name: 'Player 3',
     money: 1500,
     color: '#00CC08',
-    img: 'triangle',
+    img: 'yin-yang',
     row: '11/12',
     column: '11/12',
     positionStart: 0,
@@ -1000,7 +1016,7 @@ const players = ref([
     name: 'Player 4',
     money: 1500,
     color: '#A300CC',
-    img: 'star',
+    img: 'pacman',
     row: '11/12',
     column: '11/12',
     positionStart: 0,
@@ -1016,6 +1032,8 @@ const buttonRoll = ref(true)
 const enoughMoney = ref(false)
 const jail = ref(false)
 const teleport = ref(false)
+const directionTop = ref(false)
+
 
 function finishedRound() {
   playerActiveIndex.value < players.value.length - 1
@@ -1115,6 +1133,12 @@ function filterItem() {
 
       goTo()
     }
+
+    if (players.value[playerActiveIndex.value].positionStart >= 15 &&
+      players.value[playerActiveIndex.value].positionStart <= 26) {
+      directionTop.value = true
+    }
+
   } else {
     goTo()
   }
@@ -1284,6 +1308,9 @@ onMounted(() => {
     grid-template-columns: repeat(11, 75px);
     grid-template-rows: repeat(11, 75px);
 
+    justify-items: center;
+    align-items: center;
+
     background-color: #EBF4EB;
     border-radius: 8px;
     padding: 28px;
@@ -1338,7 +1365,6 @@ onMounted(() => {
   &__players {
     grid-column: 2/6;
     grid-row: 2/7;
-    // border: 1px solid grey;
   }
 }
 
@@ -1351,5 +1377,41 @@ onMounted(() => {
   transform: scale(1);
   opacity: 1;
   transition: all 0.3s ease-in;
+}
+
+.direction-arrow {
+  &__vertical {
+
+    grid-column: 7/8;
+    grid-row: 10/11;
+
+    justify-self: flex-start;
+    padding-bottom: 6px;
+
+    &.top {
+      grid-column: 5/6;
+      grid-row: 2/3;
+      justify-self: flex-end;
+
+      transform: rotate(180deg);
+    }
+  }
+
+
+  &__gorizontal {
+    grid-column: 5/6;
+    grid-row: 10/11;
+
+    align-self: end;
+    padding-right: 6px;
+
+    &.top {
+      grid-column: 7/8;
+      grid-row: 2/3;
+      align-self: flex-start;
+
+      transform: rotate(180deg);
+    }
+  }
 }
 </style>
