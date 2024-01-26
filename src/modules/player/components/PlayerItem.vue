@@ -1,14 +1,19 @@
 <template>
   <div class="player">
     <div class="player__wrap">
-      <div v-if="player.name !== 'Bank'" class="player__header" @click="clickArrow">
+      <div
+        v-if="player.name !== 'Bank'"
+        class="player__header"
+        :class="{ disabled: player.status }"
+        @click="clickArrow"
+      >
         <PlayerToken :player="player" :small="true" :table="true" />
         <div class="player__wrap-name">
           <h3 class="player__name">{{ player.name }}</h3>
           <img v-if="player.active" src="/images/game_dice.svg" alt="dice" class="player__active" />
         </div>
 
-        <div class="player__arrow" :class="{ active: player.details }">
+        <div class="player__arrow" :class="[{ active: player.details },{ disabled: player.status}]">
           <img src="/images/arrow.svg" alt="arrow" />
         </div>
       </div>
@@ -17,21 +22,44 @@
       </h3>
 
       <Transition name="details">
-        <div v-if="player.details" class="player__container" :class="{ bank: player.name === 'Bank' }">
+        <div
+          v-if="player.details && !player.status"
+          class="player__container"
+          :class="{ bank: player.name === 'Bank' }"
+        >
           <div class="player__content">
-            <div class="player__group" :class="`player__group-${index + 1}`" v-for="(group, index) in groups"
-              :key="index">
-              <div v-if="player.name !== 'Bank'" class="player__group-item"
-                :class="{ active: item.owner === player.name }" v-for="(item, idx) in group.items" :key="idx"
-                :style="{ '--color': item.color === 'transparent' ? '#B3B3B3' : item.color }">
-                <p class="player__group-owner-line"
-                  :style="{ '--color': item.color === 'transparent' ? '#B3B3B3' : item.color }"></p>
+            <div
+              class="player__group"
+              :class="`player__group-${index + 1}`"
+              v-for="(group, index) in groups"
+              :key="index"
+            >
+              <div
+                v-if="player.name !== 'Bank'"
+                class="player__group-item"
+                :class="{ active: item.owner === player.name }"
+                v-for="(item, idx) in group.items"
+                :key="idx"
+                :style="{ '--color': item.color === 'transparent' ? '#B3B3B3' : item.color }"
+              >
+                <p
+                  class="player__group-owner-line"
+                  :style="{ '--color': item.color === 'transparent' ? '#B3B3B3' : item.color }"
+                ></p>
               </div>
 
-              <div v-else class="player__group-item" :class="{ active: item.owner }" v-for="(item, i) in group.items"
-                :key="i" :style="{ '--color': item.color === 'transparent' ? '#B3B3B3' : item.color }">
-                <p class="player__group-owner-line"
-                  :style="{ '--color': item.color === 'transparent' ? '#B3B3B3' : item.color }"></p>
+              <div
+                v-else
+                class="player__group-item"
+                :class="{ active: item.owner === null }"
+                v-for="(item, i) in group.items"
+                :key="i"
+                :style="{ '--color': item.color === 'transparent' ? '#B3B3B3' : item.color }"
+              >
+                <p
+                  class="player__group-owner-line"
+                  :style="{ '--color': item.color === 'transparent' ? '#B3B3B3' : item.color }"
+                ></p>
               </div>
             </div>
           </div>
@@ -39,7 +67,13 @@
           <div v-if="player.name !== 'Bank'" class="player__footer">
             <span class="player__money">{{ player.money }} $</span>
 
-            <button class="player__button">upgrade</button>
+            <button
+              :disabled="!upgradeGroups.length"
+              @click="getUpgradeGroups"
+              class="player__button"
+            >
+              upgrade
+            </button>
 
             <button class="player__button">trade</button>
           </div>
@@ -63,7 +97,7 @@
 </template>
 
 <script setup>
-import PlayerToken from './PlayerToken.vue';
+import PlayerToken from './PlayerToken.vue'
 import ModalUpgrade from '@/modules/modal/ModalUpgrade.vue'
 import { onMounted, onUpdated, ref, watch } from 'vue'
 
@@ -97,25 +131,32 @@ function getColor() {
     moneyColor.value = 'orange'
   } else moneyColor.value = 'rgb(240, 24, 24)'
 
-  if (props.player.color === 'red') {
-    getPlayerColors('#FFF5F5', '#F8E2E2')
-  } else if (props.player.color === '#00DDEB') {
-    getPlayerColors('#F5FEFF', '#E2F8E3')
-  } else if (props.player.color === '#00CC08') {
-    getPlayerColors('#F5FFF5', '#E2F7F8')
-  } else if (props.player.color === '#A300CC') {
-    getPlayerColors('#FDF5FF', '#F4E2F8')
-  } else {
-    getPlayerColors('#FAFAFA', '#FAFAFA')
+  if (!props.player.status) {
+    if (props.player.color === 'red') {
+      getPlayerColors('#FFF5F5', '#F8E2E2')
+    } else if (props.player.color === '#00DDEB') {
+      getPlayerColors('#F5FEFF', '#E2F7F8')
+    } else if (props.player.color === '#00CC08') {
+      getPlayerColors('#F5FFF5', '#E2F8E3')
+    } else if (props.player.color === '#A300CC') {
+      getPlayerColors('#FDF5FF', '#F4E2F8')
+    } else {
+      getPlayerColors('#FAFAFA', '#FAFAFA')
+    }
+  }else{
+    getPlayerColors(' #646864', ' #646864')
   }
 }
 
 function isUpgrade() {
   upgradeGroups.value = []
+
   props.groups.forEach((group) => {
-    let result
-    group.items.find((item) => (item.owner !== props.player.name ? '' : (result = true)))
-    result ? (upgradeGroups.value = [...upgradeGroups.value, { ...group }]) : ''
+    const result = group.items.filter((el) => el.owner === props.player.name)
+
+    result.length === group.items.length
+      ? (upgradeGroups.value = [...upgradeGroups.value, { ...group }])
+      : ''
   })
 }
 
@@ -124,8 +165,8 @@ const ownerNumber = ref(0)
 function calcOwnerCard() {
   ownerNumber.value = 0
   if (props.player.name === 'Bank') {
-    props.groups.forEach(group => {
-      group.items.forEach(el => {
+    props.groups.forEach((group) => {
+      group.items.forEach((el) => {
         el.owner ? ownerNumber.value++ : ''
         return ownerNumber.value
       })
@@ -160,9 +201,11 @@ onUpdated(() => {
     border: 1px solid v-bind(playerColor);
 
     transition: background-color 0.3s ease-in-out;
+
   }
 
   &__header {
+    cursor: pointer;
     display: grid;
     grid-template-columns: 24px 1fr 44px;
     align-items: center;
@@ -174,6 +217,11 @@ onUpdated(() => {
 
     &:hover {
       background-color: v-bind(playerHover);
+    }
+
+    &.disabled {
+      cursor: auto;
+      pointer-events: none;
     }
   }
 
@@ -211,6 +259,10 @@ onUpdated(() => {
     display: flex;
     justify-content: center;
     align-items: center;
+
+    &.disabled {pointer-events: none;
+      cursor:auto;
+    }
 
     & img {
       width: 16px;
@@ -325,6 +377,13 @@ onUpdated(() => {
     border: 0;
 
     padding: 4px 12px;
+
+    &:disabled {
+      cursor: auto;
+
+      color: white;
+      background-color: #646864;
+    }
   }
 
   &__bank {
@@ -347,13 +406,12 @@ onUpdated(() => {
   }
 
   &__has-owner {
-    color: #CA5F63;
+    color: #ca5f63;
   }
 
   &__no-owner {
-    color: #12A11B;
+    color: #12a11b;
   }
-
 }
 
 .details-enter-from {

@@ -1,16 +1,50 @@
 <template>
   <section class="modal-error">
-    <div class="modal-error__wrap">
-      <div class="modal-error__image-wrap">
-        <img class="modal-error__image" src="/images/error__icon.png" alt="error" />
+    <div v-if="!player.status" class="modal-error__wrap">
+      <!-- <img
+        src="/images/close.png"
+        alt="close"
+        class="modal-error__close"
+        @click="closeModal"
+      /> -->
+      <img src="/images/bankrupt.png" alt="bankrupt" />
+
+      <div class="modal-error__box">
+        <button class="modal-error__button bankrupt" @click="isBankrupt">Declare bankruptcy</button>
+        <button class="modal-error__button trade" @click="isTrade">Trade</button>
       </div>
-      <img  class="modal-error__image-crack" src="/images/crack_icon.png" alt="crack">
-      <p class="modal-error__title">Not enough money Please, sell the card !</p>
+    </div>
+
+    <div v-else class="modal-error__wrap">
+      <img src="/images/game_over.png" alt="game over" />
+
+      <div class="modal-error__box">
+        {{ player.name }}
+      </div>
     </div>
   </section>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref } from 'vue'
+
+const props = defineProps({
+  player: { type: Object, required: true },
+  items: { type: Array, required: true }
+})
+const emit = defineEmits(['trade', 'bankrupt'])
+
+const gameOver = ref(false)
+
+function isBankrupt() {
+  gameOver.value = true
+  emit('bankrupt')
+}
+
+function isTrade() {
+  emit('trade')
+}
+</script>
 
 <style lang="scss" scoped>
 .modal-error {
@@ -22,92 +56,80 @@
   top: 0;
   left: 0;
 
-  // background-color: rgba(0, 0, 0, 0.5);
-
   &__wrap {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 
-    width: 300px;
-    height:250px;
-
     display: flex;
-    flex-direction: row;
-    gap: 36px;
+    flex-direction: column;
 
     background-color: white;
     border-radius: 15px;
     box-shadow: 0px 0px 10px grey;
-
-    padding: 50px 25px;
   }
 
-  &__image-wrap{
-    position: absolute;
-    z-index: 10;
-    top: 50%;
-    left: 50%;
-    background-color: #dd1c1c;
-    transform: rotate(20deg) scale(0);
+  &__box {
+    width: 100%;
+    display: flex;
+    justify-content: center;
 
-    // transform: translate(0%,100%) rotate(-20deg);
-    animation: error .5s ease-in-out forwards .4s;
-    border-radius: 17px;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 44px;
+
+    gap: 20px;
+    padding: 24px;
   }
 
-  &__image {
-    width: 250px;
-    display: inline;
-  }
+  &__button {
+    cursor: pointer;
+    width: 100%;
 
-  &__image-crack{
-    position: relative;
-    z-index: 2;
-    opacity: 0;
-    animation: crack .4s ease-in-out forwards .8s;
-  }
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 24px;
+    color: white;
 
-  &__title{
-    position: absolute;
-    z-index: 15;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%) scale(0);
+    border-radius: 4px;
+    padding: 8px 12px;
 
-    width: 210px;
+    transition: background-color 0.3s ease-in-out;
 
-    text-align: center;
-    font-size: 22px;
-    font-weight: 600;
-    color: black;
+    &.trade {
+      background-color: #008309;
 
-    animation: title .4s ease-in-out forwards 1.2s;
-  }
-}
+      &:hover {
+        background-color: #125417;
+      }
 
-@keyframes error{
-    0%{
-        transform: translate(0%,100%) rotate(-20deg) scale(0);
+      &:active {
+        background-color: #092a0b;
+      }
     }
 
-    80%{
-        transform: translate(-10%,50%) rotate(-20deg)  scale(0.3)
-    }
-    100%{
-        transform: translate(-50%,-50%) rotate(-20deg) scale(1);
-        box-shadow: 0px 0px 10px grey;
-    }
-}
+    &.bankrupt {
+      color: #ca5f63;
 
-@keyframes crack{
-    0%{opacity: 0;}
-    100%{opacity: 1;}
-}
+      background-color: transparent;
+      border-color: #ca5f63;
 
-@keyframes title{
-    0%{transform:translateX(-50%) scale(0);}
-    100%{transform: translateX(-50%) scale(1);}
+      &:hover {
+        background-color: #f5e0e1;
+      }
+
+      &:active {
+        background-color: #f0d1d2;
+      }
+    }
+
+    &:disabled {
+      cursor: auto;
+
+      color: white;
+      background-color: #646864;
+    }
+  }
 }
 </style>

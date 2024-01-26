@@ -1,53 +1,31 @@
 <template>
-  <div class="card">
+  <div class="card" :style="{ '--color-bg-card': item.type === 'teleport' ? '#06021A' : 'white' }">
     <div class="card__line" v-if="null !== item.price">
-      <p class="card__owner">Owner : {{ item.owner ? item.owner : 'No' }}</p>
     </div>
     <div class="card__body"></div>
 
     <div class="card__content">
-
-      <p v-if=" item.price !== null &&item.owner === null" class="card__price">Price: {{ item.price }}$</p>
+      <p v-if="item.price !== null" class="card__price"> {{ item.owner === null ? `Price: ${item.price} $` : `Owner:
+        ${item.owner} ` }}</p>
       <p v-if="item.rent !== null" class="card__rent">Rent: {{ item.rent }}$</p>
       <div class="card__footer">
-        <button :disabled="item.owner && item.type === 'card'" class="card__button go"
-          :class="item.owner !== null ? 'rent' : 'buy'" @click="chooseCard">
+        <button v-if="item.type !== 'surprise' && item.owner === null" :disabled="item.owner && item.type === 'card'"
+          class="card__button go" @click="chooseCard">
           Go to
         </button>
-        <button :disabled="item.price === null" class="card__button" :class="[item.owner !== null ? 'rent' : 'buy']"
+        <button v-if="item.price !== null &&item.owner!==player.name" class="card__button" :class="[item.owner !== null ? 'rent' : 'buy']"
           @click="buyCard">
-          {{ item.owner !== null ? 'Rent' : 'Buy' }}
+          {{ item.owner !== null ? 'Pay rent' : 'Buy' }}
         </button>
-
+        <button v-if="item.type === 'surprise'" class="card__button surprise" @click="chooseCard">
+          Get Surprise
+        </button>
+        <button v-if=" item.owner === player.name"
+          class="card__button go" @click="chooseCard">
+          My card
+        </button>
       </div>
     </div>
-    <!-- <button v-if="item.type === 'surprise'" class="card__button surprise" @click="getSurprise">Get surprise</button>
-    <button
-      v-if="item.type === 'card'"
-      class="card__button"
-      :class="item.owner !== null ? 'rent' : 'buy'"
-      @click="buyCard"
-    >
-      {{ item.owner !== null ? `RENT ${item.rent} $` : `BUY ${item.price} $` }}
-    </button>
-
-    <button
-      v-if="goTo&&item.type === 'card'"
-      class="card__button-go"
-      :class="item.owner !== null ? 'rent' : 'buy'"
-      @click="chooseCard"
-    >
-      GO TO
-    </button>
-
-    <button
-      v-if=" item.type === 'jail'|| item.type === 'teleport'"
-      class="card__button"
-      :class="item.owner !== null ? 'rent' : 'buy'"
-      @click="chooseCard"
-    >
-      GO TO
-    </button> -->
   </div>
 
   <p v-if="goTo && index === 0" class="text">OR</p>
@@ -58,6 +36,7 @@ import { onMounted, ref } from 'vue'
 
 const props = defineProps({
   item: { type: Object, required: true },
+  player: { type: Object, required: true },
   goTo: { type: Boolean, required: true },
   index: { type: Number, required: true }
 })
@@ -91,15 +70,17 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .card {
+  --color-bg-card: white;
+
   position: relative;
   width: 200px;
-  height: max-content;
+  height: 340px;
 
   display: flex;
   flex-direction: column;
-  justify-content: end;
+  // justify-content: flex-end;
 
-  background-color: white;
+  background-color: var(--color-bg-card);
   border-radius: 4px;
   box-shadow: 0px 0px 5px grey;
 
@@ -113,9 +94,9 @@ onMounted(() => {
   }
 
   &__owner {
-    position: absolute;
-    z-index: 3;
-    top: 50%;
+    // position: absolute;
+    // z-index: 3;
+    // top: 50%;
     transform: translateY(-50%);
 
     color: black;
@@ -129,6 +110,8 @@ onMounted(() => {
     background-image: v-bind(bgCard);
     background-size: cover;
     background-repeat: no-repeat;
+
+    margin: auto;
   }
 
   &__content {
@@ -140,7 +123,7 @@ onMounted(() => {
 
     gap: 4px;
     padding: 12px;
-
+    // margin: auto 0 0;
   }
 
   &__price {
@@ -158,8 +141,9 @@ onMounted(() => {
   &__footer {
     width: 100%;
 
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    // display: grid;
+    // grid-template-columns: repeat(2, 1fr);
+    display: flex;
     gap: 8px;
   }
 
@@ -171,23 +155,22 @@ onMounted(() => {
     font-size: 14px;
     font-weight: 700;
     line-height: 24px;
+    color: white;
 
     border-radius: 4px;
     padding: 8px 12px;
 
+
     &.buy {
       background-color: #008309;
-      color: white;
     }
 
     &.rent {
       background-color: #2598A7;
-      color: white;
     }
 
     &.surprise {
       background-color: rgb(126, 197, 245);
-      color: white;
       letter-spacing: 1.5px;
     }
 
@@ -196,6 +179,16 @@ onMounted(() => {
 
       background-color: transparent;
       border-color: #CA5F63;
+
+      transition: background-color .3s ease-in-out;
+
+      &:hover {
+        background-color: #F5E0E1;
+      }
+
+      &:active {
+        background-color: #F0D1D2;
+      }
     }
 
     &:disabled {

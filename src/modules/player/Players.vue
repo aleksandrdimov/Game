@@ -11,7 +11,8 @@
 import PlayerItem from './components/PlayerItem.vue'
 const props = defineProps({
   players: { type: Array, required: true },
-  groups: { type: Array, required: true }
+  groups: { type: Array, required: true },
+  
 })
 
 const playerBank={
@@ -26,6 +27,7 @@ const emit = defineEmits(['open'])
 function openDetails(data) {
   emit('open', data)
 }
+
 
 </script>
 

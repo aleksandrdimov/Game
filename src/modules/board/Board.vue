@@ -1,8 +1,14 @@
 <template>
   <section class="board">
     <div class="board__wrap">
-      <BoardItem v-for="(item, index) in dataItem" :key="index" :players="players" class="cell" :item="item"
-        :class="`board__item-${index}`" />
+      <BoardItem
+        v-for="(item, index) in dataItem"
+        :key="index"
+        :players="players"
+        class="cell"
+        :item="item"
+        :class="`board__item-${index}`"
+      />
       <PlayerToken v-for="player in players" :key="player.id" :player="player"></PlayerToken>
 
       <div class="board__dice-wrap">
@@ -12,35 +18,75 @@
       <button v-if="buttonRoll" class="board__button" @click="rollDice">Roll Dice</button>
       <button v-else class="board__button" @click="finishedRound">Finished Round</button>
 
-
-
-
-
       <TransitionGroup name="card">
-        <ModalCard v-if="showChoose && itemsChoose[0].type !== 'corner'" :items="itemsChoose" @close="closeModal"
-          @choose="isChooseCard" @buy="buyCard" @surprise="getSurprise" />
+        <ModalCard
+          v-if="showChoose && itemsChoose[0].type !== 'corner'"
+          :items="itemsChoose"
+          :player="players[playerActiveIndex]"
+          @close="closeModal"
+          @choose="isChooseCard"
+          @buy="buyCard"
+          @surprise="getSurprise"
+        />
 
-        <ModalError v-if="enoughMoney" />
+        <ModalError
+          v-if="enoughMoney"
+          @trade="getTradeItems"
+          @bankrupt="isGameOver"
+          :player="players[playerActiveIndex]"
+          :items="itemsChoose"
+        />
 
         <ModalJail v-if="jail" @pay="payMoney" @skip="skipMove" />
         <ModalTeleport v-if="teleport" :player="players[playerActiveIndex]" />
+        <ModalTradeBank
+          v-if="tradeBank"
+          :cards="tradeItems"
+          :player="players[playerActiveIndex]"
+          :need-money="needMoney"
+          @close="closeTradeBank"
+          @bankrupt="isBankrupt"
+        />
 
-        <svg v-if="itemsChoose.length > 1" class="direction-arrow__gorizontal" :class="{ top: directionTop }"
-          xmlns="http://www.w3.org/2000/svg" width="82" height="18" viewBox="0 0 82 18" fill="none">
+        <svg
+          v-if="itemsChoose.length > 1"
+          class="direction-arrow__gorizontal"
+          :class="{ top: directionTop }"
+          xmlns="http://www.w3.org/2000/svg"
+          width="82"
+          height="18"
+          viewBox="0 0 82 18"
+          fill="none"
+        >
           <path
             d="M0 9L15 17.6603V0.339746L0 9ZM80 10.5C80.8284 10.5 81.5 9.82843 81.5 9C81.5 8.17157 80.8284 7.5 80 7.5V10.5ZM13.5 10.5H80V7.5H13.5V10.5Z"
-            fill="#0A6F7D" />
+            fill="#0A6F7D"
+          />
         </svg>
-        <svg v-if="itemsChoose.length > 1" class="direction-arrow__vertical" :class="{ top: directionTop }"
-          xmlns="http://www.w3.org/2000/svg" width="18" height="82" viewBox="0 0 18 82" fill="none">
+        <svg
+          v-if="itemsChoose.length > 1"
+          class="direction-arrow__vertical"
+          :class="{ top: directionTop }"
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="82"
+          viewBox="0 0 18 82"
+          fill="none"
+        >
           <path
             d="M7.5 80C7.5 80.8284 8.17157 81.5 9 81.5C9.82843 81.5 10.5 80.8284 10.5 80H7.5ZM9 0L0.339746 15H17.6603L9 0ZM10.5 80L10.5 13.5H7.5L7.5 80H10.5Z"
-            fill="#0A6F7D" />
+            fill="#0A6F7D"
+          />
         </svg>
       </TransitionGroup>
     </div>
 
-    <Players class="board__players" :players="players" @open="openDetails" :groups="sortGroupItems" />
+    <Players
+      class="board__players"
+      :players="players"
+      @open="openDetails"
+      :groups="sortGroupItems"
+    />
   </section>
 </template>
 
@@ -52,6 +98,7 @@ import ModalError from '../modal/ModalError.vue'
 import ModalJail from '../modal/ModalJail.vue'
 import ModalTeleport from '../modal/ModalTeleport.vue'
 import ModalSurprise from '../modal/ModalSurprise.vue'
+import ModalTradeBank from '../modal/ModalTradeBank.vue'
 import Players from '../player/Players.vue'
 import PlayerToken from '../player/components/PlayerToken.vue'
 
@@ -62,7 +109,7 @@ const dataItem = ref([
     owner: null,
     count: '20',
     img: 'surprise_img',
-    text: '20',
+    sell: false,
     color: null,
     rent: null,
     price: null,
@@ -78,7 +125,7 @@ const dataItem = ref([
     owner: null,
     count: '21',
     img: 'puma_img',
-    text: '21',
+    sell: false,
     color: '#4D9FFF',
     rent: 60,
     price: 300,
@@ -94,7 +141,7 @@ const dataItem = ref([
     owner: null,
     count: '22',
     img: 'reebok_img',
-    text: '22',
+    sell: false,
     color: '#4D9FFF',
     rent: 56,
     price: 280,
@@ -110,7 +157,7 @@ const dataItem = ref([
     owner: null,
     count: '23',
     img: 'sea_terminal_img',
-    text: '23',
+    sell: false,
     color: 'transparent',
     rent: 45,
     price: 225,
@@ -126,7 +173,7 @@ const dataItem = ref([
     owner: null,
     count: '24',
     img: 'fitness_dream_img',
-    text: '24',
+    sell: false,
     color: '#FF8965',
     rent: 46,
     price: 230,
@@ -142,7 +189,7 @@ const dataItem = ref([
     owner: null,
     count: '25',
     img: 'street_corner',
-    text: '25',
+    sell: false,
     color: null,
     rent: null,
     price: null,
@@ -158,7 +205,7 @@ const dataItem = ref([
     owner: null,
     count: '26',
     img: 'fitness_girl_img',
-    text: '26',
+    sell: false,
     color: '#FF8965',
     rent: 55,
     price: 275,
@@ -174,7 +221,7 @@ const dataItem = ref([
     owner: null,
     count: '27',
     img: 'surprise_img',
-    text: '27',
+    sell: false,
     color: null,
     rent: null,
     price: null,
@@ -190,7 +237,7 @@ const dataItem = ref([
     owner: null,
     count: '28',
     img: 'sushi_bar_img',
-    text: '28',
+    sell: false,
     color: '#7CD65C',
     rent: 53,
     price: 265,
@@ -206,7 +253,7 @@ const dataItem = ref([
     owner: null,
     count: '29',
     img: 'steak_house_img',
-    text: '29',
+    sell: false,
     color: '#7CD65C',
     rent: 56,
     price: 280,
@@ -222,7 +269,7 @@ const dataItem = ref([
     owner: null,
     count: '30',
     img: 'police_img',
-    text: '30',
+    sell: false,
     color: null,
     rent: null,
     price: null,
@@ -239,7 +286,7 @@ const dataItem = ref([
     owner: null,
     count: '19',
     img: 'adidas_img',
-    text: '19',
+    sell: false,
     color: '#4D9FFF',
     rent: 58,
     price: 290,
@@ -255,7 +302,7 @@ const dataItem = ref([
     owner: null,
     count: '26',
     img: 'fitness_men_img',
-    text: '26s',
+    sell: false,
     color: '#FF8965',
     rent: 50,
     price: 250,
@@ -271,7 +318,7 @@ const dataItem = ref([
     owner: null,
     count: '31',
     img: 'burger_house_img',
-    text: '31',
+    sell: false,
     color: '#7CD65C',
     rent: 55,
     price: 275,
@@ -288,7 +335,7 @@ const dataItem = ref([
     owner: null,
     count: '18',
     img: 'pc_shop_img',
-    text: '18',
+    sell: false,
     color: '#FF65DB',
     rent: 52,
     price: 260,
@@ -304,7 +351,7 @@ const dataItem = ref([
     owner: null,
     count: '28',
     img: 'bessarabian_shop_img',
-    text: '27s',
+    sell: false,
     color: '#33CFFF',
     rent: 57,
     price: 285,
@@ -320,7 +367,7 @@ const dataItem = ref([
     owner: null,
     count: '32',
     img: 'go_to_casino_img',
-    text: '32',
+    sell: false,
     color: null,
     rent: null,
     price: null,
@@ -337,7 +384,7 @@ const dataItem = ref([
     owner: null,
     count: '17',
     img: 'mobile_shop_img',
-    text: '17',
+    sell: false,
     color: '#FF65DB',
     rent: 48,
     price: 240,
@@ -353,7 +400,7 @@ const dataItem = ref([
     owner: null,
     count: '31',
     img: 'surprise_img',
-    text: '28s',
+    sell: false,
     color: null,
     rent: null,
     price: null,
@@ -369,7 +416,7 @@ const dataItem = ref([
     owner: null,
     count: '30',
     img: 'wine_valley_img',
-    text: '29s',
+    sell: false,
     color: '#33CFFF',
     rent: 64,
     price: 320,
@@ -385,7 +432,7 @@ const dataItem = ref([
     owner: null,
     count: '29',
     img: 'teleport_img',
-    text: '30s',
+    sell: false,
     color: null,
     rent: null,
     price: null,
@@ -401,7 +448,7 @@ const dataItem = ref([
     owner: null,
     count: '33',
     img: 'fashion_girl_img',
-    text: '33',
+    sell: false,
     color: '#FFBB00',
     rent: 66,
     price: 330,
@@ -418,7 +465,7 @@ const dataItem = ref([
     owner: null,
     count: '16',
     img: 'appliances_shop_img',
-    text: '16',
+    sell: false,
     color: '#FF65DB',
     rent: 55,
     price: 275,
@@ -434,7 +481,7 @@ const dataItem = ref([
     owner: null,
     count: '27',
     img: 'electric_power_img',
-    text: '31s',
+    sell: false,
     color: 'transparent',
     rent: 45,
     price: 225,
@@ -450,7 +497,7 @@ const dataItem = ref([
     owner: null,
     count: '32',
     img: 'bessarabian_tour_img',
-    text: '32s',
+    sell: false,
     color: '#33CFFF',
     rent: 60,
     price: 300,
@@ -466,7 +513,7 @@ const dataItem = ref([
     owner: null,
     count: '33',
     img: 'kids_clothes_img',
-    text: '33s',
+    sell: false,
     color: '#FFBB00',
     rent: 58,
     price: 290,
@@ -482,7 +529,7 @@ const dataItem = ref([
     owner: null,
     count: '34',
     img: 'railway_station_img',
-    text: '34',
+    sell: false,
     color: 'transparent',
     rent: 45,
     price: 225,
@@ -499,7 +546,7 @@ const dataItem = ref([
     owner: null,
     count: '15',
     img: 'grocery_family_img',
-    text: '15',
+    sell: false,
     color: '#C5D65C',
     rent: 44,
     price: 220,
@@ -515,7 +562,7 @@ const dataItem = ref([
     owner: null,
     count: '35',
     img: 'mens_clothes_img',
-    text: '35',
+    sell: false,
     color: '#FFBB00',
     rent: 62,
     price: 310,
@@ -532,7 +579,7 @@ const dataItem = ref([
     owner: null,
     count: '14',
     img: 'bus_station_img',
-    text: '14',
+    sell: false,
     color: 'transparent',
     rent: 45,
     price: 225,
@@ -548,7 +595,7 @@ const dataItem = ref([
     owner: null,
     count: '13',
     img: 'grocery_organic_img',
-    text: '13s',
+    sell: false,
     color: '#C5D65C',
     rent: 43,
     price: 215,
@@ -564,7 +611,7 @@ const dataItem = ref([
     owner: null,
     count: '12',
     img: 'smoke_shop_img',
-    text: '12s',
+    sell: false,
     color: '#D665FF',
     rent: 38,
     price: 190,
@@ -580,7 +627,7 @@ const dataItem = ref([
     owner: null,
     count: '11',
     img: 'surprise_img',
-    text: '8s',
+    sell: false,
     color: null,
     rent: null,
     price: null,
@@ -596,7 +643,7 @@ const dataItem = ref([
     owner: null,
     count: '10',
     img: 'vape_shop_img',
-    text: '9s',
+    sell: false,
     color: '#D665FF',
     rent: 42,
     price: 210,
@@ -612,7 +659,7 @@ const dataItem = ref([
     owner: null,
     count: '9',
     img: 'teleport_img',
-    text: '10s',
+    sell: false,
     color: null,
     rent: null,
     price: null,
@@ -628,7 +675,7 @@ const dataItem = ref([
     owner: null,
     count: '36',
     img: 'las_vegas_1_img',
-    text: '36',
+    sell: false,
     color: '#E83061',
     rent: 75,
     price: 375,
@@ -644,7 +691,7 @@ const dataItem = ref([
     owner: null,
     count: '13',
     img: 'grocery_img',
-    text: '13',
+    sell: false,
     color: '#C5D65C',
     rent: 46,
     price: 230,
@@ -660,7 +707,7 @@ const dataItem = ref([
     owner: null,
     count: '8',
     img: 'hookah_shop_img',
-    text: '7s',
+    sell: false,
     color: '#D665FF',
     rent: 40,
     price: 200,
@@ -677,7 +724,7 @@ const dataItem = ref([
     owner: null,
     count: '37',
     img: 'surprise_img',
-    text: '37',
+    sell: false,
     color: null,
     rent: null,
     price: null,
@@ -694,7 +741,7 @@ const dataItem = ref([
     owner: null,
     count: '12',
     img: 'surprise_img',
-    text: '12',
+    sell: false,
     color: null,
     rent: null,
     price: null,
@@ -710,7 +757,7 @@ const dataItem = ref([
     owner: null,
     count: '7',
     img: 'water_energy_img',
-    text: '11s',
+    sell: false,
     color: 'transparent',
     rent: 45,
     price: 225,
@@ -727,7 +774,7 @@ const dataItem = ref([
     owner: null,
     count: '38',
     img: 'casino_img',
-    text: '38',
+    sell: false,
     color: '#E83061',
     rent: 80,
     price: 400,
@@ -744,7 +791,7 @@ const dataItem = ref([
     owner: null,
     count: '11',
     img: 'coffee_shop_img',
-    text: '11',
+    sell: false,
     color: '#8D33FF',
     rent: 35,
     price: 175,
@@ -760,7 +807,7 @@ const dataItem = ref([
     owner: null,
     count: '6',
     img: 'kids_barber_img',
-    text: '6s',
+    sell: false,
     color: '#FF658E',
     rent: 28,
     price: 140,
@@ -776,7 +823,7 @@ const dataItem = ref([
     owner: null,
     count: '39',
     img: 'hotel_royal_img',
-    text: '39',
+    sell: false,
     color: '#E83061',
     rent: 70,
     price: 350,
@@ -793,7 +840,7 @@ const dataItem = ref([
     owner: null,
     count: '10',
     img: 'jail_img',
-    text: '10',
+    sell: false,
     color: null,
     rent: null,
     price: null,
@@ -809,7 +856,7 @@ const dataItem = ref([
     owner: null,
     count: '9',
     img: 'hot_dogs_img',
-    text: '9',
+    sell: false,
     color: '#8D33FF',
     rent: 34,
     price: 170,
@@ -825,7 +872,7 @@ const dataItem = ref([
     owner: null,
     count: '8',
     img: 'airport_img',
-    text: '8',
+    sell: false,
     color: 'transparent',
     rent: 45,
     price: 225,
@@ -841,7 +888,7 @@ const dataItem = ref([
     owner: null,
     count: '7',
     img: 'croissant_bakehouse_img',
-    text: '7',
+    sell: false,
     color: '#8D33FF',
     rent: 36,
     price: 180,
@@ -857,7 +904,7 @@ const dataItem = ref([
     owner: null,
     count: '6',
     img: 'barber_shop_img',
-    text: '6',
+    sell: false,
     color: '#FF658E',
     rent: 32,
     price: 160,
@@ -873,7 +920,7 @@ const dataItem = ref([
     owner: null,
     count: '5',
     img: 'street_corner',
-    text: '5',
+    sell: false,
     color: null,
     rent: null,
     price: null,
@@ -889,7 +936,7 @@ const dataItem = ref([
     owner: null,
     count: '4',
     img: 'hair_salon_img',
-    text: '4',
+    sell: false,
     color: '#FF658E',
     rent: 35,
     price: 175,
@@ -905,7 +952,7 @@ const dataItem = ref([
     owner: null,
     count: '3',
     img: 'continantal_avenue_img',
-    text: '3',
+    sell: false,
     color: '#5CD6B6',
     rent: 20,
     price: 100,
@@ -921,9 +968,9 @@ const dataItem = ref([
     owner: null,
     count: '2',
     img: 'old_avenue_img',
-    text: '2',
+    sell: false,
     color: '#5CD6B6',
-    rent: '30',
+    rent: 30,
     price: 150,
     update: '',
     position: 'bottom',
@@ -937,7 +984,7 @@ const dataItem = ref([
     owner: null,
     count: '1',
     img: 'main_avenue_img',
-    text: '1',
+    sell: false,
     color: '#5CD6B6',
     rent: 24,
     price: 120,
@@ -951,9 +998,9 @@ const dataItem = ref([
     id: 56,
     type: 'start',
     owner: null,
-    count: '40',
+    count: '0',
     img: 'start_img',
-    text: '0',
+    sell: false,
     color: null,
     rent: null,
     price: null,
@@ -979,7 +1026,8 @@ const players = ref([
     direction: 'main',
     active: true,
     details: true,
-    skipMove: false
+    skipMove: false,
+    status: null
   },
   {
     id: 2,
@@ -994,7 +1042,8 @@ const players = ref([
     direction: 'main',
     active: false,
     details: false,
-    skipMove: false
+    skipMove: false,
+    status: null
   },
   {
     id: 3,
@@ -1009,7 +1058,8 @@ const players = ref([
     direction: 'main',
     active: false,
     details: false,
-    skipMove: false
+    skipMove: false,
+    status: null
   },
   {
     id: 4,
@@ -1024,7 +1074,8 @@ const players = ref([
     direction: 'main',
     active: false,
     details: false,
-    skipMove: false
+    skipMove: false,
+    status: null
   }
 ])
 
@@ -1033,26 +1084,41 @@ const enoughMoney = ref(false)
 const jail = ref(false)
 const teleport = ref(false)
 const directionTop = ref(false)
+const tradeBank = ref(false)
 
+const playerActiveIndex = ref(0)
+const dice1 = ref(0)
+const dice2 = ref(0)
+
+const needMoney = ref(0)
+
+const itemsChoose = ref([])
+const showChoose = ref(false)
+
+const sortGroupItems = ref([])
+const tradeItems = ref([])
 
 function finishedRound() {
   playerActiveIndex.value < players.value.length - 1
     ? playerActiveIndex.value++
     : (playerActiveIndex.value = 0)
 
-  players.value[playerActiveIndex.value].skipMove
-    ? (buttonRoll.value = false)
-    : (buttonRoll.value = true)
+  if (!players.value[playerActiveIndex.value].status) {
+    players.value[playerActiveIndex.value].skipMove
+      ? (buttonRoll.value = false)
+      : (buttonRoll.value = true)
 
-  players.value[playerActiveIndex.value].skipMove = false
-
+    players.value[playerActiveIndex.value].skipMove = false
+  } else {
+    playerActiveIndex.value < players.value.length - 1
+      ? playerActiveIndex.value++
+      : (playerActiveIndex.value = 0)
+  }
   players.value.forEach((el) => {
     el.id === playerActiveIndex.value + 1 ? (el.active = true) : (el.active = false)
     el.id === playerActiveIndex.value + 1 ? (el.details = true) : (el.details = false)
   })
 }
-
-const sortGroupItems = ref([])
 
 function checkItemValue(el, array) {
   const checkItem = (x) => x.items[0].color === el.color
@@ -1080,16 +1146,9 @@ function sortItems() {
   sortGroupItems.value.sort((a, b) => a.items.length - b.items.length)
 }
 
-const playerActiveIndex = ref(0)
-
-const dice1 = ref(0)
-const dice2 = ref(0)
-
-const itemsChoose = ref([])
-
-const showChoose = ref(false)
-
 function rollDice() {
+  directionTop.value = false
+
   dice1.value = Math.floor(Math.random() * 6) + 1
   dice2.value = Math.floor(Math.random() * 6) + 1
   const total = dice1.value + dice2.value
@@ -1115,6 +1174,29 @@ function rollDice() {
   buttonRoll.value = dice1.value === dice2.value
 }
 
+function goTo() {
+  isJail()
+  players.value[playerActiveIndex.value].row = itemsChoose.value[0].row
+  players.value[playerActiveIndex.value].column = itemsChoose.value[0].column
+  players.value[playerActiveIndex.value].direction = itemsChoose.value[0].direction
+
+  if (itemsChoose.value[0].type === 'police') {
+    players.value[playerActiveIndex.value].row = '11/12'
+    players.value[playerActiveIndex.value].column = '1/2'
+    players.value[playerActiveIndex.value].direction = 'main'
+    players.value[playerActiveIndex.value].positionGoTo = 10
+
+    showChoose.value = false
+    jail.value = true
+  }
+
+  if (itemsChoose.value[0].type === 'go') {
+    goToCasino()
+  }
+
+  isTeleport()
+}
+
 function filterItem() {
   itemsChoose.value = dataItem.value.filter(
     (el) => el.count == players.value[playerActiveIndex.value].positionGoTo
@@ -1134,14 +1216,19 @@ function filterItem() {
       goTo()
     }
 
-    if (players.value[playerActiveIndex.value].positionStart >= 15 &&
-      players.value[playerActiveIndex.value].positionStart <= 26) {
+    if (
+      players.value[playerActiveIndex.value].positionStart >= 15 &&
+      players.value[playerActiveIndex.value].positionStart <= 26
+    ) {
       directionTop.value = true
     }
-
   } else {
     goTo()
   }
+}
+
+function getCardById(id) {
+  itemsChoose.value = dataItem.value.filter((el) => el.id === id)
 }
 
 function isJail() {
@@ -1157,12 +1244,14 @@ function isTeleport() {
     teleport.value = true
 
     setTimeout(() => {
-      if (itemsChoose.value[0].id === 36) {
-        players.value[playerActiveIndex.value].row = '4/5'
-        players.value[playerActiveIndex.value].column = '8/9'
+      if (itemsChoose.value[0].id === 21) {
+        players.value[playerActiveIndex.value].row = '7/8'
+        players.value[playerActiveIndex.value].column = '6/7'
+        players.value[playerActiveIndex.value].positionGoTo = 9
       } else {
-        players.value[playerActiveIndex.value].row = '8/9'
-        players.value[playerActiveIndex.value].column = '4/5'
+        players.value[playerActiveIndex.value].row = '5/6'
+        players.value[playerActiveIndex.value].column = '6/7'
+        players.value[playerActiveIndex.value].positionGoTo = 29
       }
     }, 2300)
     players.value[playerActiveIndex.value].direction = 'branch'
@@ -1173,21 +1262,13 @@ function isTeleport() {
   }
 }
 
-function goTo() {
-  players.value[playerActiveIndex.value].row = itemsChoose.value[0].row
-  players.value[playerActiveIndex.value].column = itemsChoose.value[0].column
-  players.value[playerActiveIndex.value].direction = itemsChoose.value[0].direction
+function goToCasino() {
+  players.value[playerActiveIndex.value].row = '9/10'
+  players.value[playerActiveIndex.value].column = '11/12'
+  players.value[playerActiveIndex.value].direction = 'main'
+  players.value[playerActiveIndex.value].positionGoTo = 38
 
-  isJail()
-
-  if (itemsChoose.value[0].type === 'police') {
-    players.value[playerActiveIndex.value].row = '11/12'
-    players.value[playerActiveIndex.value].column = '1/2'
-    players.value[playerActiveIndex.value].direction = 'main'
-    isJail()
-  }
-
-  isTeleport()
+  getCardById(42)
 }
 
 function closeModal() {
@@ -1203,43 +1284,46 @@ function isChooseCard(data) {
 
 function buyCard(data) {
   let item = players.value[playerActiveIndex.value]
-  if (players.value[playerActiveIndex.value].money >= dataItem.value[data - 1].price) {
-    if (null === dataItem.value[data - 1].owner) {
+  if (dataItem.value[data - 1].owner === null) {
+    if (players.value[playerActiveIndex.value].money >= dataItem.value[data - 1].price) {
       players.value[playerActiveIndex.value] = {
         ...item,
         money: item.money - dataItem.value[data - 1].price
       }
       dataItem.value[data - 1] = { ...dataItem.value[data - 1], owner: item.name }
-    } else {
-      if (players.value[playerActiveIndex.value].money >= dataItem.value[data - 1].rent) {
-        players.value[playerActiveIndex.value] = {
-          ...item,
-          money: item.money - dataItem.value[data - 1].rent
-        }
 
-        players.value.forEach((el, index) => {
-          if (el.name === dataItem.value[data - 1].owner) {
-            players.value[index] = {
-              ...players.value[index],
-              money: players.value[index].money + dataItem.value[data - 1].rent
-            }
-          }
-        })
-      }
+      isChooseCard(data)
+      sortItems()
+    } else {
+      showChoose.value = false
+      enoughMoney.value = true
+      needMoney.value =
+        dataItem.value[data - 1].price - players.value[playerActiveIndex.value].money
     }
   } else {
-    enoughMoney.value = true
-    showChoose.value = false
+    if (players.value[playerActiveIndex.value].money >= dataItem.value[data - 1].rent) {
+      players.value[playerActiveIndex.value] = {
+        ...item,
+        money: item.money - dataItem.value[data - 1].rent
+      }
 
-    setTimeout(() => {
-      enoughMoney.value = false
+      players.value.forEach((el, index) => {
+        if (el.name === dataItem.value[data - 1].owner) {
+          players.value[index] = {
+            ...players.value[index],
+            money: players.value[index].money + dataItem.value[data - 1].rent
+          }
+        }
+      })
 
-      showChoose.value = true
-    }, 3000)
+      isChooseCard(data)
+      sortItems()
+    } else {
+      showChoose.value = false
+      enoughMoney.value = true
+      needMoney.value = dataItem.value[data - 1].rent - players.value[playerActiveIndex.value].money
+    }
   }
-
-  isChooseCard(data)
-  sortItems()
 }
 
 function openDetails(data) {
@@ -1278,12 +1362,47 @@ function skipMove() {
   buttonRoll.value = false
 }
 
-function getSurprise() { }
+function getSurprise() {}
 
-watch(players, () => { })
+function getTradeItems() {
+  enoughMoney.value = false
+  tradeBank.value = true
+  tradeItems.value = dataItem.value.filter(
+    (el) => el.owner === players.value[playerActiveIndex.value].name
+  )
+}
+
+function closeTradeBank() {
+  tradeBank.value = false
+
+  showChoose.value = true
+}
+
+function isGameOver() {
+  dataItem.value.forEach((el) =>
+    el.owner === players.value[playerActiveIndex.value].name ? (el.owner = null) : ''
+  )
+
+  players.value[playerActiveIndex.value].status = 'game over'
+
+  setTimeout(() => {
+    enoughMoney.value = false
+    finishedRound()
+  }, 1500)
+}
+
+function isBankrupt(){
+  players.value[playerActiveIndex.value].status = 'game over'
+  tradeBank.value=false
+  enoughMoney.value=true
+  isGameOver()
+}
+
+watch(players, () => {})
 
 onMounted(() => {
   sortItems()
+  // getTradeItems()
 })
 </script>
 
@@ -1301,7 +1420,6 @@ onMounted(() => {
 
   padding: 24px;
 
-
   &__wrap {
     position: relative;
     display: grid;
@@ -1311,7 +1429,7 @@ onMounted(() => {
     justify-items: center;
     align-items: center;
 
-    background-color: #EBF4EB;
+    background-color: #ebf4eb;
     border-radius: 8px;
     padding: 28px;
 
@@ -1332,7 +1450,7 @@ onMounted(() => {
 
     color: white;
 
-    background-color: #0D3B10;
+    background-color: #0d3b10;
     border-radius: 4px;
 
     margin: auto;
@@ -1350,7 +1468,6 @@ onMounted(() => {
   }
 
   &__dice-item {
-
     width: 44px;
     height: 44px;
 
@@ -1381,7 +1498,6 @@ onMounted(() => {
 
 .direction-arrow {
   &__vertical {
-
     grid-column: 7/8;
     grid-row: 10/11;
 
@@ -1396,7 +1512,6 @@ onMounted(() => {
       transform: rotate(180deg);
     }
   }
-
 
   &__gorizontal {
     grid-column: 5/6;

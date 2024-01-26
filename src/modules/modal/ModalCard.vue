@@ -1,7 +1,7 @@
 <template>
   <section class="modal-item">
-    <div class="modal-item__wrap" :class="{go:items.length > 1}">
-      <!-- <img
+    <div class="modal-item__wrap" :class="{ go: items.length > 1 }">
+     <!-- <img
         v-if="items.length === 1 && !items[0].owner"
         src="/images/close.png"
         alt="close"
@@ -13,7 +13,8 @@
         v-for="(item, index) in items"
         :key="index"
         :item="item"
-        :index="index" 
+        :index="index"
+        :player="player"
         :go-to="items.length > 1"
         @choose="chooseCard"
         @buy="buyCard"
@@ -24,31 +25,31 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 import CardItem from './components/CardItem.vue'
 
-const props = defineProps({ items: { type: Array, required: true }, })
+const props = defineProps({
+  items: { type: Array, required: true },
+  player: { type: Object, required: true }
+})
 
-const emit =defineEmits(['close','choose','buy'])
+const emit = defineEmits(['close', 'choose', 'buy'])
 
 function closeModal() {
   emit('close')
 }
 
 function chooseCard(data) {
-  emit('choose',data)
+  emit('choose', data)
 }
 
-function getSurprise(){
+function getSurprise() {
   emit('surprise')
 }
 
 function buyCard(data) {
-  emit('buy',data)
+  emit('buy', data)
 }
-
-
-
 </script>
 
 <style lang="scss" scoped>
@@ -75,7 +76,7 @@ function buyCard(data) {
     gap: 36px;
 
     // background-color: white;
-  background-color: rgba(4, 17, 5, 0.30);
+    background-color: rgba(4, 17, 5, 0.3);
     border-radius: 5px;
 
     backdrop-filter: blur(5px);
