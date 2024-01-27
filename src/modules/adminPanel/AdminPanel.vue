@@ -29,14 +29,12 @@
           v-for="player in dataPlayers"
           :key="player.id"
           :player="player"
-          :players="dataPlayers"
           :data="initInputs"
           :tokens="tokens"
-          
         />
       </div>
 
-      <button class="admin__button" @click="isValid">Start Game</button>
+      <button class="admin__button" :disabled="!activeButton" @click="startGame">Start Game</button>
     </div>
   </section>
   <Board v-else :data="dataPlayers" />
@@ -44,9 +42,8 @@
 
 <script setup>
 import Board from '../board/Board.vue'
-import { onMounted, ref, watch } from 'vue'
+import { onBeforeUpdate, onMounted, onUpdated, ref, watch } from 'vue'
 import InputPlayer from './components/InputPlayer.vue'
-
 
 const dataPlayers = ref([])
 const activeButton = ref(false)
@@ -60,20 +57,20 @@ const players = ref([
 ])
 
 const tokens = ref([
-  { active: false, label: '', name: 'square' },
-  { active: false, label: '', name: 'circle' },
-  { active: false, label: '', name: 'triangle' },
-  { active: false, label: '', name: 'pacman' },
-  { active: false, label: '', name: 'yin-yang' },
-  { active: false, label: '', name: 'burst-8' },
-  { active: false, label: '', name: 'heart' }
+  { active: false, label: null, name: 'square' },
+  { active: false, label: null, name: 'circle' },
+  { active: false, label: null, name: 'triangle' },
+  { active: false, label: null, name: 'pacman' },
+  { active: false, label: null, name: 'yin-yang' },
+  { active: false, label: null, name: 'burst-8' },
+  { active: false, label: null, name: 'heart' }
 ])
 
 const initInputs = ref([
-  { name: null, color: '#F70000', active: false, label: '', token: '' },
-  { name: null, color: '#00DDEB', active: false, label: '', token: '' },
-  { name: null, color: '#00CC08', active: false, label: '', token: '' },
-  { name: null, color: '#A300CC', active: false, label: '', token: '' }
+  { name: null, color: '#F70000', active: false, label: null, token: null },
+  { name: null, color: '#00DDEB', active: false, label: null, token: null },
+  { name: null, color: '#00CC08', active: false, label: null, token: null },
+  { name: null, color: '#A300CC', active: false, label: null, token: null }
 ])
 const playersNumber = ref(2)
 const showDropDown = ref(false)
@@ -91,8 +88,6 @@ function choosePlayersNumber(index) {
 }
 
 function initPlayers() {
-  dataPlayers.value = []
-
   const player = {
     id: null,
     name: null,
@@ -111,34 +106,51 @@ function initPlayers() {
     doubleMove: 0
   }
 
-  for (let index = 0; index < playersNumber.value; index++) {
-    dataPlayers.value = [...dataPlayers.value, { ...player, id: index + 1 }]
+  if (dataPlayers.value.length !== playersNumber.value) {
+    const iterationNumber =
+      playersNumber.value > dataPlayers.value.length
+        ? playersNumber.value - dataPlayers.value.length
+        : dataPlayers.value.length - playersNumber.value
+        
+        for (let index = 0; index < iterationNumber; index++) {
+          dataPlayers.value = [...dataPlayers.value, { ...player, id: playersNumber.value - index }]
+        }
+
+    dataPlayers.value.sort((a,b)=>a.id-b.id)
+    isValid()
   }
 }
 
-function isValid() {
-  dataPlayers.value.forEach((item) => {
-    initInputs.value.forEach((el) => {
-      if (el.label === item.id) {
-        item.color = el.color
-        item.name = el.name
-        item.img = el.token
-      }
-    })
+function startGame() {
+  console.log('before', dataPlayers.value)
+
+  dataPlayers.value.forEach((el) => {
+    if (el.name === '') return (el.name = `Player ${el.id}`)
   })
 
   adminShow.value = false
+  console.log('after', dataPlayers.value)
 }
 
+function isValid() {
+  let result = 0
+  dataPlayers.value.forEach((el) => {
+    el.img !== null && el.name !== null && el.color !== null ? result++ : ''
+  })
+  result === playersNumber.value ? (activeButton.value = true) : (activeButton.value = false)
+}
 
-watch( playersNumber, () => {
-  initPlayers()
+watch(initInputs.value, () => {
+  isValid()
 })
 
 onMounted(() => {
   initPlayers()
 })
 
+onBeforeUpdate(() => {
+  initPlayers()
+})
 </script>
 
 <style lang="scss" scoped>
@@ -253,13 +265,15 @@ onMounted(() => {
     }
   }
 
-  &__players-wrap{
+  &__players-wrap {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    // direction:rtl;
     gap: 24px;
   }
 
   &__button {
+    cursor: pointer;
     width: 200px;
 
     font-size: 14px;

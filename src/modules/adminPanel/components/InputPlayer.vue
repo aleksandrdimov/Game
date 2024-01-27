@@ -1,9 +1,12 @@
 <template>
   <div class="input">
-    <h3 class="input__title">Player {{ player.id }} <p>Choose params</p></h3>
+    <h3 class="input__title">
+      Player {{ player.id }}
+      <p>Choose params</p>
+    </h3>
     <div class="input__header">
       <label>Name :</label>
-      <input type="text" ref="inputName" />
+      <input type="text" ref="inputName" @change="isCheckName" />
       <!-- <button @click="save">save</button> -->
     </div>
     <div class="input__wrap">
@@ -31,9 +34,9 @@
             class="token__item-wrap"
             :class="{ active: tokens[index].active && player.id === tokens[index].label }"
             :style="{
-                '--color-token':
-                  tokens[index].active && player.id !== tokens[index].label ? 'grey' : playerColor
-              }"
+              '--color-token':
+                tokens[index].active && player.id !== tokens[index].label ? 'grey' : playerColor
+            }"
             v-for="(token, index) in tokens"
             :key="index"
           >
@@ -76,15 +79,24 @@ const inputName = ref(null)
 function isActiveColor(index) {
   props.data.forEach((el, i) => {
     if (i === index) {
+      playerColor.value = el.color
+
       el.active = !el.active
       el.label = props.player.id
       el.name = inputName.value.value
-      playerColor.value = el.color
+
+      props.player.color = el.color
+      props.player.name = inputName.value.value
+
+      props.tokens.forEach((token) => {
+        if (token.active && token.label === el.label) el.token = token.name
+      })
     } else {
       if (el.label === props.player.id) {
         el.active = false
-        el.label = ''
+        el.label = null
         el.name = null
+        el.token = null
       }
     }
   })
@@ -95,19 +107,31 @@ function isActiveToken(index) {
     if (i === index) {
       el.active = !el.active
       el.label = props.player.id
-      props.data.forEach((item) => (item.label == props.player.id ? (item.token = el.name) : ''))
+
+      props.player.img = el.name
+      props.player.name = inputName.value.value
+
+      props.data.forEach((item) =>
+        item.label == props.player.id ? (item.token = el.name) : (item.token = null)
+      )
     } else {
       if (el.label === props.player.id) {
         el.active = false
-        el.label = ''
+        el.label = null
+        el.token = null
       }
     }
   })
 }
 
+function isCheckName() {
+  props.player.name = inputName.value.value
+}
+
 watch(props.player, () => {
-  isActiveColor()
-  isActiveToken()
+  // isActiveColor()
+  // isActiveToken()
+  isCheckName()
 })
 </script>
 
@@ -122,7 +146,7 @@ watch(props.player, () => {
 
   padding: 16px;
 
-  &__title{
+  &__title {
     text-align: center;
     font-weight: 600;
   }
@@ -181,7 +205,7 @@ watch(props.player, () => {
   &__item-wrap {
     position: relative;
     & span {
-        display: none;
+      display: none;
       position: absolute;
       z-index: 10;
       bottom: 0px;
@@ -191,8 +215,8 @@ watch(props.player, () => {
       box-shadow: 0px 2px 4px var(--color-token);
     }
 
-    &.active span{
-        display: block;
+    &.active span {
+      display: block;
     }
   }
 
