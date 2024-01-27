@@ -91,7 +91,7 @@
 </template>
 
 <script setup>
-import { onBeforeMount, onBeforeUpdate, onMounted, onUpdated, ref, watch } from 'vue'
+import { onMounted, onUpdated, ref, watch } from 'vue'
 import BoardItem from './components/BoardItem.vue'
 import ModalCard from '../modal/ModalCard.vue'
 import ModalError from '../modal/ModalError.vue'
@@ -101,6 +101,9 @@ import ModalSurprise from '../modal/ModalSurprise.vue'
 import ModalTradeBank from '../modal/ModalTradeBank.vue'
 import Players from '../player/Players.vue'
 import PlayerToken from '../player/components/PlayerToken.vue'
+import AdminPanel from '../adminPanel/AdminPanel.vue'
+
+const props = defineProps({ data: { type: Array, required: true } })
 
 const dataItem = ref([
   {
@@ -1012,72 +1015,78 @@ const dataItem = ref([
   }
 ])
 
-const players = ref([
-  {
-    id: 1,
-    name: 'Player 1',
-    money: 1500,
-    color: 'red',
-    img: 'burst-8',
-    row: '11/12',
-    column: '11/12',
-    positionStart: 0,
-    positionGoTo: 0,
-    direction: 'main',
-    active: true,
-    details: true,
-    skipMove: false,
-    status: null
-  },
-  {
-    id: 2,
-    name: 'Player 2',
-    money: 1500,
-    color: '#00DDEB',
-    img: 'heart',
-    row: '11/12',
-    column: '11/12',
-    positionStart: 0,
-    positionGoTo: 0,
-    direction: 'main',
-    active: false,
-    details: false,
-    skipMove: false,
-    status: null
-  },
-  {
-    id: 3,
-    name: 'Player 3',
-    money: 1500,
-    color: '#00CC08',
-    img: 'yin-yang',
-    row: '11/12',
-    column: '11/12',
-    positionStart: 0,
-    positionGoTo: 0,
-    direction: 'main',
-    active: false,
-    details: false,
-    skipMove: false,
-    status: null
-  },
-  {
-    id: 4,
-    name: 'Player 4',
-    money: 1500,
-    color: '#A300CC',
-    img: 'pacman',
-    row: '11/12',
-    column: '11/12',
-    positionStart: 0,
-    positionGoTo: 0,
-    direction: 'main',
-    active: false,
-    details: false,
-    skipMove: false,
-    status: null
-  }
-])
+// const players = ref([
+//   {
+//     id: 1,
+//     name: 'Player 1',
+//     money: 1500,
+//     color: '#F70000',
+//     img: 'pacman',
+//     row: '11/12',
+//     column: '11/12',
+//     positionStart: 0,
+//     positionGoTo: 0,
+//     direction: 'main',
+//     active: true,
+//     details: true,
+//     skipMove: false,
+//     status: null,
+//     doubleMove: 0
+//   },
+//   {
+//     id: 2,
+//     name: 'Player 2',
+//     money: 1500,
+//     color: '#00DDEB',
+//     img: 'burst-8',
+//     row: '11/12',
+//     column: '11/12',
+//     positionStart: 0,
+//     positionGoTo: 0,
+//     direction: 'main',
+//     active: false,
+//     details: false,
+//     skipMove: false,
+//     status: null,
+//     doubleMove: 0
+//   },
+//   {
+//     id: 3,
+//     name: 'Player 3',
+//     money: 1500,
+//     color: '#00CC08',
+//     img: 'yin-yang',
+//     row: '11/12',
+//     column: '11/12',
+//     positionStart: 0,
+//     positionGoTo: 0,
+//     direction: 'main',
+//     active: false,
+//     details: false,
+//     skipMove: false,
+//     status: null,
+//     doubleMove: 0
+//   },
+//   {
+//     id: 4,
+//     name: 'Player 4',
+//     money: 1500,
+//     color: '#A300CC',
+//     img: 'heart',
+//     row: '11/12',
+//     column: '11/12',
+//     positionStart: 0,
+//     positionGoTo: 0,
+//     direction: 'main',
+//     active: false,
+//     details: false,
+//     skipMove: false,
+//     status: null,
+//     doubleMove: 0
+//   }
+// ])
+
+const players=ref(props.data)
 
 const buttonRoll = ref(true)
 const enoughMoney = ref(false)
@@ -1085,6 +1094,7 @@ const jail = ref(false)
 const teleport = ref(false)
 const directionTop = ref(false)
 const tradeBank = ref(false)
+const admin = ref(true)
 
 const playerActiveIndex = ref(0)
 const dice1 = ref(0)
@@ -1103,6 +1113,8 @@ function finishedRound() {
     ? playerActiveIndex.value++
     : (playerActiveIndex.value = 0)
 
+  players.value[playerActiveIndex.value].doubleMove = 0
+
   if (!players.value[playerActiveIndex.value].status) {
     players.value[playerActiveIndex.value].skipMove
       ? (buttonRoll.value = false)
@@ -1113,6 +1125,7 @@ function finishedRound() {
     playerActiveIndex.value < players.value.length - 1
       ? playerActiveIndex.value++
       : (playerActiveIndex.value = 0)
+      buttonRoll.value=true
   }
   players.value.forEach((el) => {
     el.id === playerActiveIndex.value + 1 ? (el.active = true) : (el.active = false)
@@ -1167,31 +1180,47 @@ function rollDice() {
       players.value[playerActiveIndex.value].positionGoTo + total
   }
 
-  filterItem()
+  if (dice1.value === dice2.value) {
+    players.value[playerActiveIndex.value].doubleMove++
+    if (players.value[playerActiveIndex.value].doubleMove !== 2) {
+      buttonRoll.value = true
+      filterItem()
 
-  showChoose.value = true
+      showChoose.value = true
+    } else {
+      goToJail()
+      isJail()
+    }
+  } else {
+    buttonRoll.value = false
+    filterItem()
 
-  buttonRoll.value = dice1.value === dice2.value
+    showChoose.value = true
+  }
 }
 
 function goTo() {
-  isJail()
+  if(itemsChoose.value[0].type === 'start') {
+    showChoose.value=false
+  }
+  // showChoose.value=true
+  itemsChoose.value[0].type === 'jail' ? isJail() : ''
   players.value[playerActiveIndex.value].row = itemsChoose.value[0].row
   players.value[playerActiveIndex.value].column = itemsChoose.value[0].column
   players.value[playerActiveIndex.value].direction = itemsChoose.value[0].direction
 
-  if (itemsChoose.value[0].type === 'police') {
-    players.value[playerActiveIndex.value].row = '11/12'
-    players.value[playerActiveIndex.value].column = '1/2'
-    players.value[playerActiveIndex.value].direction = 'main'
-    players.value[playerActiveIndex.value].positionGoTo = 10
 
-    showChoose.value = false
-    jail.value = true
+  if (itemsChoose.value[0].type === 'police') {
+    goToJail()
+    isJail()
   }
 
   if (itemsChoose.value[0].type === 'go') {
-    goToCasino()
+    showChoose.value=false
+    setTimeout(()=>{
+
+      goToCasino()
+    },300)
   }
 
   isTeleport()
@@ -1229,13 +1258,19 @@ function filterItem() {
 
 function getCardById(id) {
   itemsChoose.value = dataItem.value.filter((el) => el.id === id)
+  showChoose.value = true
 }
 
 function isJail() {
-  if (itemsChoose.value[0].type === 'jail') {
-    showChoose.value = false
-    jail.value = true
-  }
+  showChoose.value = false
+  jail.value = true
+}
+
+function goToJail() {
+  players.value[playerActiveIndex.value].row = '11/12'
+  players.value[playerActiveIndex.value].column = '1/2'
+  players.value[playerActiveIndex.value].direction = 'main'
+  players.value[playerActiveIndex.value].positionGoTo = 10
 }
 
 function isTeleport() {
@@ -1278,8 +1313,8 @@ function closeModal() {
 function isChooseCard(data) {
   itemsChoose.value = dataItem.value.filter((el) => el.id === data)
 
-  goTo()
   showChoose.value = false
+  goTo()
 }
 
 function buyCard(data) {
@@ -1391,18 +1426,19 @@ function isGameOver() {
   }, 1500)
 }
 
-function isBankrupt(){
+function isBankrupt() {
   players.value[playerActiveIndex.value].status = 'game over'
-  tradeBank.value=false
-  enoughMoney.value=true
+  tradeBank.value = false
+  enoughMoney.value = true
   isGameOver()
 }
 
-watch(players, () => {})
+watch(players, () => {
+  sortItems()
+})
 
 onMounted(() => {
   sortItems()
-  // getTradeItems()
 })
 </script>
 
@@ -1446,14 +1482,14 @@ onMounted(() => {
     width: 108px;
     height: 40px;
     grid-column: 8/10;
-    grid-row: 10/11;
+    grid-row: 8/9;
 
     color: white;
 
     background-color: #0d3b10;
     border-radius: 4px;
 
-    margin: auto;
+    margin:auto 0 0 ;
   }
 
   &__dice-wrap {

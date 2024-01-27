@@ -1,19 +1,55 @@
 <template>
   <div v-if="item.color === 'transparent'" class="board-item">
     <div v-if="stand" class="board-item__shadow"></div>
-    <div v-if="null !== item.color" class="board-item__label" :class="classLabelPosition"
-      :style="{ '--color-bg': item.color }"></div>
-    <PlayerToken :player="players[indexPlayerOwner]" :small="true" v-if="item.owner && indexPlayerOwner !== null"
-      class="board-item__owner" :class="classLabelPosition" />
+    <div
+      v-if="null !== item.color"
+      class="board-item__label"
+      :class="classLabelPosition"
+      :style="{ '--color-bg': item.color }"
+    ></div>
+    <PlayerToken
+      :player="players[indexPlayerOwner]"
+      :small="true"
+      v-if="item.owner && indexPlayerOwner !== null"
+      class="board-item__owner"
+      :class="[
+        classLabelPosition,
+        {
+          'edit':
+            players[indexPlayerOwner].img === 'pacman' ||
+            players[indexPlayerOwner].img === 'yin-yang' ||
+            players[indexPlayerOwner].img === 'heart' ||
+            players[indexPlayerOwner].img === 'burst-8'
+        }
+      ]"
+    />
   </div>
 
   <div v-else class="board-item" :style="{ '--color-border': item.color }">
     <div v-if="stand" class="board-item__shadow"></div>
 
-    <div v-if="null !== item.color" class="board-item__label" :class="classLabelPosition"
-      :style="{ '--color-bg': item.color }"></div>
-    <PlayerToken :player="players[indexPlayerOwner]" :small="true" v-if="item.owner && indexPlayerOwner !== null"
-      class="board-item__owner" :class="classLabelPosition" />
+    <div
+      v-if="null !== item.color"
+      class="board-item__label"
+      :class="classLabelPosition"
+      :style="{ '--color-bg': item.color }"
+    ></div>
+    <PlayerToken
+      :player="players[indexPlayerOwner]"
+      :small="true"
+      v-if="item.owner && indexPlayerOwner !== null"
+      class="board-item__owner"
+      :class="[
+        classLabelPosition,
+        {
+          'edit':
+            players[indexPlayerOwner].img === 'pacman' ||
+            players[indexPlayerOwner].img === 'yin-yang' ||
+            players[indexPlayerOwner].img === 'heart' ||
+            players[indexPlayerOwner].img === 'burst-8'
+        }
+      ]"
+    />
   </div>
 </template>
 
@@ -36,7 +72,7 @@ const stand = ref(false)
 const positionRow = ref('')
 const positionColumn = ref('')
 
-function getSliderValues() {
+function getItemValues() {
   bgImage.value = `url('../images/${props.item.img}.png')`
   positionColumn.value = props.item.column
   positionRow.value = props.item.row
@@ -50,31 +86,30 @@ function getSliderValues() {
 }
 
 function isPlayerStand() {
-  stand.value=false
+  stand.value = false
   props.players.forEach((el) => {
-    el.row === props.item.row && el.column === props.item.column ?
-      stand.value = true : ''
-
+    el.row === props.item.row && el.column === props.item.column ? (stand.value = true) : ''
   })
 }
 
-watch(props.players,()=>{
+watch(props, () => {
   isPlayerStand()
+  getItemValues()
 })
 
 onMounted(() => {
-  getSliderValues()
+  getItemValues()
   isPlayerStand()
 })
 
 onUpdated(() => {
-  getSliderValues()
+  getItemValues()
 })
 </script>
 
 <style lang="scss" scoped>
 .board-item {
-  --color-border: #B3B3B3;
+  --color-border: #b3b3b3;
   position: relative;
   width: 100%;
 
@@ -96,8 +131,8 @@ onUpdated(() => {
 
     width: 100%;
     height: 100%;
-    
-    background-color: rgba(0, 0, 0, .5);
+
+    background-color: rgba(0, 0, 0, 0.5);
     border-radius: 4px;
   }
 
@@ -120,7 +155,6 @@ onUpdated(() => {
     &.bottom {
       bottom: 0;
       border-radius: 0 0 3px 3px;
-
     }
 
     &.left {
@@ -129,7 +163,6 @@ onUpdated(() => {
       left: 0;
 
       border-radius: 3px 0 0 3px;
-
     }
 
     &.right {
@@ -138,7 +171,6 @@ onUpdated(() => {
       right: 0;
 
       border-radius: 0 3px 3px 0;
-
     }
   }
 
@@ -157,9 +189,13 @@ onUpdated(() => {
     }
 
     &.bottom {
-      top: 77px;
+      bottom: -18px;
       left: 50%;
       transform: translateX(-50%);
+
+      &.edit{
+        bottom: -77px;
+      }
     }
 
     &.left {
@@ -169,9 +205,12 @@ onUpdated(() => {
     }
 
     &.right {
-      right: -77px;
+      right: -18px;
       top: 50%;
       transform: translateY(-50%);
+      &.edit{
+        right: -77px;
+      }
     }
   }
 }

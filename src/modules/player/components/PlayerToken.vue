@@ -30,9 +30,9 @@ onMounted(() => {
   getPosition()
 })
 
-onBeforeUpdate(() => {
-  getPosition()
-})
+// onBeforeUpdate(() => {
+//   getPosition()
+// })
 
 </script>
 
@@ -41,8 +41,8 @@ onBeforeUpdate(() => {
   // position: absolute;
   position: relative;
   z-index: 10;
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
 
 
   grid-column: v-bind(playerColumn);
@@ -78,11 +78,21 @@ onBeforeUpdate(() => {
 
   &.square {
     background-color: v-bind(playerColor);
+
+    &.small{
+      width: 16px;
+      height: 16px;
+    }
   }
 
   &.circle {
     background-color: v-bind(playerColor);
     border-radius: 50%;
+
+    &.small{
+      width: 16px;
+      height: 16px;
+    }
   }
 
   &.triangle {
@@ -93,6 +103,13 @@ onBeforeUpdate(() => {
     background-color: transparent;
 
     border-bottom: 24px solid v-bind(playerColor);
+
+    &.small{
+      border-left:8px solid transparent;
+    border-right: 8px solid transparent;
+
+    border-bottom: 16px solid v-bind(playerColor);
+    }
   }
 
   &.pacman {

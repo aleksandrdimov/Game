@@ -66,12 +66,12 @@ function buyCard(data) {
 
   &__wrap {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+ top: 50%;
+ left: 50%;
+    transform: translate(-50% ,-50%);
 
     display: flex;
-    flex-direction: row;
+    flex-direction: row-reverse;
     align-items: center;
     gap: 36px;
 

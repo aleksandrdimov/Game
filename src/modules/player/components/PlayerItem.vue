@@ -132,7 +132,7 @@ function getColor() {
   } else moneyColor.value = 'rgb(240, 24, 24)'
 
   if (!props.player.status) {
-    if (props.player.color === 'red') {
+    if (props.player.color === '#F70000') {
       getPlayerColors('#FFF5F5', '#F8E2E2')
     } else if (props.player.color === '#00DDEB') {
       getPlayerColors('#F5FEFF', '#E2F7F8')
