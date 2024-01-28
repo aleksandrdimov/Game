@@ -7,7 +7,6 @@
     <div class="input__header">
       <label>Name :</label>
       <input type="text" ref="inputName" @change="isCheckName" />
-      <!-- <button @click="save">save</button> -->
     </div>
     <div class="input__wrap">
       <div class="input__color">
@@ -28,7 +27,7 @@
 
       <div class="input__token token">
         <p class="input__token-title">Token :</p>
-        <!-- <InputToken /> -->
+
         <div class="token__wrap">
           <div
             class="token__item-wrap"
@@ -129,8 +128,6 @@ function isCheckName() {
 }
 
 watch(props.player, () => {
-  // isActiveColor()
-  // isActiveToken()
   isCheckName()
 })
 </script>
@@ -195,11 +192,11 @@ watch(props.player, () => {
 .token {
   --color-token: grey;
   &__wrap {
-    display: flex;
-    align-items: center;
-
-    flex-wrap: wrap;
-    gap: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(52px, 80px));
+    justify-content: center;
+    justify-items: center;
+    gap: 8px;
   }
 
   &__item-wrap {
@@ -222,8 +219,8 @@ watch(props.player, () => {
 
   &__item {
     cursor: pointer;
-    width: 44px;
-    height: 44px;
+    width: 32px;
+    height: 32px;
 
     margin: 10px;
 
@@ -251,46 +248,46 @@ watch(props.player, () => {
     &.triangle {
       width: 0;
       height: 0;
-      border-left: 22px solid transparent;
-      border-right: 22px solid transparent;
+      border-left: 16px solid transparent;
+      border-right: 16px solid transparent;
       background-color: transparent;
 
-      border-bottom: 44px solid var(--color-token);
+      border-bottom: 32px solid var(--color-token);
     }
 
     &.pacman {
       position: relative;
       width: 0px;
       height: 0px;
-      border-left: 22px solid transparent;
-      border-top: 22px solid var(--color-token);
-      border-right: 22px solid var(--color-token);
-      border-bottom: 22px solid var(--color-token);
-      border-top-left-radius: 22px;
-      border-top-right-radius: 22px;
-      border-bottom-left-radius: 22px;
-      border-bottom-right-radius: 22px;
+      border-left: 16px solid transparent;
+      border-top: 16px solid var(--color-token);
+      border-right: 16px solid var(--color-token);
+      border-bottom: 16px solid var(--color-token);
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
 
       &::after {
         content: '';
         position: absolute;
-        top: -15px;
+        top: -10px;
         left: 0;
-        width: 6px;
-        height: 6px;
+        width: 4px;
+        height: 4px;
         border-radius: 50%;
         background-color: white;
       }
     }
 
     &.yin-yang {
-      width: 42px;
+      width: 30px;
       box-sizing: content-box;
-      height: 21px;
+      height: 15px;
       background: #eee;
       border-color: var(--color-token);
       border-style: solid;
-      border-width: 1px 1px 22px 1px;
+      border-width: 1px 1px 15px 1px;
       border-radius: 100%;
       position: relative;
 
@@ -300,10 +297,10 @@ watch(props.player, () => {
         top: 50%;
         left: 0;
         background: #eee;
-        border: 8px solid var(--color-token);
+        border: 6px solid var(--color-token);
         border-radius: 100%;
-        width: 6px;
-        height: 6px;
+        width: 4px;
+        height: 4px;
         box-sizing: content-box;
       }
 
@@ -313,18 +310,18 @@ watch(props.player, () => {
         top: 50%;
         right: 0;
         background: var(--color-token);
-        border: 7.8px solid #eee;
+        border: 6px solid #eee;
         border-radius: 100%;
-        width: 6px;
-        height: 6px;
+        width: 4px;
+        height: 4px;
         box-sizing: content-box;
       }
     }
 
     &.burst-8 {
       background: var(--color-token);
-      width: 44px;
-      height: 44px;
+      width: 28px;
+      height: 28px;
       position: relative;
       text-align: center;
       transform: rotate(20deg);
@@ -334,8 +331,8 @@ watch(props.player, () => {
         position: absolute;
         top: 0;
         left: 0;
-        height: 44px;
-        width: 44px;
+        height: 28px;
+        width: 28px;
         background: var(--color-token);
         transform: rotate(135deg);
       }
@@ -343,19 +340,19 @@ watch(props.player, () => {
 
     &.heart {
       position: relative;
-      width: 44px;
-      height: 44px;
+      width: 32px;
+      height: 32px;
 
       &:before,
       &:after {
         position: absolute;
         content: '';
-        left: 22px;
+        left: 14px;
         top: 0;
-        width: 28px;
-        height: 44px;
+        width: 20px;
+        height: 32px;
         background: var(--color-token);
-        border-radius: 24px 24px 0 0;
+        border-radius: 18px 18px 0 0;
         transform: rotate(-45deg);
         transform-origin: 0 100%;
       }

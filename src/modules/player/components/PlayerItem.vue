@@ -13,7 +13,10 @@
           <img v-if="player.active" src="/images/game_dice.svg" alt="dice" class="player__active" />
         </div>
 
-        <div class="player__arrow" :class="[{ active: player.details },{ disabled: player.status}]">
+        <div
+          class="player__arrow"
+          :class="[{ active: player.details }, { disabled: player.status }]"
+        >
           <img src="/images/arrow.svg" alt="arrow" />
         </div>
       </div>
@@ -67,15 +70,11 @@
           <div v-if="player.name !== 'Bank'" class="player__footer">
             <span class="player__money">{{ player.money }} $</span>
 
-            <button
-              :disabled="!upgradeGroups.length"
-              @click="getUpgradeGroups"
-              class="player__button"
-            >
+            <button :disabled="!upgradeGroups.length" @click="toggleUpgrade" class="player__button">
               upgrade
             </button>
 
-            <button class="player__button">trade</button>
+            <button :disabled="active.id!==player.id" class="player__button">trade</button>
           </div>
           <div v-else class="player__bank">
             <div class="player__bank-owner">
@@ -91,7 +90,13 @@
       </Transition>
     </div>
     <Transition>
-      <ModalUpgrade v-if="upgrade" :groups="upgradeGroups" :player="player" />
+      <ModalUpgrade
+        v-if="upgrade"
+        :items="upgradeGroups"
+        :player="player"
+        @upgrade="getUpgrade"
+        @close="toggleUpgrade"
+      />
     </Transition>
   </div>
 </template>
@@ -103,13 +108,18 @@ import { onMounted, onUpdated, ref, watch } from 'vue'
 
 const props = defineProps({
   player: { type: Object, required: true },
-  groups: { type: Array, required: true }
+  groups: { type: Array, required: true },
+  active: { type: Object, required: false }
 })
 
-const emit = defineEmits(['open'])
+const emit = defineEmits(['open', 'upgrade'])
 
 function clickArrow() {
   emit('open', props.player.id)
+}
+
+function getUpgrade(data) {
+  emit('upgrade', data)
 }
 
 const playerColor = ref(props.player.color)
@@ -143,7 +153,7 @@ function getColor() {
     } else {
       getPlayerColors('#FAFAFA', '#FAFAFA')
     }
-  }else{
+  } else {
     getPlayerColors(' #646864', ' #646864')
   }
 }
@@ -151,13 +161,16 @@ function getColor() {
 function isUpgrade() {
   upgradeGroups.value = []
 
-  props.groups.forEach((group) => {
-    const result = group.items.filter((el) => el.owner === props.player.name)
+  if (props.active === props.player) {
+    props.groups.forEach((group) => {
+      const result = group.items.filter((el) => el.owner === props.player.name)
 
-    result.length === group.items.length
-      ? (upgradeGroups.value = [...upgradeGroups.value, { ...group }])
-      : ''
-  })
+      result.length === group.items.length
+        ? (upgradeGroups.value = [...upgradeGroups.value, ...group.items])
+        : ''
+    })
+  }
+  console.log(props.active, props.player)
 }
 
 const ownerNumber = ref(0)
@@ -174,9 +187,13 @@ function calcOwnerCard() {
   }
 }
 
-function getUpgradeGroups() {
-  upgrade.value = true
+function toggleUpgrade() {
+  upgrade.value = !upgrade.value
 }
+
+watch(props.groups, () => {
+  isUpgrade()
+})
 
 onMounted(() => {
   getColor()
@@ -201,7 +218,6 @@ onUpdated(() => {
     border: 1px solid v-bind(playerColor);
 
     transition: background-color 0.3s ease-in-out;
-
   }
 
   &__header {
@@ -260,8 +276,9 @@ onUpdated(() => {
     justify-content: center;
     align-items: center;
 
-    &.disabled {pointer-events: none;
-      cursor:auto;
+    &.disabled {
+      pointer-events: none;
+      cursor: auto;
     }
 
     & img {

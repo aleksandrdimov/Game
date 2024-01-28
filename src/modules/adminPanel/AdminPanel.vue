@@ -48,7 +48,7 @@ import InputPlayer from './components/InputPlayer.vue'
 const dataPlayers = ref([])
 const activeButton = ref(false)
 
-const adminShow = ref(true)
+const adminShow = ref(false)
 
 const players = ref([
   { value: 2, active: true },
@@ -248,6 +248,7 @@ onBeforeUpdate(() => {
     position: relative;
     z-index: 5;
 
+    color: black;
     padding: 4px 8px;
 
     &:first-of-type {

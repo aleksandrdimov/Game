@@ -1,9 +1,17 @@
 <template>
   <section class="players">
     <div class="players__wrap">
-      <PlayerItem v-for="player in players" :key="player.id" :player="player" :groups="groups" @open="openDetails" />
+      <PlayerItem
+        v-for="player in players"
+        :key="player.id"
+        :player="player"
+        :active="active"
+        :groups="groups"
+        @open="openDetails"
+        @upgrade="isUpgrade"
+      />
     </div>
-    <PlayerItem class="players__bank" :player="playerBank" :groups="groups"/>
+    <PlayerItem class="players__bank" :player="playerBank" :groups="groups"  :active="null"/>
   </section>
 </template>
 
@@ -12,23 +20,25 @@ import PlayerItem from './components/PlayerItem.vue'
 const props = defineProps({
   players: { type: Array, required: true },
   groups: { type: Array, required: true },
-  
+  active: { type: Object, required:false }
 })
 
-const playerBank={
-    id: 5,
-    name: 'Bank',
-    color: '#7C7C7C',
-    details: true
-  }
+const playerBank = {
+  id: 5,
+  name: 'Bank',
+  color: '#7C7C7C',
+  details: true
+}
 
-const emit = defineEmits(['open'])
+const emit = defineEmits(['open', 'upgrade'])
 
 function openDetails(data) {
   emit('open', data)
 }
 
-
+function isUpgrade(data) {
+  emit('upgrade', data)
+}
 </script>
 
 <style lang="scss" scoped>
@@ -46,9 +56,8 @@ function openDetails(data) {
     overflow: hidden;
   }
 
-  &__bank{
+  &__bank {
     width: 341px;
   }
-
 }
 </style>

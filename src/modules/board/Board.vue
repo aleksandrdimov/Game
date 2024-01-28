@@ -84,8 +84,10 @@
     <Players
       class="board__players"
       :players="players"
-      @open="openDetails"
       :groups="sortGroupItems"
+      :active="players[playerActiveIndex]"
+      @open="openDetails"
+      @upgrade="isUpgrade"
     />
   </section>
 </template>
@@ -116,7 +118,7 @@ const dataItem = ref([
     color: null,
     rent: null,
     price: null,
-    update: null,
+    upgrade: null,
     position: null,
     row: '1/2',
     column: '1/2',
@@ -124,15 +126,17 @@ const dataItem = ref([
   },
   {
     id: 2,
+    title: 'Puma',
+    coefficient: { upgrade: 50, rent: 33 },
     type: 'card',
-    owner: null,
+    owner: 'Player 1',
     count: '21',
     img: 'puma_img',
     sell: false,
     color: '#4D9FFF',
     rent: 60,
     price: 300,
-    update: '',
+    upgrade: 0,
     position: 'top',
     row: '1/2',
     column: '2/3',
@@ -140,15 +144,17 @@ const dataItem = ref([
   },
   {
     id: 3,
+    title: 'Reebok',
+    coefficient: { upgrade: 52, rent: 35 },
     type: 'card',
-    owner: null,
+    owner: 'Player 1',
     count: '22',
     img: 'reebok_img',
     sell: false,
     color: '#4D9FFF',
     rent: 56,
     price: 280,
-    update: '',
+    upgrade: 0,
     position: 'top',
     row: '1/2',
     column: '3/4',
@@ -156,6 +162,8 @@ const dataItem = ref([
   },
   {
     id: 4,
+    title: 'Sea Terminal',
+    coefficient: { upgrade: 45, rent: 40 },
     type: 'card',
     owner: null,
     count: '23',
@@ -164,7 +172,7 @@ const dataItem = ref([
     color: 'transparent',
     rent: 45,
     price: 225,
-    update: '',
+    upgrade: 0,
     position: 'top',
     row: '1/2',
     column: '4/5',
@@ -172,15 +180,17 @@ const dataItem = ref([
   },
   {
     id: 5,
+    title: 'Fitness Dream',
+    coefficient: { upgrade: 50, rent: 30 },
     type: 'card',
-    owner: null,
+    owner: 'Player 1',
     count: '24',
     img: 'fitness_dream_img',
     sell: false,
     color: '#FF8965',
     rent: 46,
     price: 230,
-    update: '',
+    upgrade: 0,
     position: 'top',
     row: '1/2',
     column: '5/6',
@@ -196,7 +206,7 @@ const dataItem = ref([
     color: null,
     rent: null,
     price: null,
-    update: null,
+    upgrade: null,
     position: null,
     row: '1/2',
     column: '6/7',
@@ -204,15 +214,17 @@ const dataItem = ref([
   },
   {
     id: 7,
+    title: 'Fitness Girl',
+    coefficient: { upgrade: 48, rent: 31 },
     type: 'card',
-    owner: null,
+    owner: 'Player 1',
     count: '26',
     img: 'fitness_girl_img',
     sell: false,
     color: '#FF8965',
     rent: 55,
     price: 275,
-    update: '',
+    upgrade: 0,
     position: 'top',
     row: '1/2',
     column: '7/8',
@@ -228,7 +240,7 @@ const dataItem = ref([
     color: null,
     rent: null,
     price: null,
-    update: null,
+    upgrade: null,
     position: 'top',
     row: '1/2',
     column: '8/9',
@@ -236,6 +248,8 @@ const dataItem = ref([
   },
   {
     id: 9,
+    title: 'Sushi Bar',
+    coefficient: { upgrade: 50, rent: 34 },
     type: 'card',
     owner: null,
     count: '28',
@@ -244,7 +258,7 @@ const dataItem = ref([
     color: '#7CD65C',
     rent: 53,
     price: 265,
-    update: '',
+    upgrade: 0,
     position: 'top',
     row: '1/2',
     column: '9/10',
@@ -252,6 +266,8 @@ const dataItem = ref([
   },
   {
     id: 10,
+    title: 'Steak House',
+    coefficient: { upgrade: 45, rent: 31 },
     type: 'card',
     owner: null,
     count: '29',
@@ -260,7 +276,7 @@ const dataItem = ref([
     color: '#7CD65C',
     rent: 56,
     price: 280,
-    update: '',
+    upgrade: 0,
     position: 'top',
     row: '1/2',
     column: '10/11',
@@ -276,7 +292,7 @@ const dataItem = ref([
     color: null,
     rent: null,
     price: null,
-    update: null,
+    upgrade: null,
     position: null,
     row: '1/2',
     column: '11/12',
@@ -285,15 +301,17 @@ const dataItem = ref([
 
   {
     id: 12,
+    title: 'adidas',
+    coefficient: { upgrade: 50, rent: 32 },
     type: 'card',
-    owner: null,
+    owner: 'Player 1',
     count: '19',
     img: 'adidas_img',
     sell: false,
     color: '#4D9FFF',
     rent: 58,
     price: 290,
-    update: '',
+    upgrade: 0,
     position: 'left',
     row: '2/3',
     column: '1/2',
@@ -301,15 +319,17 @@ const dataItem = ref([
   },
   {
     id: 13,
+    title: 'Fitness Men',
+    coefficient: { upgrade: 45, rent: 31 },
     type: 'card',
-    owner: null,
+    owner: 'Player 1',
     count: '26',
     img: 'fitness_men_img',
     sell: false,
     color: '#FF8965',
     rent: 50,
     price: 250,
-    update: '',
+    upgrade: 0,
     position: 'left',
     row: '2/3',
     column: '6/7',
@@ -317,6 +337,8 @@ const dataItem = ref([
   },
   {
     id: 14,
+    title: 'Burger House',
+    coefficient: { upgrade: 42, rent: 34 },
     type: 'card',
     owner: null,
     count: '31',
@@ -325,7 +347,7 @@ const dataItem = ref([
     color: '#7CD65C',
     rent: 55,
     price: 275,
-    update: '',
+    upgrade: 0,
     position: 'right',
     row: '2/3',
     column: '11/12',
@@ -334,6 +356,8 @@ const dataItem = ref([
 
   {
     id: 15,
+    title: 'PC Shop',
+    coefficient: { upgrade: 38, rent: 30 },
     type: 'card',
     owner: null,
     count: '18',
@@ -342,7 +366,7 @@ const dataItem = ref([
     color: '#FF65DB',
     rent: 52,
     price: 260,
-    update: '',
+    upgrade: 0,
     position: 'left',
     row: '3/4',
     column: '1/2',
@@ -350,6 +374,8 @@ const dataItem = ref([
   },
   {
     id: 16,
+    title: 'Bessarabian Wine Shop',
+    coefficient: { upgrade: 45, rent: 32 },
     type: 'card',
     owner: null,
     count: '28',
@@ -358,7 +384,7 @@ const dataItem = ref([
     color: '#33CFFF',
     rent: 57,
     price: 285,
-    update: '',
+    upgrade: 0,
     position: 'left',
     row: '4/5',
     column: '6/7',
@@ -374,7 +400,7 @@ const dataItem = ref([
     color: null,
     rent: null,
     price: null,
-    update: null,
+    upgrade: null,
     position: 'right',
     row: '3/4',
     column: '11/12',
@@ -383,6 +409,8 @@ const dataItem = ref([
 
   {
     id: 18,
+    title: 'Mobile Shop',
+    coefficient: { upgrade: 40, rent: 34 },
     type: 'card',
     owner: null,
     count: '17',
@@ -391,7 +419,7 @@ const dataItem = ref([
     color: '#FF65DB',
     rent: 48,
     price: 240,
-    update: '',
+    upgrade: 0,
     position: 'left',
     row: '4/5',
     column: '1/2',
@@ -407,7 +435,7 @@ const dataItem = ref([
     color: null,
     rent: null,
     price: null,
-    update: null,
+    upgrade: null,
     position: null,
     row: '5/6',
     column: '8/9',
@@ -415,6 +443,8 @@ const dataItem = ref([
   },
   {
     id: 20,
+    title: 'Wine Valley',
+    coefficient: { upgrade: 43, rent: 35 },
     type: 'card',
     owner: null,
     count: '30',
@@ -423,7 +453,7 @@ const dataItem = ref([
     color: '#33CFFF',
     rent: 64,
     price: 320,
-    update: '',
+    upgrade: 0,
     position: 'top',
     row: '5/6',
     column: '7/8',
@@ -439,7 +469,7 @@ const dataItem = ref([
     color: null,
     rent: null,
     price: null,
-    update: null,
+    upgrade: null,
     position: null,
     row: '5/6',
     column: '6/7',
@@ -447,6 +477,8 @@ const dataItem = ref([
   },
   {
     id: 22,
+    title: 'Fashion Girl',
+    coefficient: { upgrade: 48, rent: 33 },
     type: 'card',
     owner: null,
     count: '33',
@@ -455,7 +487,7 @@ const dataItem = ref([
     color: '#FFBB00',
     rent: 66,
     price: 330,
-    update: '',
+    upgrade: 0,
     position: 'right',
     row: '4/5',
     column: '11/12',
@@ -464,6 +496,8 @@ const dataItem = ref([
 
   {
     id: 23,
+    title: 'Appluances Shop',
+    coefficient: { upgrade: 40, rent: 32 },
     type: 'card',
     owner: null,
     count: '16',
@@ -472,7 +506,7 @@ const dataItem = ref([
     color: '#FF65DB',
     rent: 55,
     price: 275,
-    update: '',
+    upgrade: 0,
     position: 'left',
     row: '5/6',
     column: '1/2',
@@ -480,6 +514,8 @@ const dataItem = ref([
   },
   {
     id: 24,
+    title: 'Electric Power',
+    coefficient: { upgrade: 50, rent: 40 },
     type: 'card',
     owner: null,
     count: '27',
@@ -488,7 +524,7 @@ const dataItem = ref([
     color: 'transparent',
     rent: 45,
     price: 225,
-    update: '',
+    upgrade: 0,
     position: 'left',
     row: '3/4',
     column: '6/7',
@@ -496,6 +532,8 @@ const dataItem = ref([
   },
   {
     id: 25,
+    title: 'Bessarabian Wine Tour',
+    coefficient: { upgrade: 44, rent: 35 },
     type: 'card',
     owner: null,
     count: '32',
@@ -504,7 +542,7 @@ const dataItem = ref([
     color: '#33CFFF',
     rent: 60,
     price: 300,
-    update: '',
+    upgrade: 0,
     position: 'top',
     row: '5/6',
     column: '9/10',
@@ -512,6 +550,8 @@ const dataItem = ref([
   },
   {
     id: 26,
+    title: 'Kids Clothes',
+    coefficient: { upgrade: 38, rent: 34 },
     type: 'card',
     owner: null,
     count: '33',
@@ -520,7 +560,7 @@ const dataItem = ref([
     color: '#FFBB00',
     rent: 58,
     price: 290,
-    update: '',
+    upgrade: 0,
     position: 'top',
     row: '5/6',
     column: '10/11',
@@ -528,6 +568,8 @@ const dataItem = ref([
   },
   {
     id: 27,
+    title: 'Railway Station',
+    coefficient: { upgrade: 50, rent: 40 },
     type: 'card',
     owner: null,
     count: '34',
@@ -536,7 +578,7 @@ const dataItem = ref([
     color: 'transparent',
     rent: 45,
     price: 225,
-    update: '',
+    upgrade: 0,
     position: 'right',
     row: '5/6',
     column: '11/12',
@@ -545,6 +587,8 @@ const dataItem = ref([
 
   {
     id: 28,
+    title: 'Grocery Family',
+    coefficient: { upgrade: 38, rent: 34 },
     type: 'card',
     owner: null,
     count: '15',
@@ -553,7 +597,7 @@ const dataItem = ref([
     color: '#C5D65C',
     rent: 44,
     price: 220,
-    update: '',
+    upgrade: 0,
     position: 'left',
     row: '6/7',
     column: '1/2',
@@ -561,6 +605,8 @@ const dataItem = ref([
   },
   {
     id: 29,
+    title: 'Men`s Clothes',
+    coefficient: { upgrade: 40, rent: 35 },
     type: 'card',
     owner: null,
     count: '35',
@@ -569,7 +615,7 @@ const dataItem = ref([
     color: '#FFBB00',
     rent: 62,
     price: 310,
-    update: '',
+    upgrade: 0,
     position: 'right',
     row: '6/7',
     column: '11/12',
@@ -578,6 +624,8 @@ const dataItem = ref([
 
   {
     id: 30,
+    title: 'Bus Station',
+    coefficient: { upgrade: 50, rent: 40 },
     type: 'card',
     owner: null,
     count: '14',
@@ -586,7 +634,7 @@ const dataItem = ref([
     color: 'transparent',
     rent: 45,
     price: 225,
-    update: '',
+    upgrade: 0,
     position: 'left',
     row: '7/8',
     column: '1/2',
@@ -594,6 +642,8 @@ const dataItem = ref([
   },
   {
     id: 31,
+    title: 'Grocery Organic',
+    coefficient: { upgrade: 35, rent: 35 },
     type: 'card',
     owner: null,
     count: '13',
@@ -602,7 +652,7 @@ const dataItem = ref([
     color: '#C5D65C',
     rent: 43,
     price: 215,
-    update: '',
+    upgrade: 0,
     position: 'bottom',
     row: '7/8',
     column: '2/3',
@@ -610,6 +660,8 @@ const dataItem = ref([
   },
   {
     id: 32,
+    title: 'Smoke Shop',
+    coefficient: { upgrade: 40, rent: 37 },
     type: 'card',
     owner: null,
     count: '12',
@@ -618,7 +670,7 @@ const dataItem = ref([
     color: '#D665FF',
     rent: 38,
     price: 190,
-    update: '',
+    upgrade: 0,
     position: 'bottom',
     row: '7/8',
     column: '3/4',
@@ -634,7 +686,7 @@ const dataItem = ref([
     color: null,
     rent: null,
     price: null,
-    update: '',
+    upgrade: 0,
     position: null,
     row: '7/8',
     column: '4/5',
@@ -642,6 +694,8 @@ const dataItem = ref([
   },
   {
     id: 34,
+    title: 'Vape Shop',
+    coefficient: { upgrade: 44, rent: 35 },
     type: 'card',
     owner: null,
     count: '10',
@@ -650,7 +704,7 @@ const dataItem = ref([
     color: '#D665FF',
     rent: 42,
     price: 210,
-    update: '',
+    upgrade: 0,
     position: 'bottom',
     row: '7/8',
     column: '5/6',
@@ -666,7 +720,7 @@ const dataItem = ref([
     color: null,
     rent: null,
     price: null,
-    update: '',
+    upgrade: 0,
     position: null,
     row: '7/8',
     column: '6/7',
@@ -674,6 +728,8 @@ const dataItem = ref([
   },
   {
     id: 36,
+    title: 'Las Vegas',
+    coefficient: { upgrade: 40, rent:40 },
     type: 'card',
     owner: null,
     count: '36',
@@ -682,7 +738,7 @@ const dataItem = ref([
     color: '#E83061',
     rent: 75,
     price: 375,
-    update: '',
+    upgrade: 0,
     position: 'right',
     row: '7/8',
     column: '11/12',
@@ -690,6 +746,8 @@ const dataItem = ref([
   },
   {
     id: 37,
+    title: 'Grocery',
+    coefficient: { upgrade: 35, rent: 33 },
     type: 'card',
     owner: null,
     count: '13',
@@ -698,7 +756,7 @@ const dataItem = ref([
     color: '#C5D65C',
     rent: 46,
     price: 230,
-    update: '',
+    upgrade: 0,
     position: 'left',
     row: '8/9',
     column: '1/2',
@@ -706,6 +764,8 @@ const dataItem = ref([
   },
   {
     id: 38,
+    title: 'Hookah Shop',
+    coefficient: { upgrade: 40, rent: 35 },
     type: 'card',
     owner: null,
     count: '8',
@@ -714,7 +774,7 @@ const dataItem = ref([
     color: '#D665FF',
     rent: 40,
     price: 200,
-    update: '',
+    upgrade: 0,
     position: 'right',
     row: '8/9',
     column: '6/7',
@@ -731,7 +791,7 @@ const dataItem = ref([
     color: null,
     rent: null,
     price: null,
-    update: '',
+    upgrade: 0,
     position: 'right',
     row: '8/9',
     column: '11/12',
@@ -748,7 +808,7 @@ const dataItem = ref([
     color: null,
     rent: null,
     price: null,
-    update: '',
+    upgrade: 0,
     position: 'left',
     row: '9/10',
     column: '1/2',
@@ -756,6 +816,8 @@ const dataItem = ref([
   },
   {
     id: 41,
+    title: 'Water Energy',
+    coefficient: { upgrade: 50, rent: 40 },
     type: 'card',
     owner: null,
     count: '7',
@@ -764,7 +826,7 @@ const dataItem = ref([
     color: 'transparent',
     rent: 45,
     price: 225,
-    update: '',
+    upgrade: 0,
     position: 'right',
     row: '9/10',
     column: '6/7',
@@ -773,6 +835,8 @@ const dataItem = ref([
 
   {
     id: 42,
+    title: 'Casino',
+    coefficient: { upgrade: 45, rent:40 },
     type: 'card',
     owner: null,
     count: '38',
@@ -781,7 +845,7 @@ const dataItem = ref([
     color: '#E83061',
     rent: 80,
     price: 400,
-    update: '',
+    upgrade: 0,
     position: 'right',
     row: '9/10',
     column: '11/12',
@@ -790,6 +854,8 @@ const dataItem = ref([
 
   {
     id: 43,
+    title: 'Coffee Shop',
+    coefficient: { upgrade: 30, rent: 34 },
     type: 'card',
     owner: null,
     count: '11',
@@ -798,7 +864,7 @@ const dataItem = ref([
     color: '#8D33FF',
     rent: 35,
     price: 175,
-    update: '',
+    upgrade: 0,
     position: 'left',
     row: '10/11',
     column: '1/2',
@@ -806,6 +872,8 @@ const dataItem = ref([
   },
   {
     id: 44,
+    title: 'Barber Kids',
+    coefficient: { upgrade: 35, rent: 32 },
     type: 'card',
     owner: null,
     count: '6',
@@ -814,7 +882,7 @@ const dataItem = ref([
     color: '#FF658E',
     rent: 28,
     price: 140,
-    update: '',
+    upgrade: 0,
     position: 'right',
     row: '10/11',
     column: '6/7',
@@ -822,6 +890,8 @@ const dataItem = ref([
   },
   {
     id: 45,
+    title: 'Hotel Royal',
+    coefficient: { upgrade: 40, rent: 40 },
     type: 'card',
     owner: null,
     count: '39',
@@ -830,7 +900,7 @@ const dataItem = ref([
     color: '#E83061',
     rent: 70,
     price: 350,
-    update: '',
+    upgrade: 0,
     position: 'right',
     row: '10/11',
     column: '11/12',
@@ -847,7 +917,7 @@ const dataItem = ref([
     color: null,
     rent: null,
     price: null,
-    update: '',
+    upgrade: 0,
     position: null,
     row: '11/12',
     column: '1/2',
@@ -855,6 +925,8 @@ const dataItem = ref([
   },
   {
     id: 47,
+    title: 'Hot Dogs',
+    coefficient: { upgrade: 25, rent: 30 },
     type: 'card',
     owner: null,
     count: '9',
@@ -863,7 +935,7 @@ const dataItem = ref([
     color: '#8D33FF',
     rent: 34,
     price: 170,
-    update: '',
+    upgrade: 0,
     position: 'bottom',
     row: '11/12',
     column: '2/3',
@@ -871,6 +943,8 @@ const dataItem = ref([
   },
   {
     id: 48,
+    title: 'Airport',
+    coefficient: { upgrade: 50, rent: 40 },
     type: 'card',
     owner: null,
     count: '8',
@@ -879,7 +953,7 @@ const dataItem = ref([
     color: 'transparent',
     rent: 45,
     price: 225,
-    update: '',
+    upgrade: 0,
     position: 'bottom',
     row: '11/12',
     column: '3/4',
@@ -887,6 +961,8 @@ const dataItem = ref([
   },
   {
     id: 49,
+    title: 'Croissant Bakehouse',
+    coefficient: { upgrade: 28, rent: 35 },
     type: 'card',
     owner: null,
     count: '7',
@@ -895,7 +971,7 @@ const dataItem = ref([
     color: '#8D33FF',
     rent: 36,
     price: 180,
-    update: '',
+    upgrade: 0,
     position: 'bottom',
     row: '11/12',
     column: '4/5',
@@ -903,6 +979,8 @@ const dataItem = ref([
   },
   {
     id: 50,
+    title: 'Barber Shop',
+    coefficient: { upgrade: 33, rent: 34 },
     type: 'card',
     owner: null,
     count: '6',
@@ -911,7 +989,7 @@ const dataItem = ref([
     color: '#FF658E',
     rent: 32,
     price: 160,
-    update: '',
+    upgrade: 0,
     position: 'bottom',
     row: '11/12',
     column: '5/6',
@@ -927,7 +1005,7 @@ const dataItem = ref([
     color: null,
     rent: null,
     price: null,
-    update: null,
+    upgrade: null,
     position: null,
     row: '11/12',
     column: '6/7',
@@ -935,6 +1013,8 @@ const dataItem = ref([
   },
   {
     id: 52,
+    title: 'Hair Salon',
+    coefficient: { upgrade: 35, rent: 35 },
     type: 'card',
     owner: null,
     count: '4',
@@ -943,7 +1023,7 @@ const dataItem = ref([
     color: '#FF658E',
     rent: 35,
     price: 175,
-    update: '',
+    upgrade: 0,
     position: 'bottom',
     row: '11/12',
     column: '7/8',
@@ -951,6 +1031,8 @@ const dataItem = ref([
   },
   {
     id: 53,
+    title: 'Continantal Avenue',
+    coefficient: { upgrade: 50, rent: 35 },
     type: 'card',
     owner: null,
     count: '3',
@@ -959,7 +1041,7 @@ const dataItem = ref([
     color: '#5CD6B6',
     rent: 20,
     price: 100,
-    update: '',
+    upgrade: 0,
     position: 'bottom',
     row: '11/12',
     column: '8/9',
@@ -967,6 +1049,8 @@ const dataItem = ref([
   },
   {
     id: 54,
+    title: 'Old Avenue',
+    coefficient: { upgrade: 50, rent: 32 },
     type: 'card',
     owner: null,
     count: '2',
@@ -975,7 +1059,7 @@ const dataItem = ref([
     color: '#5CD6B6',
     rent: 30,
     price: 150,
-    update: '',
+    upgrade: 0,
     position: 'bottom',
     row: '11/12',
     column: '9/10',
@@ -983,6 +1067,8 @@ const dataItem = ref([
   },
   {
     id: 55,
+    title: 'Main Avenue',
+    coefficient: { upgrade: 50, rent: 33 },
     type: 'card',
     owner: null,
     count: '1',
@@ -991,7 +1077,7 @@ const dataItem = ref([
     color: '#5CD6B6',
     rent: 24,
     price: 120,
-    update: '',
+    upgrade: 0,
     position: 'bottom',
     row: '11/12',
     column: '10/11',
@@ -1007,7 +1093,7 @@ const dataItem = ref([
     color: null,
     rent: null,
     price: null,
-    update: null,
+    upgrade: null,
     position: null,
     row: '11/12',
     column: '11/12',
@@ -1015,78 +1101,78 @@ const dataItem = ref([
   }
 ])
 
-// const players = ref([
-//   {
-//     id: 1,
-//     name: 'Player 1',
-//     money: 1500,
-//     color: '#F70000',
-//     img: 'pacman',
-//     row: '11/12',
-//     column: '11/12',
-//     positionStart: 0,
-//     positionGoTo: 0,
-//     direction: 'main',
-//     active: true,
-//     details: true,
-//     skipMove: false,
-//     status: null,
-//     doubleMove: 0
-//   },
-//   {
-//     id: 2,
-//     name: 'Player 2',
-//     money: 1500,
-//     color: '#00DDEB',
-//     img: 'burst-8',
-//     row: '11/12',
-//     column: '11/12',
-//     positionStart: 0,
-//     positionGoTo: 0,
-//     direction: 'main',
-//     active: false,
-//     details: false,
-//     skipMove: false,
-//     status: null,
-//     doubleMove: 0
-//   },
-//   {
-//     id: 3,
-//     name: 'Player 3',
-//     money: 1500,
-//     color: '#00CC08',
-//     img: 'yin-yang',
-//     row: '11/12',
-//     column: '11/12',
-//     positionStart: 0,
-//     positionGoTo: 0,
-//     direction: 'main',
-//     active: false,
-//     details: false,
-//     skipMove: false,
-//     status: null,
-//     doubleMove: 0
-//   },
-//   {
-//     id: 4,
-//     name: 'Player 4',
-//     money: 1500,
-//     color: '#A300CC',
-//     img: 'heart',
-//     row: '11/12',
-//     column: '11/12',
-//     positionStart: 0,
-//     positionGoTo: 0,
-//     direction: 'main',
-//     active: false,
-//     details: false,
-//     skipMove: false,
-//     status: null,
-//     doubleMove: 0
-//   }
-// ])
+const players = ref([
+  {
+    id: 1,
+    name: 'Player 1',
+    money: 1500,
+    color: '#F70000',
+    img: 'pacman',
+    row: '11/12',
+    column: '11/12',
+    positionStart: 0,
+    positionGoTo: 0,
+    direction: 'main',
+    active: true,
+    details: true,
+    skipMove: false,
+    status: null,
+    doubleMove: 0
+  },
+  {
+    id: 2,
+    name: 'Player 2',
+    money: 1500,
+    color: '#00DDEB',
+    img: 'burst-8',
+    row: '11/12',
+    column: '11/12',
+    positionStart: 0,
+    positionGoTo: 0,
+    direction: 'main',
+    active: false,
+    details: false,
+    skipMove: false,
+    status: null,
+    doubleMove: 0
+  },
+  {
+    id: 3,
+    name: 'Player 3',
+    money: 1500,
+    color: '#00CC08',
+    img: 'yin-yang',
+    row: '11/12',
+    column: '11/12',
+    positionStart: 0,
+    positionGoTo: 0,
+    direction: 'main',
+    active: false,
+    details: false,
+    skipMove: false,
+    status: null,
+    doubleMove: 0
+  },
+  {
+    id: 4,
+    name: 'Player 4',
+    money: 1500,
+    color: '#A300CC',
+    img: 'heart',
+    row: '11/12',
+    column: '11/12',
+    positionStart: 0,
+    positionGoTo: 0,
+    direction: 'main',
+    active: false,
+    details: false,
+    skipMove: false,
+    status: null,
+    doubleMove: 0
+  }
+])
 
-const players=ref(props.data)
+// const players=ref(props.data)
 
 const buttonRoll = ref(true)
 const enoughMoney = ref(false)
@@ -1125,7 +1211,7 @@ function finishedRound() {
     playerActiveIndex.value < players.value.length - 1
       ? playerActiveIndex.value++
       : (playerActiveIndex.value = 0)
-      buttonRoll.value=true
+    buttonRoll.value = true
   }
   players.value.forEach((el) => {
     el.id === playerActiveIndex.value + 1 ? (el.active = true) : (el.active = false)
@@ -1200,8 +1286,8 @@ function rollDice() {
 }
 
 function goTo() {
-  if(itemsChoose.value[0].type === 'start') {
-    showChoose.value=false
+  if (itemsChoose.value[0].type === 'start') {
+    showChoose.value = false
   }
   // showChoose.value=true
   itemsChoose.value[0].type === 'jail' ? isJail() : ''
@@ -1209,18 +1295,16 @@ function goTo() {
   players.value[playerActiveIndex.value].column = itemsChoose.value[0].column
   players.value[playerActiveIndex.value].direction = itemsChoose.value[0].direction
 
-
   if (itemsChoose.value[0].type === 'police') {
     goToJail()
     isJail()
   }
 
   if (itemsChoose.value[0].type === 'go') {
-    showChoose.value=false
-    setTimeout(()=>{
-
+    showChoose.value = false
+    setTimeout(() => {
       goToCasino()
-    },300)
+    }, 300)
   }
 
   isTeleport()
@@ -1433,7 +1517,19 @@ function isBankrupt() {
   isGameOver()
 }
 
-watch(players, () => {
+function isUpgrade(data) {
+  dataItem.value.forEach((el) => {
+    if (el.id === data) {
+      el.price = Math.floor(el.price + (el.price * el.coefficient.upgrade) / 100)
+      el.rent = Math.floor((el.price * el.coefficient.rent) / 100)
+      el.upgrade++
+    }
+  })
+
+  console.log(dataItem.value)
+}
+
+watch(players.value, () => {
   sortItems()
 })
 
@@ -1489,7 +1585,7 @@ onMounted(() => {
     background-color: #0d3b10;
     border-radius: 4px;
 
-    margin:auto 0 0 ;
+    margin: auto 0 0;
   }
 
   &__dice-wrap {
@@ -1510,6 +1606,7 @@ onMounted(() => {
     text-align: center;
     font-weight: 600;
     font-size: 36px;
+    color: black;
 
     background-color: white;
     border: 1px solid black;

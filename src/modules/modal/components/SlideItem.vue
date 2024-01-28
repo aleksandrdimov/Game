@@ -2,12 +2,12 @@
   <div
     class="slide"
     :style="{ '--color-bg-slide': item.type === 'teleport' ? '#06021A' : 'white' }"
-    @click="chooseItem"
+    @click="chooseItem(index)"
   >
     <div class="slide__line"></div>
     <div class="slide__body"></div>
 
-    <p class="slide__sell">Sell: {{sellCard}}$</p>
+    <p class="slide__sell">{{upgrade?`Rent: ${item.rent}`:`Sell: ${sellCard}`}}$</p>
     <div v-if="item.sell" class="slide__choose"></div>
   </div>
 </template>
@@ -17,6 +17,9 @@ import { onMounted, ref } from 'vue'
 
 const props = defineProps({
   item: { type: Object, required: true },
+  upgrade: { type: Boolean, required: false },
+  index: { type: Number, required: false }
+
 //   index: { type: Number, required: true }
 })
 
@@ -43,10 +46,13 @@ function getInit() {
   bgSlide.value = `url('../images/${props.item.img}.png')`
 }
 
-function chooseItem(){
+function chooseItem(index){
+  if(!props.upgrade){
     props.item.sell=!props.item.sell
+  }
+    emit('active',index)
 
-    emit('active')
+    console.log(props.item.sell)
 }
 
 onMounted(() => {
