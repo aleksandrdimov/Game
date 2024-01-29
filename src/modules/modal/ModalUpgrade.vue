@@ -37,14 +37,14 @@
           <div class="item__container">
             <div class="item__content">
               <div class="item__text">
-                Upgrade: <span>{{ activeCard.upgrade }}</span>
+                Upgrade: <span>{{activeCard.upgrade<3? activeCard.upgrade:'MAX' }}</span>
                 <img src="/images/icon_has_owner.svg" alt="house" />
               </div>
               <div class="item__text">
                 Rent: <span>{{ activeCard.rent }}$</span>
               </div>
             </div>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <svg v-if="activeCard.upgrade < 3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <g data-name="Double Arrow Box">
                 <rect x="2" y="2" width="20" height="20" rx="1" ry="1" style="fill: white" />
                 <path
@@ -57,7 +57,7 @@
                 />
               </g>
             </svg>
-            <div class="item__content">
+            <div v-if="activeCard.upgrade < 3" class="item__content">
               <div class="item__text upgrade">
                 Upgrade: <span>{{ activeCard.upgrade + 1 }} </span>
                 <img src="/images/icon_has_owner.svg" alt="house" />
@@ -67,8 +67,12 @@
               </div>
             </div>
           </div>
-          <button :disabled="player.money < buy" class="modal-upgrade__button" @click="getUpgrade">
-            Price upgrade {{ buy }}$
+          <button
+            :disabled="player.money < buy || activeCard.upgrade > 2"
+            class="modal-upgrade__button"
+            @click="getUpgrade"
+          >
+            {{ activeCard.upgrade < 3 ? `Price upgrade  ${buy}$` : 'You have max upgrade' }}
           </button>
         </div>
       </Transition>
@@ -102,24 +106,26 @@ function initCard(data) {
 }
 
 function getValues() {
-  buy.value = Math.floor(
-    activeCard.value.price + (activeCard.value.price * activeCard.value.coefficient.upgrade) / 100
-  )
-  rent.value = Math.floor((buy.value * activeCard.value.coefficient.rent) / 100)
+  if (activeCard.value.upgrade <= 2) {
+    buy.value = activeCard.value.coefficient[activeCard.value.upgrade].upgrade
+
+    rent.value = activeCard.value.coefficient[activeCard.value.upgrade].rent
+  }
 }
 
 function getUpgrade() {
   emit('upgrade', activeCard.value.id)
-  props.player.money = props.player.money - buy.value
+  if (activeCard.value.upgrade <= 3) {
+    props.player.money = props.player.money - buy.value
+  }
 }
 
 function closeUpgrade() {
   emit('close')
-  props.items.forEach((el) => el.sell = false)
+  props.items.forEach((el) => (el.sell = false))
 }
 
-
-onBeforeUpdate(()=>{
+onBeforeUpdate(() => {
   getValues()
 })
 </script>
@@ -145,6 +151,7 @@ onBeforeUpdate(()=>{
 
     width: 510px;
     min-height: 240px;
+    // min-height: 404px;
 
     display: flex;
     flex-direction: column;
@@ -238,6 +245,10 @@ onBeforeUpdate(()=>{
   // padding: 12px 44px;
   overflow: hidden;
 
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
   &__name {
     text-transform: capitalize;
     text-align: center;
@@ -245,16 +256,21 @@ onBeforeUpdate(()=>{
     font-size: 20px;
     line-height: 25px;
     letter-spacing: 0.5px;
-    margin-bottom: 12px;
+    // margin-bottom: 12px;
   }
 
   &__container {
     display: grid;
     grid-template-columns: 1fr 44px 1fr;
+    justify-content: center;
     align-items: center;
     gap: 24px;
     padding: 0 43px;
-    margin-bottom: 12px;
+
+    &.max{
+      grid-template-columns: auto;
+    }
+
   }
 
   &__content {
@@ -290,6 +306,10 @@ onBeforeUpdate(()=>{
 .upgrade-enter-to {
   height: 165px;
   transition: height 0.4s ease-in-out;
+}
+
+.upgrade-leave-from {
+  height: 165px;
 }
 .upgrade-leave-to {
   height: 0px;

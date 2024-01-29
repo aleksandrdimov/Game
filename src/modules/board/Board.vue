@@ -85,6 +85,7 @@
       class="board__players"
       :players="players"
       :groups="sortGroupItems"
+      :upgradeItems="upgradeItems"
       :active="players[playerActiveIndex]"
       @open="openDetails"
       @upgrade="isUpgrade"
@@ -127,7 +128,11 @@ const dataItem = ref([
   {
     id: 2,
     title: 'Puma',
-    coefficient: { upgrade: 50, rent: 33 },
+    coefficient: [
+      { upgrade: 400, rent: 120 },
+      { upgrade: 500, rent: 175 },
+      { upgrade: 600, rent: 250 }
+    ],
     type: 'card',
     owner: 'Player 1',
     count: '21',
@@ -145,7 +150,11 @@ const dataItem = ref([
   {
     id: 3,
     title: 'Reebok',
-    coefficient: { upgrade: 52, rent: 35 },
+    coefficient: [
+      { upgrade: 370, rent: 112 },
+      { upgrade: 460, rent: 170 },
+      { upgrade: 580, rent: 230 }
+    ],
     type: 'card',
     owner: 'Player 1',
     count: '22',
@@ -163,7 +172,11 @@ const dataItem = ref([
   {
     id: 4,
     title: 'Sea Terminal',
-    coefficient: { upgrade: 45, rent: 40 },
+    coefficient: [
+      { upgrade: 300, rent: 100 },
+      { upgrade: 350, rent: 150 },
+      { upgrade: 400, rent: 200 }
+    ],
     type: 'card',
     owner: null,
     count: '23',
@@ -181,7 +194,11 @@ const dataItem = ref([
   {
     id: 5,
     title: 'Fitness Dream',
-    coefficient: { upgrade: 50, rent: 30 },
+    coefficient: [
+      { upgrade: 300, rent: 90 },
+      { upgrade: 380, rent: 135 },
+      { upgrade: 480, rent: 190 }
+    ],
     type: 'card',
     owner: 'Player 1',
     count: '24',
@@ -215,7 +232,11 @@ const dataItem = ref([
   {
     id: 7,
     title: 'Fitness Girl',
-    coefficient: { upgrade: 48, rent: 31 },
+    coefficient: [
+      { upgrade: 365, rent: 110 },
+      { upgrade: 460, rent: 150 },
+      { upgrade: 570, rent: 200 }
+    ],
     type: 'card',
     owner: 'Player 1',
     count: '26',
@@ -249,7 +270,11 @@ const dataItem = ref([
   {
     id: 9,
     title: 'Sushi Bar',
-    coefficient: { upgrade: 50, rent: 34 },
+    coefficient: [
+      { upgrade: 350, rent: 105},
+      { upgrade: 400, rent: 150 },
+      { upgrade: 550, rent: 210 }
+    ],
     type: 'card',
     owner: null,
     count: '28',
@@ -267,7 +292,11 @@ const dataItem = ref([
   {
     id: 10,
     title: 'Steak House',
-    coefficient: { upgrade: 45, rent: 31 },
+    coefficient: [
+      { upgrade: 375, rent: 112 },
+      { upgrade: 470, rent: 160 },
+      { upgrade: 590, rent: 220 }
+    ],
     type: 'card',
     owner: null,
     count: '29',
@@ -302,7 +331,11 @@ const dataItem = ref([
   {
     id: 12,
     title: 'adidas',
-    coefficient: { upgrade: 50, rent: 32 },
+    coefficient:[
+      { upgrade: 380, rent: 116 },
+      { upgrade: 480, rent: 170 },
+      { upgrade: 600, rent: 240 }
+    ],
     type: 'card',
     owner: 'Player 1',
     count: '19',
@@ -320,7 +353,11 @@ const dataItem = ref([
   {
     id: 13,
     title: 'Fitness Men',
-    coefficient: { upgrade: 45, rent: 31 },
+    coefficient: [
+      { upgrade: 330, rent: 100 },
+      { upgrade: 420, rent: 135 },
+      { upgrade: 520, rent: 190 }
+    ],
     type: 'card',
     owner: 'Player 1',
     count: '26',
@@ -338,7 +375,11 @@ const dataItem = ref([
   {
     id: 14,
     title: 'Burger House',
-    coefficient: { upgrade: 42, rent: 34 },
+    coefficient: [
+      { upgrade: 365, rent: 110 },
+      { upgrade: 460, rent: 155 },
+      { upgrade: 570, rent: 215 }
+    ],
     type: 'card',
     owner: null,
     count: '31',
@@ -357,7 +398,11 @@ const dataItem = ref([
   {
     id: 15,
     title: 'PC Shop',
-    coefficient: { upgrade: 38, rent: 30 },
+    coefficient: [
+      { upgrade: 350, rent: 104 },
+      { upgrade: 430, rent: 155 },
+      { upgrade: 540, rent: 222 }
+    ],
     type: 'card',
     owner: null,
     count: '18',
@@ -375,7 +420,11 @@ const dataItem = ref([
   {
     id: 16,
     title: 'Bessarabian Wine Shop',
-    coefficient: { upgrade: 45, rent: 32 },
+    coefficient: [
+      { upgrade: 380, rent: 114 },
+      { upgrade: 475, rent: 160 },
+      { upgrade: 600, rent: 220 }
+    ],
     type: 'card',
     owner: null,
     count: '28',
@@ -410,7 +459,11 @@ const dataItem = ref([
   {
     id: 18,
     title: 'Mobile Shop',
-    coefficient: { upgrade: 40, rent: 34 },
+    coefficient: [
+      { upgrade: 320, rent: 96 },
+      { upgrade: 400, rent: 140},
+      { upgrade: 500, rent: 205 }
+    ],
     type: 'card',
     owner: null,
     count: '17',
@@ -444,7 +497,11 @@ const dataItem = ref([
   {
     id: 20,
     title: 'Wine Valley',
-    coefficient: { upgrade: 43, rent: 35 },
+    coefficient: [
+      { upgrade: 425, rent: 128 },
+      { upgrade: 530, rent: 180 },
+      { upgrade: 665, rent: 250 }
+    ],
     type: 'card',
     owner: null,
     count: '30',
@@ -478,7 +535,11 @@ const dataItem = ref([
   {
     id: 22,
     title: 'Fashion Girl',
-    coefficient: { upgrade: 48, rent: 33 },
+    coefficient: [
+      { upgrade: 440, rent: 132 },
+      { upgrade: 550, rent: 190 },
+      { upgrade: 690, rent: 270 }
+    ],
     type: 'card',
     owner: null,
     count: '33',
@@ -497,7 +558,11 @@ const dataItem = ref([
   {
     id: 23,
     title: 'Appluances Shop',
-    coefficient: { upgrade: 40, rent: 32 },
+    coefficient: [
+      { upgrade: 370, rent: 110 },
+      { upgrade: 460, rent: 160 },
+      { upgrade: 575, rent: 235 }
+    ],
     type: 'card',
     owner: null,
     count: '16',
@@ -515,7 +580,11 @@ const dataItem = ref([
   {
     id: 24,
     title: 'Electric Power',
-    coefficient: { upgrade: 50, rent: 40 },
+    coefficient: [
+      { upgrade: 300, rent: 100 },
+      { upgrade: 350, rent: 150 },
+      { upgrade: 400, rent: 200 }
+    ],
     type: 'card',
     owner: null,
     count: '27',
@@ -533,7 +602,11 @@ const dataItem = ref([
   {
     id: 25,
     title: 'Bessarabian Wine Tour',
-    coefficient: { upgrade: 44, rent: 35 },
+    coefficient: [
+      { upgrade: 400, rent: 120 },
+      { upgrade: 500, rent: 170 },
+      { upgrade: 620, rent: 230 }
+    ],
     type: 'card',
     owner: null,
     count: '32',
@@ -551,7 +624,11 @@ const dataItem = ref([
   {
     id: 26,
     title: 'Kids Clothes',
-    coefficient: { upgrade: 38, rent: 34 },
+    coefficient: [
+      { upgrade: 390, rent: 116 },
+      { upgrade: 480, rent: 165 },
+      { upgrade: 600, rent: 235 }
+    ],
     type: 'card',
     owner: null,
     count: '33',
@@ -569,7 +646,11 @@ const dataItem = ref([
   {
     id: 27,
     title: 'Railway Station',
-    coefficient: { upgrade: 50, rent: 40 },
+    coefficient: [
+      { upgrade: 300, rent: 100 },
+      { upgrade: 350, rent: 150 },
+      { upgrade: 400, rent: 200 }
+    ],
     type: 'card',
     owner: null,
     count: '34',
@@ -588,7 +669,11 @@ const dataItem = ref([
   {
     id: 28,
     title: 'Grocery Family',
-    coefficient: { upgrade: 38, rent: 34 },
+    coefficient: [
+      { upgrade: 290, rent: 88},
+      { upgrade: 370, rent: 120 },
+      { upgrade: 460, rent: 165 }
+    ],
     type: 'card',
     owner: null,
     count: '15',
@@ -606,7 +691,11 @@ const dataItem = ref([
   {
     id: 29,
     title: 'Men`s Clothes',
-    coefficient: { upgrade: 40, rent: 35 },
+    coefficient: [
+      { upgrade: 415, rent: 124 },
+      { upgrade: 515, rent: 180 },
+      { upgrade: 645, rent: 250 }
+    ],
     type: 'card',
     owner: null,
     count: '35',
@@ -625,7 +714,11 @@ const dataItem = ref([
   {
     id: 30,
     title: 'Bus Station',
-    coefficient: { upgrade: 50, rent: 40 },
+    coefficient: [
+      { upgrade: 300, rent: 100 },
+      { upgrade: 350, rent: 150 },
+      { upgrade: 400, rent: 200 }
+    ],
     type: 'card',
     owner: null,
     count: '14',
@@ -643,7 +736,11 @@ const dataItem = ref([
   {
     id: 31,
     title: 'Grocery Organic',
-    coefficient: { upgrade: 35, rent: 35 },
+    coefficient: [
+      { upgrade: 285, rent: 86 },
+      { upgrade: 360, rent: 120 },
+      { upgrade: 450, rent: 160 }
+    ],
     type: 'card',
     owner: null,
     count: '13',
@@ -661,7 +758,11 @@ const dataItem = ref([
   {
     id: 32,
     title: 'Smoke Shop',
-    coefficient: { upgrade: 40, rent: 37 },
+    coefficient: [
+      { upgrade: 255, rent: 76},
+      { upgrade: 320, rent: 110 },
+      { upgrade: 400, rent: 155 }
+    ],
     type: 'card',
     owner: null,
     count: '12',
@@ -695,7 +796,11 @@ const dataItem = ref([
   {
     id: 34,
     title: 'Vape Shop',
-    coefficient: { upgrade: 44, rent: 35 },
+    coefficient: [
+      { upgrade: 280, rent: 84 },
+      { upgrade: 350, rent: 180 },
+      { upgrade: 440, rent: 250 }
+    ],
     type: 'card',
     owner: null,
     count: '10',
@@ -729,7 +834,11 @@ const dataItem = ref([
   {
     id: 36,
     title: 'Las Vegas',
-    coefficient: { upgrade: 40, rent:40 },
+    coefficient: [
+      { upgrade: 500, rent: 150 },
+      { upgrade: 625, rent: 230 },
+      { upgrade: 780, rent: 335 }
+    ],
     type: 'card',
     owner: null,
     count: '36',
@@ -747,7 +856,11 @@ const dataItem = ref([
   {
     id: 37,
     title: 'Grocery',
-    coefficient: { upgrade: 35, rent: 33 },
+    coefficient: [
+      { upgrade: 300, rent: 92 },
+      { upgrade: 380, rent: 125},
+      { upgrade: 480, rent: 175 }
+    ],
     type: 'card',
     owner: null,
     count: '13',
@@ -765,7 +878,11 @@ const dataItem = ref([
   {
     id: 38,
     title: 'Hookah Shop',
-    coefficient: { upgrade: 40, rent: 35 },
+    coefficient: [
+      { upgrade: 265, rent: 80 },
+      { upgrade: 330, rent: 115 },
+      { upgrade: 415, rent: 160 }
+    ],
     type: 'card',
     owner: null,
     count: '8',
@@ -817,7 +934,11 @@ const dataItem = ref([
   {
     id: 41,
     title: 'Water Energy',
-    coefficient: { upgrade: 50, rent: 40 },
+    coefficient: [
+      { upgrade: 300, rent: 100 },
+      { upgrade: 350, rent: 150 },
+      { upgrade: 400, rent: 200 }
+    ],
     type: 'card',
     owner: null,
     count: '7',
@@ -836,7 +957,11 @@ const dataItem = ref([
   {
     id: 42,
     title: 'Casino',
-    coefficient: { upgrade: 45, rent:40 },
+    coefficient: [
+      { upgrade: 530, rent: 160 },
+      { upgrade: 660, rent: 245 },
+      { upgrade: 830, rent: 360 }
+    ],
     type: 'card',
     owner: null,
     count: '38',
@@ -855,7 +980,11 @@ const dataItem = ref([
   {
     id: 43,
     title: 'Coffee Shop',
-    coefficient: { upgrade: 30, rent: 34 },
+    coefficient:[
+      { upgrade: 235, rent: 70 },
+      { upgrade: 300, rent: 100 },
+      { upgrade: 365, rent: 140 }
+    ],
     type: 'card',
     owner: null,
     count: '11',
@@ -873,7 +1002,11 @@ const dataItem = ref([
   {
     id: 44,
     title: 'Barber Kids',
-    coefficient: { upgrade: 35, rent: 32 },
+    coefficient: [
+      { upgrade: 185, rent: 56 },
+      { upgrade: 240, rent: 80 },
+      { upgrade: 300, rent: 107 }
+    ],
     type: 'card',
     owner: null,
     count: '6',
@@ -891,7 +1024,11 @@ const dataItem = ref([
   {
     id: 45,
     title: 'Hotel Royal',
-    coefficient: { upgrade: 40, rent: 40 },
+    coefficient: [
+      { upgrade: 465, rent: 140 },
+      { upgrade: 580, rent: 210 },
+      { upgrade: 730, rent: 310 }
+    ],
     type: 'card',
     owner: null,
     count: '39',
@@ -926,7 +1063,11 @@ const dataItem = ref([
   {
     id: 47,
     title: 'Hot Dogs',
-    coefficient: { upgrade: 25, rent: 30 },
+    coefficient: [
+      { upgrade: 225, rent: 68 },
+      { upgrade: 300, rent: 100 },
+      { upgrade: 360, rent: 135}
+    ],
     type: 'card',
     owner: null,
     count: '9',
@@ -944,7 +1085,11 @@ const dataItem = ref([
   {
     id: 48,
     title: 'Airport',
-    coefficient: { upgrade: 50, rent: 40 },
+    coefficient: [
+      { upgrade: 300, rent: 100 },
+      { upgrade: 350, rent: 150 },
+      { upgrade: 400, rent: 200 }
+    ],
     type: 'card',
     owner: null,
     count: '8',
@@ -962,7 +1107,11 @@ const dataItem = ref([
   {
     id: 49,
     title: 'Croissant Bakehouse',
-    coefficient: { upgrade: 28, rent: 35 },
+    coefficient: [
+      { upgrade: 240, rent: 72 },
+      { upgrade: 300, rent: 105 },
+      { upgrade: 375, rent: 140 }
+    ],
     type: 'card',
     owner: null,
     count: '7',
@@ -980,7 +1129,11 @@ const dataItem = ref([
   {
     id: 50,
     title: 'Barber Shop',
-    coefficient: { upgrade: 33, rent: 34 },
+    coefficient: [
+      { upgrade: 215, rent:64 },
+      { upgrade: 270, rent: 90 },
+      { upgrade: 335, rent: 125}
+    ],
     type: 'card',
     owner: null,
     count: '6',
@@ -1014,7 +1167,11 @@ const dataItem = ref([
   {
     id: 52,
     title: 'Hair Salon',
-    coefficient: { upgrade: 35, rent: 35 },
+    coefficient:[
+      { upgrade: 230, rent: 70 },
+      { upgrade: 300, rent: 100 },
+      { upgrade: 365, rent: 135 }
+    ],
     type: 'card',
     owner: null,
     count: '4',
@@ -1032,9 +1189,13 @@ const dataItem = ref([
   {
     id: 53,
     title: 'Continantal Avenue',
-    coefficient: { upgrade: 50, rent: 35 },
+    coefficient: [
+      { upgrade: 135, rent: 40 },
+      { upgrade: 170, rent: 60 },
+      { upgrade: 210, rent: 90 }
+    ],
     type: 'card',
-    owner: null,
+    owner: 'Player 2',
     count: '3',
     img: 'continantal_avenue_img',
     sell: false,
@@ -1050,9 +1211,13 @@ const dataItem = ref([
   {
     id: 54,
     title: 'Old Avenue',
-    coefficient: { upgrade: 50, rent: 32 },
+    coefficient: [
+      { upgrade: 200, rent: 60 },
+      { upgrade: 250, rent: 90 },
+      { upgrade: 310, rent: 135}
+    ],
     type: 'card',
-    owner: null,
+    owner: 'Player 2',
     count: '2',
     img: 'old_avenue_img',
     sell: false,
@@ -1068,9 +1233,13 @@ const dataItem = ref([
   {
     id: 55,
     title: 'Main Avenue',
-    coefficient: { upgrade: 50, rent: 33 },
+    coefficient: [
+      { upgrade: 160, rent: 48},
+      { upgrade: 200, rent: 70 },
+      { upgrade: 250, rent: 105}
+    ],
     type: 'card',
-    owner: null,
+    owner: 'Player 2',
     count: '1',
     img: 'main_avenue_img',
     sell: false,
@@ -1193,6 +1362,7 @@ const showChoose = ref(false)
 
 const sortGroupItems = ref([])
 const tradeItems = ref([])
+const upgradeItems = ref([])
 
 function finishedRound() {
   playerActiveIndex.value < players.value.length - 1
@@ -1519,22 +1689,69 @@ function isBankrupt() {
 
 function isUpgrade(data) {
   dataItem.value.forEach((el) => {
-    if (el.id === data) {
-      el.price = Math.floor(el.price + (el.price * el.coefficient.upgrade) / 100)
-      el.rent = Math.floor((el.price * el.coefficient.rent) / 100)
+    if (el.id === data&&el.upgrade<=2) {
+      el.price = el.coefficient[el.upgrade].upgrade
+      el.rent = el.coefficient[el.upgrade].rent
       el.upgrade++
     }
   })
-
-  console.log(dataItem.value)
 }
+
+function getUpgradeItems() {
+  let resultArray = []
+
+  sortGroupItems.value.forEach((group) => {
+    const result = group.items.filter(
+      (el) => el.owner === players.value[playerActiveIndex.value].name
+    )
+
+    result.length === group.items.length ? (resultArray = [...resultArray, ...group.items]) : ''
+  })
+
+  upgradeItems.value = dataItem.value
+    .filter((item) => {
+      return resultArray.some((item2) => item2.id === item.id)
+    })
+    .sort((a, b) => {
+      if (a.color > b.color) {
+        return 1
+      }
+      if (a.color < b.color) {
+        return -1
+      }
+      return 0
+    })
+}
+
+// function calc() {
+//   let rent =24
+//   let upgrade = rent*5
+//   let result = []
+//   const newCoefficient = { upgrade: 0, rent: 0 }
+
+//   for (let index = 0; index < 3; index++) {
+//     if (index == 0) {
+//       rent=rent*2
+//       upgrade=rent/0.3
+//     } else {
+//       let asd=0.3+index*0.06
+//       upgrade = upgrade *1.25
+//       rent = upgrade * asd
+//     }
+//     result = [...result, { ...newCoefficient, upgrade: upgrade, rent: rent }]
+//   }
+
+//   console.log(result)
+// }
 
 watch(players.value, () => {
   sortItems()
+  getUpgradeItems()
 })
 
 onMounted(() => {
   sortItems()
+  getUpgradeItems()
 })
 </script>
 

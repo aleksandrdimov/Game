@@ -70,11 +70,15 @@
           <div v-if="player.name !== 'Bank'" class="player__footer">
             <span class="player__money">{{ player.money }} $</span>
 
-            <button :disabled="!upgradeGroups.length" @click="toggleUpgrade" class="player__button">
+            <button
+              :disabled="!upgradeItems.length || player.id !== active.id"
+              @click="toggleUpgrade"
+              class="player__button"
+            >
               upgrade
             </button>
 
-            <button :disabled="active.id!==player.id" class="player__button">trade</button>
+            <button :disabled="active.id !== player.id" class="player__button">trade</button>
           </div>
           <div v-else class="player__bank">
             <div class="player__bank-owner">
@@ -91,8 +95,8 @@
     </div>
     <Transition>
       <ModalUpgrade
-        v-if="upgrade"
-        :items="upgradeGroups"
+        v-if="showUpgrade"
+        :items="upgradeItems"
         :player="player"
         @upgrade="getUpgrade"
         @close="toggleUpgrade"
@@ -104,11 +108,12 @@
 <script setup>
 import PlayerToken from './PlayerToken.vue'
 import ModalUpgrade from '@/modules/modal/ModalUpgrade.vue'
-import { onMounted, onUpdated, ref, watch } from 'vue'
+import { onBeforeUpdate, onMounted, onUpdated, ref, watch } from 'vue'
 
 const props = defineProps({
   player: { type: Object, required: true },
   groups: { type: Array, required: true },
+  upgradeItems: { type: Array, required: false },
   active: { type: Object, required: false }
 })
 
@@ -126,8 +131,8 @@ const playerColor = ref(props.player.color)
 const playerBg = ref('')
 const playerHover = ref('')
 const moneyColor = ref('')
-const upgrade = ref(false)
-const upgradeGroups = ref([])
+const showUpgrade = ref(false)
+// const upgradeGroups = ref([])
 
 function getPlayerColors(bg, hover) {
   playerBg.value = bg
@@ -158,20 +163,21 @@ function getColor() {
   }
 }
 
-function isUpgrade() {
-  upgradeGroups.value = []
+// function isUpgrade() {
+//   upgradeGroups.value = []
 
-  if (props.active === props.player) {
-    props.groups.forEach((group) => {
-      const result = group.items.filter((el) => el.owner === props.player.name)
+//   if (props.active === props.player) {
+//     props.groups.forEach((group) => {
+//       const result = group.items.filter((el) => el.owner === props.player.name)
 
-      result.length === group.items.length
-        ? (upgradeGroups.value = [...upgradeGroups.value, ...group.items])
-        : ''
-    })
-  }
-  console.log(props.active, props.player)
-}
+//       result.length === group.items.length
+//         ? (upgradeGroups.value = [...upgradeGroups.value, ...group.items])
+//         : ''
+//     })
+
+//     // console.log(upgradeGroups.value)
+//   }
+// }
 
 const ownerNumber = ref(0)
 
@@ -188,22 +194,26 @@ function calcOwnerCard() {
 }
 
 function toggleUpgrade() {
-  upgrade.value = !upgrade.value
+  showUpgrade.value = !showUpgrade.value
 }
 
-watch(props.groups, () => {
-  isUpgrade()
-})
+// watch(props.groups, () => {
+//   isUpgrade()
+// })
 
 onMounted(() => {
   getColor()
-  isUpgrade()
+  // isUpgrade()
   calcOwnerCard()
+})
+
+onBeforeUpdate(() => {
+  // isUpgrade()
 })
 
 onUpdated(() => {
   getColor()
-  isUpgrade()
+  // isUpgrade()
   calcOwnerCard()
 })
 </script>

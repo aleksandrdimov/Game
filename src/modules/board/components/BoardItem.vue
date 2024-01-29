@@ -15,7 +15,7 @@
       :class="[
         classLabelPosition,
         {
-          'edit':
+          edit:
             players[indexPlayerOwner].img === 'pacman' ||
             players[indexPlayerOwner].img === 'yin-yang' ||
             players[indexPlayerOwner].img === 'heart' ||
@@ -33,7 +33,17 @@
       class="board-item__label"
       :class="classLabelPosition"
       :style="{ '--color-bg': item.color }"
-    ></div>
+    >
+      <div class="board-item__houses"  :class="classLabelPosition">
+        <img
+          v-for="(icon, index) in houseNumbers"
+          :key="index"
+          class="board-item__houses-item"
+          src="/images/icon_has_owner.svg"
+          alt="house"
+        />
+      </div>
+    </div>
     <PlayerToken
       :player="players[indexPlayerOwner]"
       :small="true"
@@ -42,7 +52,7 @@
       :class="[
         classLabelPosition,
         {
-          'edit':
+          edit:
             players[indexPlayerOwner].img === 'pacman' ||
             players[indexPlayerOwner].img === 'yin-yang' ||
             players[indexPlayerOwner].img === 'heart' ||
@@ -92,9 +102,19 @@ function isPlayerStand() {
   })
 }
 
+const houseNumbers = ref([])
+
+function initItemHouse() {
+  houseNumbers.value = []
+  for (let index = 0; index < props.item.upgrade; index++) {
+    houseNumbers.value = [...houseNumbers.value, index + 1]
+  }
+}
+
 watch(props, () => {
   isPlayerStand()
   getItemValues()
+  initItemHouse()
 })
 
 onMounted(() => {
@@ -143,7 +163,7 @@ onUpdated(() => {
     z-index: 3;
 
     width: 100%;
-    height: 8px;
+    height: 10px;
 
     background-color: var(--color-bg);
 
@@ -158,7 +178,7 @@ onUpdated(() => {
     }
 
     &.left {
-      width: 8px;
+      width: 10px;
       height: 100%;
       left: 0;
 
@@ -166,12 +186,49 @@ onUpdated(() => {
     }
 
     &.right {
-      width: 8px;
+      width: 10px;
       height: 100%;
       right: 0;
 
       border-radius: 0 3px 3px 0;
     }
+  }
+
+  &__houses {
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    width: 100%;
+    // height: 10px;
+
+    display: flex;
+
+    gap: 3px;
+
+    &.right,&.left{
+      flex-direction: column;
+    }
+
+    &.right{
+      left: auto;
+      right: -11px;
+    }
+
+    &.left{
+      left: -11px;
+    }
+
+    &.top{
+      top: -11px;
+    }
+  }
+
+  &__houses-item {
+    // position: fixed;
+    width: 22px;
+    height: 22px;
+    padding: 1px;
   }
 
   &__owner {
@@ -193,7 +250,7 @@ onUpdated(() => {
       left: 50%;
       transform: translateX(-50%);
 
-      &.edit{
+      &.edit {
         bottom: -77px;
       }
     }
@@ -208,7 +265,7 @@ onUpdated(() => {
       right: -18px;
       top: 50%;
       transform: translateY(-50%);
-      &.edit{
+      &.edit {
         right: -77px;
       }
     }

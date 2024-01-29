@@ -6,6 +6,7 @@
         :key="player.id"
         :player="player"
         :active="active"
+        :upgradeItems="upgradeItems"
         :groups="groups"
         @open="openDetails"
         @upgrade="isUpgrade"
@@ -16,12 +17,15 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import PlayerItem from './components/PlayerItem.vue'
 const props = defineProps({
   players: { type: Array, required: true },
   groups: { type: Array, required: true },
+  upgradeItems: { type: Array, required: false },
   active: { type: Object, required:false }
 })
+
 
 const playerBank = {
   id: 5,
@@ -39,6 +43,7 @@ function openDetails(data) {
 function isUpgrade(data) {
   emit('upgrade', data)
 }
+
 </script>
 
 <style lang="scss" scoped>

@@ -178,7 +178,8 @@ onUpdated(() => {
     position: relative;
     overflow: hidden;
 
-    gap: 48px;
+    gap: 48;
+    padding-top: 15px;
   }
 
   &__arrow {
