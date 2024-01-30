@@ -267,10 +267,6 @@ onBeforeUpdate(() => {
     gap: 24px;
     padding: 0 43px;
 
-    &.max{
-      grid-template-columns: auto;
-    }
-
   }
 
   &__content {

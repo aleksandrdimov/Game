@@ -5,11 +5,14 @@
         v-for="player in players"
         :key="player.id"
         :player="player"
+        :allPlayers="players"
         :active="active"
         :upgradeItems="upgradeItems"
         :groups="groups"
+        :items="items"
         @open="openDetails"
         @upgrade="isUpgrade"
+
       />
     </div>
     <PlayerItem class="players__bank" :player="playerBank" :groups="groups"  :active="null"/>
@@ -21,6 +24,7 @@ import { ref } from 'vue';
 import PlayerItem from './components/PlayerItem.vue'
 const props = defineProps({
   players: { type: Array, required: true },
+  items: { type: Array, required: true },
   groups: { type: Array, required: true },
   upgradeItems: { type: Array, required: false },
   active: { type: Object, required:false }
@@ -43,6 +47,7 @@ function openDetails(data) {
 function isUpgrade(data) {
   emit('upgrade', data)
 }
+
 
 </script>
 

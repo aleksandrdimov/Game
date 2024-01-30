@@ -78,7 +78,9 @@
               upgrade
             </button>
 
-            <button :disabled="active.id !== player.id" class="player__button">trade</button>
+            <button :disabled="active.id !== player.id" class="player__button" @click="toggleTrade">
+              trade
+            </button>
           </div>
           <div v-else class="player__bank">
             <div class="player__bank-owner">
@@ -93,7 +95,7 @@
         </div>
       </Transition>
     </div>
-    <Transition>
+    <TransitionGroup>
       <ModalUpgrade
         v-if="showUpgrade"
         :items="upgradeItems"
@@ -101,23 +103,34 @@
         @upgrade="getUpgrade"
         @close="toggleUpgrade"
       />
-    </Transition>
+
+      <ModalTrade
+        v-if="showTrade"
+        @close="toggleTrade"
+        :items="items"
+        :allPlayers="allPlayers"
+        :active="active"
+      />
+    </TransitionGroup>
   </div>
 </template>
 
 <script setup>
 import PlayerToken from './PlayerToken.vue'
 import ModalUpgrade from '@/modules/modal/ModalUpgrade.vue'
+import ModalTrade from '@/modules/modal/ModalTrade.vue'
 import { onBeforeUpdate, onMounted, onUpdated, ref, watch } from 'vue'
 
 const props = defineProps({
   player: { type: Object, required: true },
+  allPlayers: { type: Array, required: true },
+  items: { type: Array, required: true },
   groups: { type: Array, required: true },
   upgradeItems: { type: Array, required: false },
   active: { type: Object, required: false }
 })
 
-const emit = defineEmits(['open', 'upgrade'])
+const emit = defineEmits(['open', 'upgrade',])
 
 function clickArrow() {
   emit('open', props.player.id)
@@ -132,7 +145,7 @@ const playerBg = ref('')
 const playerHover = ref('')
 const moneyColor = ref('')
 const showUpgrade = ref(false)
-// const upgradeGroups = ref([])
+const showTrade = ref(false)
 
 function getPlayerColors(bg, hover) {
   playerBg.value = bg
@@ -163,22 +176,6 @@ function getColor() {
   }
 }
 
-// function isUpgrade() {
-//   upgradeGroups.value = []
-
-//   if (props.active === props.player) {
-//     props.groups.forEach((group) => {
-//       const result = group.items.filter((el) => el.owner === props.player.name)
-
-//       result.length === group.items.length
-//         ? (upgradeGroups.value = [...upgradeGroups.value, ...group.items])
-//         : ''
-//     })
-
-//     // console.log(upgradeGroups.value)
-//   }
-// }
-
 const ownerNumber = ref(0)
 
 function calcOwnerCard() {
@@ -195,6 +192,11 @@ function calcOwnerCard() {
 
 function toggleUpgrade() {
   showUpgrade.value = !showUpgrade.value
+}
+
+function toggleTrade() {
+  showTrade.value = !showTrade.value
+  emit('init')
 }
 
 // watch(props.groups, () => {

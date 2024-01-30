@@ -87,6 +87,7 @@
       :groups="sortGroupItems"
       :upgradeItems="upgradeItems"
       :active="players[playerActiveIndex]"
+      :items="dataItem"
       @open="openDetails"
       @upgrade="isUpgrade"
     />
@@ -271,12 +272,12 @@ const dataItem = ref([
     id: 9,
     title: 'Sushi Bar',
     coefficient: [
-      { upgrade: 350, rent: 105},
+      { upgrade: 350, rent: 105 },
       { upgrade: 400, rent: 150 },
       { upgrade: 550, rent: 210 }
     ],
     type: 'card',
-    owner: null,
+    owner: 'Player 3',
     count: '28',
     img: 'sushi_bar_img',
     sell: false,
@@ -331,7 +332,7 @@ const dataItem = ref([
   {
     id: 12,
     title: 'adidas',
-    coefficient:[
+    coefficient: [
       { upgrade: 380, rent: 116 },
       { upgrade: 480, rent: 170 },
       { upgrade: 600, rent: 240 }
@@ -461,7 +462,7 @@ const dataItem = ref([
     title: 'Mobile Shop',
     coefficient: [
       { upgrade: 320, rent: 96 },
-      { upgrade: 400, rent: 140},
+      { upgrade: 400, rent: 140 },
       { upgrade: 500, rent: 205 }
     ],
     type: 'card',
@@ -670,7 +671,7 @@ const dataItem = ref([
     id: 28,
     title: 'Grocery Family',
     coefficient: [
-      { upgrade: 290, rent: 88},
+      { upgrade: 290, rent: 88 },
       { upgrade: 370, rent: 120 },
       { upgrade: 460, rent: 165 }
     ],
@@ -759,7 +760,7 @@ const dataItem = ref([
     id: 32,
     title: 'Smoke Shop',
     coefficient: [
-      { upgrade: 255, rent: 76},
+      { upgrade: 255, rent: 76 },
       { upgrade: 320, rent: 110 },
       { upgrade: 400, rent: 155 }
     ],
@@ -858,7 +859,7 @@ const dataItem = ref([
     title: 'Grocery',
     coefficient: [
       { upgrade: 300, rent: 92 },
-      { upgrade: 380, rent: 125},
+      { upgrade: 380, rent: 125 },
       { upgrade: 480, rent: 175 }
     ],
     type: 'card',
@@ -980,7 +981,7 @@ const dataItem = ref([
   {
     id: 43,
     title: 'Coffee Shop',
-    coefficient:[
+    coefficient: [
       { upgrade: 235, rent: 70 },
       { upgrade: 300, rent: 100 },
       { upgrade: 365, rent: 140 }
@@ -1066,7 +1067,7 @@ const dataItem = ref([
     coefficient: [
       { upgrade: 225, rent: 68 },
       { upgrade: 300, rent: 100 },
-      { upgrade: 360, rent: 135}
+      { upgrade: 360, rent: 135 }
     ],
     type: 'card',
     owner: null,
@@ -1130,9 +1131,9 @@ const dataItem = ref([
     id: 50,
     title: 'Barber Shop',
     coefficient: [
-      { upgrade: 215, rent:64 },
+      { upgrade: 215, rent: 64 },
       { upgrade: 270, rent: 90 },
-      { upgrade: 335, rent: 125}
+      { upgrade: 335, rent: 125 }
     ],
     type: 'card',
     owner: null,
@@ -1167,7 +1168,7 @@ const dataItem = ref([
   {
     id: 52,
     title: 'Hair Salon',
-    coefficient:[
+    coefficient: [
       { upgrade: 230, rent: 70 },
       { upgrade: 300, rent: 100 },
       { upgrade: 365, rent: 135 }
@@ -1195,7 +1196,7 @@ const dataItem = ref([
       { upgrade: 210, rent: 90 }
     ],
     type: 'card',
-    owner: 'Player 2',
+    owner: null,
     count: '3',
     img: 'continantal_avenue_img',
     sell: false,
@@ -1214,7 +1215,7 @@ const dataItem = ref([
     coefficient: [
       { upgrade: 200, rent: 60 },
       { upgrade: 250, rent: 90 },
-      { upgrade: 310, rent: 135}
+      { upgrade: 310, rent: 135 }
     ],
     type: 'card',
     owner: 'Player 2',
@@ -1234,9 +1235,9 @@ const dataItem = ref([
     id: 55,
     title: 'Main Avenue',
     coefficient: [
-      { upgrade: 160, rent: 48},
+      { upgrade: 160, rent: 48 },
       { upgrade: 200, rent: 70 },
-      { upgrade: 250, rent: 105}
+      { upgrade: 250, rent: 105 }
     ],
     type: 'card',
     owner: 'Player 2',
@@ -1363,6 +1364,9 @@ const showChoose = ref(false)
 const sortGroupItems = ref([])
 const tradeItems = ref([])
 const upgradeItems = ref([])
+
+const tradePlayers = ref([])
+const tradePlayerItems=ref([])
 
 function finishedRound() {
   playerActiveIndex.value < players.value.length - 1
@@ -1689,7 +1693,7 @@ function isBankrupt() {
 
 function isUpgrade(data) {
   dataItem.value.forEach((el) => {
-    if (el.id === data&&el.upgrade<=2) {
+    if (el.id === data && el.upgrade <= 2) {
       el.price = el.coefficient[el.upgrade].upgrade
       el.rent = el.coefficient[el.upgrade].rent
       el.upgrade++
@@ -1795,19 +1799,19 @@ onMounted(() => {
     width: 108px;
     height: 40px;
     grid-column: 8/10;
-    grid-row: 8/9;
+    grid-row: 9/10;
 
     color: white;
 
     background-color: #0d3b10;
     border-radius: 4px;
 
-    margin: auto 0 0;
+    margin: 0 0 auto 0;
   }
 
   &__dice-wrap {
     grid-column: 8/10;
-    grid-row: 9/10;
+    grid-row: 8/9;
 
     display: flex;
     flex-direction: row;

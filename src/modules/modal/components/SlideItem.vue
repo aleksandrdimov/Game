@@ -17,7 +17,10 @@
     </div>
     <div class="slide__body"></div>
 
-    <p class="slide__sell">{{ upgrade ? `Rent: ${item.rent}` : `Sell: ${sellCard}` }}$</p>
+    <p class="slide__sell">
+      {{ trade ? `Price: ${item.price}` : upgrade ? `Rent: ${item.rent}` : `Sell: ${sellCard}` }}$
+    </p>
+
     <div v-if="item.sell" class="slide__choose"></div>
   </div>
 </template>
@@ -28,6 +31,7 @@ import { onBeforeUpdate, onMounted, ref } from 'vue'
 const props = defineProps({
   item: { type: Object, required: true },
   upgrade: { type: Boolean, required: false },
+  trade: { type: Boolean, required: false },
   index: { type: Number, required: false }
 
   //   index: { type: Number, required: true }
@@ -49,7 +53,7 @@ const emit = defineEmits(['active'])
 const sellCard = ref(0)
 const lineColor = ref('')
 const bgSlide = ref('white')
-const houseNumbers=ref([])
+const houseNumbers = ref([])
 
 function getInit() {
   sellCard.value = Math.floor(props.item.price / 2)
@@ -76,7 +80,7 @@ onMounted(() => {
   initItemHouse()
 })
 
-onBeforeUpdate(()=>{
+onBeforeUpdate(() => {
   initItemHouse()
 })
 </script>
@@ -95,6 +99,7 @@ onBeforeUpdate(()=>{
   background-color: var(--color-bg-slide);
   border-radius: 4px;
   border: 2px solid v-bind(lineColor);
+  margin-top: 15px;
 
   &__line {
     position: relative;
