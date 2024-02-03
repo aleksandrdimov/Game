@@ -33,11 +33,11 @@ const props = defineProps({
   player: { type: Object, required: true }
 })
 
-const emit = defineEmits(['close', 'choose', 'buy'])
+const emit = defineEmits(['close', 'choose', 'buy','surprise'])
 
-function closeModal() {
-  emit('close')
-}
+// function closeModal() {
+//   emit('close')
+// }
 
 function chooseCard(data) {
   emit('choose', data)

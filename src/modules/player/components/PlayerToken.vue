@@ -12,13 +12,14 @@ const props = defineProps({
   table: { type: Boolean, required: false }
 })
 
-const playerColor = props.player.color
+const playerColor = ref('')
 const playerColumn = ref('')
 const playerRow = ref('')
 
 function getPosition() {
   playerColumn.value = props.player.column
   playerRow.value = props.player.row
+  playerColor.value=props.player.color
 }
 
 
@@ -50,7 +51,7 @@ onMounted(() => {
 
   margin: 10px;
 
-  transition: all 1s linear;
+  // transition: all 1s linear;
 
   &.table {
     grid-column: 1/2;

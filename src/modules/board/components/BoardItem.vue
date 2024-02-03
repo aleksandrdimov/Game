@@ -196,15 +196,13 @@ onUpdated(() => {
 
   &__houses {
     position: absolute;
-    z-index: 10;
+    z-index: 30;
     top: 0;
     left: 0;
     width: 100%;
-    // height: 10px;
 
     display: flex;
-
-    gap: 3px;
+    gap: 2px;
 
     &.right,&.left{
       flex-direction: column;
@@ -212,22 +210,21 @@ onUpdated(() => {
 
     &.right{
       left: auto;
-      right: -11px;
+      right: -8px;
     }
 
     &.left{
-      left: -11px;
+      left: -8px;
     }
 
     &.top{
-      top: -11px;
+      top: -8px;
     }
   }
 
   &__houses-item {
-    // position: fixed;
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height:18px;
     padding: 1px;
   }
 

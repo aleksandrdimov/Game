@@ -25,11 +25,11 @@
           d="M477.261 190.805H367.064l-79.76-79.76C285.353 95.503 272.063 83.436 256 83.436c-16.064 0-29.353 12.066-31.305 27.609l-79.76 79.76H34.738C15.584 190.805 0 206.389 0 225.544v168.28c0 19.156 15.584 34.738 34.738 34.738h442.523c19.156 0 34.738-15.584 34.738-34.738v-168.28c.001-19.155-15.583-34.739-34.738-34.739zm-221.26-89.522c7.562 0 13.715 6.152 13.715 13.715s-6.152 13.715-13.715 13.715-13.715-6.152-13.715-13.715c-.002-7.563 6.152-13.715 13.715-13.715zm-26.746 30.441c5.587 8.901 15.484 14.835 26.746 14.835 11.262 0 21.159-5.933 26.746-14.835l59.081 59.081H170.173l59.082-59.081zm264.899 262.1c0 9.315-7.578 16.893-16.893 16.893H34.738c-9.315 0-16.893-7.578-16.893-16.893v-168.28c0-9.315 7.578-16.893 16.893-16.893h442.523c9.315 0 16.893 7.578 16.893 16.893v168.28z"
         />
       </svg>
+      <h3 class="modal-upgrade__title">Upgrade</h3>
       <div class="modal-upgrade__header">
         <p class="modal-upgrade__name">{{ player.name }}</p>
         <p class="modal-upgrade__money">{{ player.money }}$</p>
       </div>
-      <h3 class="modal-upgrade__title">Upgrade</h3>
       <Slider :cards="items" :upgrade="true" @active="initCard" />
       <Transition name="upgrade">
         <div v-if="activeCard !== null" class="modal-upgrade__content item">
@@ -200,8 +200,7 @@ onBeforeUpdate(() => {
 
   &__title {
     font-weight: 600;
-    color: #d50000;
-    text-transform: uppercase;
+    color: #2598a7;
   }
 
   // &__name {

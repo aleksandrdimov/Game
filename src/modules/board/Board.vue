@@ -37,6 +37,7 @@
           :items="itemsChoose"
         />
 
+        <ModalSurprise v-if="surpriseItem !== null" :item="surpriseItem" @button="performAction" />
         <ModalJail v-if="jail" @pay="payMoney" @skip="skipMove" />
         <ModalTeleport v-if="teleport" :player="players[playerActiveIndex]" />
         <ModalTradeBank
@@ -95,7 +96,7 @@
 </template>
 
 <script setup>
-import { onMounted, onUpdated, ref, watch } from 'vue'
+import { onBeforeMount, onBeforeUpdate, onMounted, onUpdated, ref, watch } from 'vue'
 import BoardItem from './components/BoardItem.vue'
 import ModalCard from '../modal/ModalCard.vue'
 import ModalError from '../modal/ModalError.vue'
@@ -105,7 +106,7 @@ import ModalSurprise from '../modal/ModalSurprise.vue'
 import ModalTradeBank from '../modal/ModalTradeBank.vue'
 import Players from '../player/Players.vue'
 import PlayerToken from '../player/components/PlayerToken.vue'
-import AdminPanel from '../adminPanel/AdminPanel.vue'
+import { surprise } from '../../data/surprise'
 
 const props = defineProps({ data: { type: Array, required: true } })
 
@@ -142,7 +143,7 @@ const dataItem = ref([
     color: '#4D9FFF',
     rent: 60,
     price: 300,
-    upgrade: 0,
+    upgrade: 2,
     position: 'top',
     row: '1/2',
     column: '2/3',
@@ -164,7 +165,7 @@ const dataItem = ref([
     color: '#4D9FFF',
     rent: 56,
     price: 280,
-    upgrade: 0,
+    upgrade: 2,
     position: 'top',
     row: '1/2',
     column: '3/4',
@@ -179,14 +180,14 @@ const dataItem = ref([
       { upgrade: 400, rent: 200 }
     ],
     type: 'card',
-    owner: null,
+    owner: 'Player 1',
     count: '23',
     img: 'sea_terminal_img',
     sell: false,
     color: 'transparent',
     rent: 45,
     price: 225,
-    upgrade: 0,
+    upgrade: 2,
     position: 'top',
     row: '1/2',
     column: '4/5',
@@ -201,7 +202,7 @@ const dataItem = ref([
       { upgrade: 480, rent: 190 }
     ],
     type: 'card',
-    owner: 'Player 1',
+    owner: null,
     count: '24',
     img: 'fitness_dream_img',
     sell: false,
@@ -239,7 +240,7 @@ const dataItem = ref([
       { upgrade: 570, rent: 200 }
     ],
     type: 'card',
-    owner: 'Player 1',
+    owner: null,
     count: '26',
     img: 'fitness_girl_img',
     sell: false,
@@ -277,7 +278,7 @@ const dataItem = ref([
       { upgrade: 550, rent: 210 }
     ],
     type: 'card',
-    owner: 'Player 3',
+    owner: null,
     count: '28',
     img: 'sushi_bar_img',
     sell: false,
@@ -338,7 +339,7 @@ const dataItem = ref([
       { upgrade: 600, rent: 240 }
     ],
     type: 'card',
-    owner: 'Player 1',
+    owner: null,
     count: '19',
     img: 'adidas_img',
     sell: false,
@@ -360,7 +361,7 @@ const dataItem = ref([
       { upgrade: 520, rent: 190 }
     ],
     type: 'card',
-    owner: 'Player 1',
+    owner: null,
     count: '26',
     img: 'fitness_men_img',
     sell: false,
@@ -1218,7 +1219,7 @@ const dataItem = ref([
       { upgrade: 310, rent: 135 }
     ],
     type: 'card',
-    owner: 'Player 2',
+    owner: null,
     count: '2',
     img: 'old_avenue_img',
     sell: false,
@@ -1240,7 +1241,7 @@ const dataItem = ref([
       { upgrade: 250, rent: 105 }
     ],
     type: 'card',
-    owner: 'Player 2',
+    owner: null,
     count: '1',
     img: 'main_avenue_img',
     sell: false,
@@ -1350,7 +1351,6 @@ const jail = ref(false)
 const teleport = ref(false)
 const directionTop = ref(false)
 const tradeBank = ref(false)
-const admin = ref(true)
 
 const playerActiveIndex = ref(0)
 const dice1 = ref(0)
@@ -1364,9 +1364,8 @@ const showChoose = ref(false)
 const sortGroupItems = ref([])
 const tradeItems = ref([])
 const upgradeItems = ref([])
-
-const tradePlayers = ref([])
-const tradePlayerItems=ref([])
+const surpriseItem = ref(null)
+// const surpriseMoney = ref(0)
 
 function finishedRound() {
   playerActiveIndex.value < players.value.length - 1
@@ -1655,7 +1654,56 @@ function skipMove() {
   buttonRoll.value = false
 }
 
-function getSurprise() {}
+function getSurprise() {
+  surpriseItem.value = null
+  showChoose.value = false
+  const random = Math.floor(Math.random() * 24)
+
+  surpriseItem.value = surprise[random]
+}
+
+function performAction() {
+  let money = 0
+  if (surpriseItem.value.type === 'profitable') {
+    if (surpriseItem.value.id === 7) {
+      money =
+        dataItem.value.filter((el) => el.owner === players.value[playerActiveIndex.value].name)
+          .length * 35
+
+      players.value[playerActiveIndex.value].money =
+        players.value[playerActiveIndex.value].money + money
+    } else {
+      players.value[playerActiveIndex.value].money =
+        players.value[playerActiveIndex.value].money + surpriseItem.value.getMoney
+    }
+  } else if (surpriseItem.value.type === 'unprofitable') {
+    if (surpriseItem.value.id === 13) {
+      const result = dataItem.value.filter(
+        (el) => el.owner === players.value[playerActiveIndex.value].name
+      )
+
+      result.forEach((el) => {
+        return (money = money + el.upgrade)
+      })
+
+      money = money * 50
+
+      players.value[playerActiveIndex.value].money =
+        players.value[playerActiveIndex.value].money - money
+    } else {
+      players.value[playerActiveIndex.value].money =
+        players.value[playerActiveIndex.value].money - surpriseItem.value.payMoney
+    }
+  } else {
+    players.value[playerActiveIndex.value].positionGoTo = Number(surpriseItem.value.goTo.count)
+    players.value[playerActiveIndex.value].row = surpriseItem.value.goTo.row
+    players.value[playerActiveIndex.value].column = surpriseItem.value.goTo.column
+    players.value[playerActiveIndex.value].direction = 'main'
+    itemsChoose.value=dataItem.value.filter(el=>el.count===surpriseItem.value.goTo.count&&el.direction==='main')
+    showChoose.value=true
+  }
+  surpriseItem.value = null
+}
 
 function getTradeItems() {
   enoughMoney.value = false
@@ -1745,7 +1793,7 @@ function getUpgradeItems() {
 //     result = [...result, { ...newCoefficient, upgrade: upgrade, rent: rent }]
 //   }
 
-//   console.log(result)
+//
 // }
 
 watch(players.value, () => {
@@ -1756,6 +1804,7 @@ watch(players.value, () => {
 onMounted(() => {
   sortItems()
   getUpgradeItems()
+  // getSurprise()
 })
 </script>
 

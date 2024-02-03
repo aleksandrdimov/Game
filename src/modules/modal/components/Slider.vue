@@ -2,14 +2,15 @@
   <div class="slider" ref="slider">
     <div class="slider__arrow-wrap">
       <div class="slider__wrap">
-        <div class="slider__slides" ref="items">
+        <div class="slider__slides" :class="{trade: cards.length<5}" ref="items">
           <SlideItem
             class="slider__slide"
-            v-for="(card, index) in cards"
-            :key="index"
+            v-for="(card,index) in cards"
+            :key="card.id"
             :item="card"
             :index="index"
             :upgrade="upgrade"
+            :trade="trade"
             @active="chooseItem"
           />
         </div>
@@ -18,7 +19,6 @@
       <svg
         v-if="counter !== 0"
         class="slider__arrow left"
-        :class="{ disabled: counter === 0 }"
         width="44"
         height="45"
         viewBox="0 0 44 45"
@@ -45,7 +45,6 @@
       <svg
         v-if="counter !== maxStep && cards.length > 5"
         class="slider__arrow right"
-        :class="{ disabled: counter === maxStep }"
         width="44"
         height="45"
         viewBox="0 0 44 45"
@@ -74,12 +73,13 @@
 </template>
 
 <script setup>
-import { onMounted, onUpdated, ref } from 'vue'
+import { onBeforeUpdate, onMounted, onUpdated, ref, watch } from 'vue'
 import SlideItem from './SlideItem.vue'
 
 const props = defineProps({
   cards: { type: Array, required: true },
-  upgrade: { type: Boolean, required: false }
+  upgrade: { type: Boolean, required: false },
+  trade: { type: Boolean, required: false }
 })
 
 const emit = defineEmits(['active'])
@@ -95,6 +95,13 @@ const counter = ref(0)
 const translateXVar = ref(0)
 
 const maxStep = ref(null)
+
+// function initValues() {
+//   counter.value = 0
+//   maxStep.value = null
+//   translateX.value = 0
+//   translateXVar.value = 0
+// }
 
 function getSizeSlide() {
   if (props.cards.length) {
@@ -150,27 +157,39 @@ function chooseItem(data) {
   emit('active', data)
 }
 
+// watch(props.cards, () => {
+//   props.trade ? initValues() : ''
+// })
+
 onMounted(() => {
   getSizeSlide()
+  // initValues()
 })
+
+// onBeforeUpdate(()=>{
+//   getSizeSlide()
+// })
 
 onUpdated(() => {
   getSizeSlide()
+
 })
 </script>
 
 <style lang="scss" scoped>
 .slider {
-  width: 425px;
-  padding: 5px 0px;
+  max-width: 425px;
+  // width: 100%;
+
+  // padding: 0px 44px;
 
   &__arrow-wrap {
-    width: 100%;
+    // width: 100%;
     position: relative;
   }
 
   &__wrap {
-    width: 100%;
+    // width: 100%;
 
     display: flex;
     flex-direction: column;
@@ -178,7 +197,9 @@ onUpdated(() => {
     position: relative;
     overflow: hidden;
 
-    gap: 48;
+  // padding: 0px 44px;
+
+    // gap: 48px;
   }
 
   &__arrow {
@@ -244,6 +265,10 @@ onUpdated(() => {
 
     transition: transform 0.3s ease-in-out;
     transform: translateX(v-bind(translateXVar));
+
+    &.trade{
+      justify-content: center;
+    }
   }
 
   &__slide {

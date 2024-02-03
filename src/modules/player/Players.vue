@@ -15,7 +15,7 @@
 
       />
     </div>
-    <PlayerItem class="players__bank" :player="playerBank" :groups="groups"  :active="null"/>
+    <PlayerItem class="players__bank" :allPlayers="players" :player="playerBank" :groups="groups" :items="items" :active="active" />
   </section>
 </template>
 
@@ -29,7 +29,6 @@ const props = defineProps({
   upgradeItems: { type: Array, required: false },
   active: { type: Object, required:false }
 })
-
 
 const playerBank = {
   id: 5,

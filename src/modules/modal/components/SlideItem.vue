@@ -81,7 +81,7 @@ onMounted(() => {
 })
 
 onBeforeUpdate(() => {
-  initItemHouse()
+    initItemHouse()
 })
 </script>
 
@@ -122,8 +122,8 @@ onBeforeUpdate(() => {
   }
 
   &__houses-item {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
     padding: 1px;
   }
 

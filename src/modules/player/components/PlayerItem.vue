@@ -78,7 +78,7 @@
               upgrade
             </button>
 
-            <button :disabled="active.id !== player.id" class="player__button" @click="toggleTrade">
+            <button :disabled="disabledTrade" class="player__button" @click="toggleTrade">
               trade
             </button>
           </div>
@@ -107,6 +107,8 @@
       <ModalTrade
         v-if="showTrade"
         @close="toggleTrade"
+        @disagree="closeAndDisabled"
+        @agree="closeAndDisabled"
         :items="items"
         :allPlayers="allPlayers"
         :active="active"
@@ -127,10 +129,10 @@ const props = defineProps({
   items: { type: Array, required: true },
   groups: { type: Array, required: true },
   upgradeItems: { type: Array, required: false },
-  active: { type: Object, required: false }
+  active: { type: Object, required: true }
 })
 
-const emit = defineEmits(['open', 'upgrade',])
+const emit = defineEmits(['open', 'upgrade'])
 
 function clickArrow() {
   emit('open', props.player.id)
@@ -146,6 +148,8 @@ const playerHover = ref('')
 const moneyColor = ref('')
 const showUpgrade = ref(false)
 const showTrade = ref(false)
+
+const disabledTrade = ref(false)
 
 function getPlayerColors(bg, hover) {
   playerBg.value = bg
@@ -176,6 +180,10 @@ function getColor() {
   }
 }
 
+function getDisabledTrade() {
+  disabledTrade.value = props.active.id !== props.player.id
+}
+
 const ownerNumber = ref(0)
 
 function calcOwnerCard() {
@@ -196,7 +204,11 @@ function toggleUpgrade() {
 
 function toggleTrade() {
   showTrade.value = !showTrade.value
-  emit('init')
+}
+
+function closeAndDisabled() {
+ toggleTrade()
+  disabledTrade.value = props.active.id === props.player.id
 }
 
 // watch(props.groups, () => {
@@ -205,17 +217,16 @@ function toggleTrade() {
 
 onMounted(() => {
   getColor()
-  // isUpgrade()
+  getDisabledTrade()
   calcOwnerCard()
 })
 
 onBeforeUpdate(() => {
-  // isUpgrade()
+  getDisabledTrade()
 })
 
 onUpdated(() => {
   getColor()
-  // isUpgrade()
   calcOwnerCard()
 })
 </script>

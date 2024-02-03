@@ -17,7 +17,7 @@
           @click="buyCard">
           {{ item.owner !== null ? 'Pay rent' : 'Buy' }}
         </button>
-        <button v-if="item.type === 'surprise'" class="card__button surprise" @click="chooseCard">
+        <button v-if="item.type === 'surprise'" class="card__button surprise" @click="getSurprise">
           Get Surprise
         </button>
         <button v-if=" item.owner === player.name"
@@ -32,6 +32,7 @@
 </template>
 
 <script setup>
+import { surprise } from '@/data/surprise';
 import { onMounted, ref } from 'vue'
 
 const props = defineProps({

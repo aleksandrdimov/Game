@@ -122,14 +122,11 @@ function initPlayers() {
 }
 
 function startGame() {
-  console.log('before', dataPlayers.value)
-
   dataPlayers.value.forEach((el) => {
     if (el.name === '') return (el.name = `Player ${el.id}`)
   })
 
   adminShow.value = false
-  console.log('after', dataPlayers.value)
 }
 
 function isValid() {

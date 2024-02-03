@@ -2,6 +2,7 @@
   <section class="modal-trade">
     <div class="modal-trade__wrap">
       <svg
+        v-if="!showOffer"
         class="modal-trade__close"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 512 512"
@@ -25,15 +26,38 @@
           d="M477.261 190.805H367.064l-79.76-79.76C285.353 95.503 272.063 83.436 256 83.436c-16.064 0-29.353 12.066-31.305 27.609l-79.76 79.76H34.738C15.584 190.805 0 206.389 0 225.544v168.28c0 19.156 15.584 34.738 34.738 34.738h442.523c19.156 0 34.738-15.584 34.738-34.738v-168.28c.001-19.155-15.583-34.739-34.738-34.739zm-221.26-89.522c7.562 0 13.715 6.152 13.715 13.715s-6.152 13.715-13.715 13.715-13.715-6.152-13.715-13.715c-.002-7.563 6.152-13.715 13.715-13.715zm-26.746 30.441c5.587 8.901 15.484 14.835 26.746 14.835 11.262 0 21.159-5.933 26.746-14.835l59.081 59.081H170.173l59.082-59.081zm264.899 262.1c0 9.315-7.578 16.893-16.893 16.893H34.738c-9.315 0-16.893-7.578-16.893-16.893v-168.28c0-9.315 7.578-16.893 16.893-16.893h442.523c9.315 0 16.893 7.578 16.893 16.893v168.28z"
         />
       </svg>
-      <h3 class="modal-trade__title">Trade</h3>
+      <h3 class="modal-trade__title">{{ !showOffer ? 'Trade' : 'Offer' }}</h3>
 
+      <div class="modal-trade__header">
+        <p>{{ active.name }}</p>
+        <p v-if="!showOffer">{{ active.money }}$</p>
+      </div>
       <div class="modal-trade__container">
-        <div class="modal-trade__column">
-          <h3 class="modal-trade__player">{{active.name}}</h3>
-          <div class="modal-trade__slider">
-            <VerticalSlider :cards="activeTradeItems" :trade="true" />
-          </div>
-          <p class="modal-trade__plus">+</p>
+        <div class="modal-trade__player">
+          <Slider
+            v-if="activeTradeItems.length"
+            :cards="activeTradeItems"
+            :trade="true"
+            @active="getActivePlayerItem"
+          />
+          <!-- <div v-else class="modal-trade__cards">
+            <SlideItem
+            class="modal-trade__card"
+            v-for="(card,index) in activeTradeItems"
+            :key="card.id"
+            :item="card"
+            :index="index"
+            :trade="true"
+            @active="chooseItem"
+          />
+          </div> -->
+          <p v-if="!showOffer || offer.money !== 0" class="modal-trade__plus">
+            {{ !showOffer ? '+' : offer.money !== 0 ? `+${offer.money}$` : '' }}
+          </p>
+          <label v-if="!showOffer" class="modal-trade__label">
+            Add money:
+            <input type="text" ref="inputMoney" @change="addMoney" />
+          </label>
         </div>
 
         <svg class="modal-trade__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
@@ -81,10 +105,12 @@
           </g>
         </svg>
 
-        <div class="modal-trade__column">
-          <div class="modal-trade__header-item">
-            <p class="modal-trade__players-number" @click="openDropDown">
-                {{ playersName }}
+        <div class="modal-trade__player">
+          <p v-if="showOffer" class="modal-trade__header">{{ playersName }}</p>
+
+          <div v-if="!showOffer" class="modal-trade__header-item">
+            <p class="modal-trade__players-name" @click="openDropDown">
+              {{ playersName }}
               <span class="modal-trade__arrow"></span>
             </p>
             <Transition name="drop-down">
@@ -100,48 +126,74 @@
               </div>
             </Transition>
           </div>
-          <div class="modal-trade__slider">
-            <VerticalSlider v-if="showTradeItems&&tradePlayerItems.length" :cards="tradePlayerItems" :trade="true" />
-            <p class="modal-trade__slider-description" v-else>{{playersName==='Choose player'? playersName: `${playersName}  has no cards`}}</p>
-          </div>
+
+          <Transition name="slider">
+            <Slider
+              v-if="showTradeItems && tradePlayerItems.length"
+              :cards="tradePlayerItems"
+              :trade="true"
+              @active="getPlayerItem"
+            />
+            <!-- <div v-else class="modal-trade__cards">
+            <SlideItem
+            class="modal-trade__card"
+            v-for="(card,index) in tradePlayerItems"
+            :key="card.id"
+            :item="card"
+            :index="index"
+            :trade="true"
+            @active="chooseItem"
+          />
+          </div> -->
+          </Transition>
+          <p v-if="!tradePlayerItems.length" class="modal-trade__slider-description">
+            {{ playersName === 'Choose player' ? playersName : `${playersName}  has no cards` }}
+          </p>
         </div>
       </div>
-      <label class="modal-trade__label">
-        Add money:
-        <input type="text" />
-      </label>
-      <button :disabled="true" class="modal-trade__button">Make offer</button>
+
+      <Button v-if="!showOffer" :disabled="disabled" class="modal-trade__button" @active="makeOffer"
+        >Make offer</Button
+      >
+
+      <div v-else class="modal-trade__offer">
+        <Button @click="isDisagree" :transparent="true">Disagree</Button>
+        <Button @click="isAgree">Agree</Button>
+      </div>
     </div>
   </section>
 </template>
 
 <script setup>
-import { onBeforeUpdate, onMounted, ref } from 'vue'
+import Button from '../UIComponents/Button.vue'
+import { onMounted, ref, watch } from 'vue'
 import VerticalSlider from './components/VerticalSlider.vue'
+import Slider from './components/Slider.vue'
+import SlideItem from './components/SlideItem.vue'
 
 const props = defineProps({
   items: { type: Array, required: true },
   allPlayers: { type: Array, required: false },
-  active: { type: Object, required: true },
+  active: { type: Object, required: true }
 })
-const emit = defineEmits(['close','init','getItems'])
+const emit = defineEmits(['close', 'init', 'getItems', 'disagree', 'agree'])
 
+const inputMoney = ref(null)
+
+const disabled = ref(true)
 const showDropDown = ref(false)
-const showTradeItems=ref(false)
+const showTradeItems = ref(false)
 const playersName = ref('Choose player')
 
-// const players = ref([
-//   { value: 'Player 2', active: false },
-//   { value: 'Player 3', active: false },
-//   { value: 'Player 4', active: false }
-// ])
+const tradePlayers = ref([])
+const tradePlayerItems = ref([])
+const activeTradeItems = ref([])
 
-const tradePlayers=ref([])
-const tradePlayerItems=ref([])
-const activeTradeItems=ref([])
+const showOffer = ref(false)
+const offer = ref({ money: 0, chooseActiveItems: [], chooseItems: [] })
 
-function initActiveItems(){
-  activeTradeItems.value=props.items.filter(el=>el.owner===props.active.name)
+function initActiveItems() {
+  activeTradeItems.value = props.items.filter((el) => el.owner === props.active.name)
 }
 
 function initTradePlayers() {
@@ -153,12 +205,41 @@ function initTradePlayers() {
       ? (tradePlayers.value = [...tradePlayers.value, { ...tradePlayer, name: el.name }])
       : ''
   })
-  // tradePlayers.value=props.allPlayers.filter(el=>el.name!== props.active.name)
 }
 
-function initTradeItems(){
-  showTradeItems.value=true
-  tradePlayerItems.value=props.items.filter(el=>el.owner===playersName.value)
+function initTradeItems() {
+  showTradeItems.value = true
+  tradePlayerItems.value = JSON.parse(
+    JSON.stringify(props.items.filter((el) => el.owner === playersName.value))
+  )
+}
+
+function getActivePlayerItem() {
+  // iteratingOverArray(offer.value.chooseActiveItems, activeTradeItems.value)
+  offer.value.chooseActiveItems = activeTradeItems.value.filter((el) => el.sell)
+}
+function getPlayerItem() {
+  offer.value.chooseItems = tradePlayerItems.value.filter((el) => el.sell)
+}
+
+function addMoney() {
+  inputMoney.value.value !== ''
+    ? (offer.value.money = Number(inputMoney.value.value))
+    : (offer.value.money = 0)
+}
+
+function isValid() {
+  offer.value.chooseActiveItems.length > 0 ||
+  (offer.value.money > 0 && offer.value.chooseItems.length > 0)
+    ? (disabled.value = false)
+    : (disabled.value = true)
+}
+
+function makeOffer() {
+  activeTradeItems.value = offer.value.chooseActiveItems
+  tradePlayerItems.value = offer.value.chooseItems
+
+  showOffer.value = true
 }
 
 function openDropDown() {
@@ -167,27 +248,59 @@ function openDropDown() {
 }
 
 function chooseplayersName(index) {
-  showTradeItems.value=false
   tradePlayers.value.forEach((el, i) => {
     i === index ? (el.active = true) : (el.active = false)
   })
   playersName.value = tradePlayers.value[index].name
   showDropDown.value = false
 
-  setTimeout(()=>{
-    initTradeItems()
-  },50)
+  initTradeItems()
 }
 
 function closeTrade() {
   emit('close')
-  playersName.value='Choose player'
+  playersName.value = 'Choose player'
+  activeTradeItems.value.forEach((el) => (el.sell = false))
 }
 
-onMounted(()=>{
-  initActiveItems()
+function isDisagree() {
+  emit('disagree')
+  playersName.value = 'Choose player'
+  activeTradeItems.value.forEach((el) => (el.sell = false))
+}
+
+function isAgree() {
+  emit('agree')
+
+  if (offer.value.money > 0) {
+    props.allPlayers.forEach((el) => {
+      el.name === props.active.name
+        ? (el.money = el.money - offer.value.money)
+        : el.name === playersName.value
+          ? (el.money = el.money + offer.value.money)
+          : ''
+    })
+  }
+
+  props.items.forEach((item) => {
+    if (offer.value.chooseActiveItems.length > 0) {
+      offer.value.chooseActiveItems.forEach((el) => {
+        item.id == el.id ? (item.owner = playersName.value) : ''
+      })
+    }
+    offer.value.chooseItems.forEach((el) => {
+      item.id == el.id ? (item.owner = props.active.name) : ''
+    })
+  })
+}
+
+watch(offer.value, () => {
+  isValid()
 })
 
+onMounted(() => {
+  initActiveItems()
+})
 </script>
 
 <style lang="scss" scoped>
@@ -209,7 +322,7 @@ onMounted(()=>{
     left: 50%;
     transform: translate(-50%, -50%);
 
-    width: 510px;
+    max-width: 510px;
     min-height: 240px;
     // min-height: 404px;
 
@@ -217,13 +330,12 @@ onMounted(()=>{
     flex-direction: column;
     align-items: center;
     gap: 12px;
-    // padding: 0px 5px;
 
     background-color: white;
     border-radius: 12px;
     box-shadow: 0px 0px 10px grey;
 
-    padding: 12px 0px;
+    padding: 24px 44px;
 
     transition: all 0.4s ease-in-out;
   }
@@ -246,53 +358,68 @@ onMounted(()=>{
 
   &__title {
     font-weight: 600;
-    color: #d50000;
-    text-transform: uppercase;
+    color: #2598a7;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+
+    color: black;
+    font-size: 24px;
+    line-height: 28px;
+    font-weight: 700;
+
+    & p {
+      font-weight: 700;
+    }
   }
 
   &__container {
-    // width: 100%;
+    display: flex;
+    flex-direction: column;
 
-    display: grid;
-    grid-template-columns: 1fr 44px 1fr;
-    // justify-items: space-between;
-    // align-items: center;
-    gap: 24px;
-    // padding: 44px 24px;
+    gap: 16px;
   }
 
-  &__icon {
-    align-self: center;
+  // &__cards{
+  //   width: max-content;
+  //   display: flex;
+  //   justify-content: center;
+  //   gap: 12px;
+  // }
+
+  // &__card{
+  //   flex: 0 0 75px;
+  // }
+
+  &__player {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
 
-  &__plus{
-    // display: inline-block;
+  &__plus {
     height: 36px;
     font-size: 36px;
     line-height: 36px;
     text-align: center;
     color: green;
-    // margin: auto 0;
   }
 
-  &__slider {
-    padding: 44px 0;
-  }
-
-  &__player {
-    text-transform: capitalize;
-    text-align: center;
-    font-weight: 600;
-    font-size: 20px;
-    line-height: 34px;
-    letter-spacing: 0.5px;
-    color: black;
+  &__icon {
+    align-self: center;
+    width: 44px;
+    height: 44px;
+    transform: rotate(270deg);
   }
 
   &__label {
     color: black;
-    padding: 0px 44px;
-    margin: 0 auto 0 0;
+    // padding: 0px 44px;
+    margin: 0 auto;
 
     & input {
       width: 50px;
@@ -304,37 +431,15 @@ onMounted(()=>{
     }
   }
 
-  &__button {
-    cursor: pointer;
-    max-width: 425px;
-    width: 100%;
-
-    font-size: 14px;
-    font-weight: 700;
-    line-height: 24px;
-    color: white;
-
-    background-color: #008309;
-    border-radius: 4px;
-
-    padding: 8px 12px;
-    margin: 0 44px;
-
-    &:disabled {
-      cursor: auto;
-
-      color: white;
-      background-color: #646864;
-    }
-  }
-
   &__header-item {
     position: relative;
-    max-width: 162px;
+    max-width: 240px;
     width: 100%;
+
+    margin: 0 auto;
   }
 
-  &__players-number {
+  &__players-name {
     position: relative;
     cursor: pointer;
 
@@ -353,7 +458,7 @@ onMounted(()=>{
     position: absolute;
     z-index: 2;
     top: 10px;
-    right:13px;
+    right: 13px;
 
     border: solid black;
     border-width: 0 1px 1px 0;
@@ -370,7 +475,6 @@ onMounted(()=>{
     left: 0px;
 
     width: 100%;
-  
 
     background-color: white;
     border-radius: 4px;
@@ -402,12 +506,65 @@ onMounted(()=>{
     }
   }
 
-  &__slider-description{
-    max-width: 162px;
+  &__slider-description {
+    text-align: center;
+  }
+
+  // &__button-wrap {
+  //   width: 100%;
+  //   // padding: 0 44px;
+  // }
+
+  &__button {
+    cursor: pointer;
+
+    // max-width: 425px;
     width: 100%;
+
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 24px;
+    color: white;
+
+    background-color: #008309;
+    border-radius: 4px;
+
+    padding: 8px 12px;
+
+    &.go {
+      color: #ca5f63;
+
+      background-color: transparent;
+      border-color: #ca5f63;
+
+      transition: background-color 0.3s ease-in-out;
+
+      &:hover {
+        background-color: #f5e0e1;
+      }
+
+      &:active {
+        background-color: #f0d1d2;
+      }
+    }
+
+    &:disabled {
+      cursor: auto;
+
+      color: white;
+      background-color: #646864;
+    }
+  }
+
+  &__offer {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+
+    // padding: 0 44px;
   }
 }
-
 
 .drop-down-enter-from {
   height: 34px;
@@ -420,5 +577,24 @@ onMounted(()=>{
   height: 34px;
   opacity: 0;
   transition: all 0.3s ease-in-out;
+}
+
+.slider-enter-from {
+  height: 28px;
+  overflow: hidden;
+}
+.slider-enter-to {
+  height: 145px;
+  overflow: hidden;
+  transition: height 0.3s ease-in-out;
+}
+
+.slider-leave-from {
+  height: 121px;
+}
+.slider-leave-to {
+  height: 0px;
+  overflow: hidden;
+  transition: height 0.3s ease-in-out;
 }
 </style>

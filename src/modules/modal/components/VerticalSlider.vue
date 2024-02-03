@@ -110,7 +110,6 @@
       maxStep.value = Math.ceil(slidesLength/2 - sliderWindow / slideHeight.value)
       distance.value = sliderHeight - sliderWindow - (translateY.value + slideHeight.value)
   
-      console.log(maxStep.value)
       if (distance.value >= 0 && counter.value <= maxStep.value - 1) {
         counter.value++
   
