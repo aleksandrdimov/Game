@@ -48,7 +48,7 @@ import InputPlayer from './components/InputPlayer.vue'
 const dataPlayers = ref([])
 const activeButton = ref(false)
 
-const adminShow = ref(false)
+const adminShow = ref(true)
 
 const players = ref([
   { value: 2, active: true },

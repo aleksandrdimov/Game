@@ -1272,78 +1272,78 @@ const dataItem = ref([
   }
 ])
 
-const players = ref([
-  {
-    id: 1,
-    name: 'Player 1',
-    money: 1500,
-    color: '#F70000',
-    img: 'pacman',
-    row: '11/12',
-    column: '11/12',
-    positionStart: 0,
-    positionGoTo: 0,
-    direction: 'main',
-    active: true,
-    details: true,
-    skipMove: false,
-    status: null,
-    doubleMove: 0
-  },
-  {
-    id: 2,
-    name: 'Player 2',
-    money: 1500,
-    color: '#00DDEB',
-    img: 'burst-8',
-    row: '11/12',
-    column: '11/12',
-    positionStart: 0,
-    positionGoTo: 0,
-    direction: 'main',
-    active: false,
-    details: false,
-    skipMove: false,
-    status: null,
-    doubleMove: 0
-  },
-  {
-    id: 3,
-    name: 'Player 3',
-    money: 1500,
-    color: '#00CC08',
-    img: 'yin-yang',
-    row: '11/12',
-    column: '11/12',
-    positionStart: 0,
-    positionGoTo: 0,
-    direction: 'main',
-    active: false,
-    details: false,
-    skipMove: false,
-    status: null,
-    doubleMove: 0
-  },
-  {
-    id: 4,
-    name: 'Player 4',
-    money: 1500,
-    color: '#A300CC',
-    img: 'heart',
-    row: '11/12',
-    column: '11/12',
-    positionStart: 0,
-    positionGoTo: 0,
-    direction: 'main',
-    active: false,
-    details: false,
-    skipMove: false,
-    status: null,
-    doubleMove: 0
-  }
-])
+// const players = ref([
+//   {
+//     id: 1,
+//     name: 'Player 1',
+//     money: 1500,
+//     color: '#F70000',
+//     img: 'pacman',
+//     row: '11/12',
+//     column: '11/12',
+//     positionStart: 0,
+//     positionGoTo: 0,
+//     direction: 'main',
+//     active: true,
+//     details: true,
+//     skipMove: false,
+//     status: null,
+//     doubleMove: 0
+//   },
+//   {
+//     id: 2,
+//     name: 'Player 2',
+//     money: 1500,
+//     color: '#00DDEB',
+//     img: 'burst-8',
+//     row: '11/12',
+//     column: '11/12',
+//     positionStart: 0,
+//     positionGoTo: 0,
+//     direction: 'main',
+//     active: false,
+//     details: false,
+//     skipMove: false,
+//     status: null,
+//     doubleMove: 0
+//   },
+//   {
+//     id: 3,
+//     name: 'Player 3',
+//     money: 1500,
+//     color: '#00CC08',
+//     img: 'yin-yang',
+//     row: '11/12',
+//     column: '11/12',
+//     positionStart: 0,
+//     positionGoTo: 0,
+//     direction: 'main',
+//     active: false,
+//     details: false,
+//     skipMove: false,
+//     status: null,
+//     doubleMove: 0
+//   },
+//   {
+//     id: 4,
+//     name: 'Player 4',
+//     money: 1500,
+//     color: '#A300CC',
+//     img: 'heart',
+//     row: '11/12',
+//     column: '11/12',
+//     positionStart: 0,
+//     positionGoTo: 0,
+//     direction: 'main',
+//     active: false,
+//     details: false,
+//     skipMove: false,
+//     status: null,
+//     doubleMove: 0
+//   }
+// ])
 
-// const players=ref(props.data)
+const players=ref(props.data)
 
 const buttonRoll = ref(true)
 const enoughMoney = ref(false)
