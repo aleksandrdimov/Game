@@ -107,16 +107,17 @@ function initPlayers() {
   }
 
   if (dataPlayers.value.length !== playersNumber.value) {
-    const iterationNumber =
-      playersNumber.value > dataPlayers.value.length
-        ? playersNumber.value - dataPlayers.value.length
-        : dataPlayers.value.length - playersNumber.value
-        
-        for (let index = 0; index < iterationNumber; index++) {
-          dataPlayers.value = [...dataPlayers.value, { ...player, id: playersNumber.value - index }]
-        }
+    if (playersNumber.value > dataPlayers.value.length) {
+      const iterationNumber = playersNumber.value - dataPlayers.value.length
+      for (let index = 0; index < iterationNumber; index++) {
+        dataPlayers.value = [...dataPlayers.value, { ...player, id: playersNumber.value - index }]
+      }
+      dataPlayers.value.sort((a, b) => a.id - b.id)
+    } else {
+      const iterationNumber = dataPlayers.value.length - playersNumber.value
+      dataPlayers.value.splice(dataPlayers.value.length-iterationNumber, dataPlayers.value.length)
+    }
 
-    dataPlayers.value.sort((a,b)=>a.id-b.id)
     isValid()
   }
 }
