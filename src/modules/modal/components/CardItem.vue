@@ -1,29 +1,40 @@
 <template>
   <div class="card" :style="{ '--color-bg-card': item.type === 'teleport' ? '#06021A' : 'white' }">
-    <div class="card__line" v-if="null !== item.price">
-    </div>
+    <div class="card__line" v-if="null !== item.price"></div>
     <div class="card__body"></div>
 
     <div class="card__content">
-      <p v-if="item.price !== null" class="card__price"> {{ item.owner === null ? `Price: ${item.price} $` : `Owner:
-        ${item.owner} ` }}</p>
+      <p v-if="item.price !== null" class="card__price">
+        {{
+          item.owner === null
+            ? `Price: ${item.price} $`
+            : `Owner:
+        ${item.owner} `
+        }}
+      </p>
       <p v-if="item.rent !== null" class="card__rent">Rent: {{ item.rent }}$</p>
       <div class="card__footer">
-        <button v-if="item.type !== 'surprise' && item.owner === null" :disabled="item.owner && item.type === 'card'"
-          class="card__button go" @click="chooseCard">
+        <Button
+          v-if="item.type !== 'surprise' && item.owner === null"
+          :disabled="item.owner && item.type === 'card'"
+          :type="'transparent'"
+          @click="chooseCard"
+        >
           Go to
-        </button>
-        <button v-if="item.price !== null &&item.owner!==player.name" class="card__button" :class="[item.owner !== null ? 'rent' : 'buy']"
-          @click="buyCard">
+        </Button>
+        <Button
+          v-if="item.price !== null && item.owner !== player.name"
+          :type="[item.owner !== null ? 'rent' : 'buy']"
+          @click="buyCard"
+        >
           {{ item.owner !== null ? 'Pay rent' : 'Buy' }}
-        </button>
-        <button v-if="item.type === 'surprise'" class="card__button surprise" @click="getSurprise">
+        </Button>
+        <Button v-if="item.type === 'surprise'" :type="'surprise'" @click="getSurprise">
           Get Surprise
-        </button>
-        <button v-if=" item.owner === player.name"
-          class="card__button go" @click="chooseCard">
-          My card
-        </button>
+        </Button>
+        <Button v-if="item.owner === player.name" :type="'transparent'" @click="chooseCard">
+          Go to
+        </Button>
       </div>
     </div>
   </div>
@@ -32,7 +43,7 @@
 </template>
 
 <script setup>
-import { surprise } from '@/data/surprise';
+import Button from '@/modules/UIComponents/Button.vue'
 import { onMounted, ref } from 'vue'
 
 const props = defineProps({
@@ -148,7 +159,6 @@ onMounted(() => {
     gap: 8px;
   }
 
-
   &__button {
     cursor: pointer;
     width: 100%;
@@ -161,13 +171,12 @@ onMounted(() => {
     border-radius: 4px;
     padding: 8px 12px;
 
-
     &.buy {
       background-color: #008309;
     }
 
     &.rent {
-      background-color: #2598A7;
+      background-color: #2598a7;
     }
 
     &.surprise {
@@ -176,32 +185,29 @@ onMounted(() => {
     }
 
     &.go {
-      color: #CA5F63;
+      color: #ca5f63;
 
       background-color: transparent;
-      border-color: #CA5F63;
+      border-color: #ca5f63;
 
-      transition: background-color .3s ease-in-out;
+      transition: background-color 0.3s ease-in-out;
 
       &:hover {
-        background-color: #F5E0E1;
+        background-color: #f5e0e1;
       }
 
       &:active {
-        background-color: #F0D1D2;
+        background-color: #f0d1d2;
       }
     }
 
     &:disabled {
-
       cursor: auto;
 
       color: white;
       background-color: #646864;
     }
   }
-
-
 }
 
 .text {
@@ -209,6 +215,5 @@ onMounted(() => {
   font-weight: 700;
   line-height: 24px;
   color: white;
-
 }
 </style>

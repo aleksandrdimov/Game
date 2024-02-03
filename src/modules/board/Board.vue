@@ -136,14 +136,14 @@ const dataItem = ref([
       { upgrade: 600, rent: 250 }
     ],
     type: 'card',
-    owner: 'Player 1',
+    owner: null,
     count: '21',
     img: 'puma_img',
     sell: false,
     color: '#4D9FFF',
     rent: 60,
     price: 300,
-    upgrade: 2,
+    upgrade: 0,
     position: 'top',
     row: '1/2',
     column: '2/3',
@@ -158,14 +158,14 @@ const dataItem = ref([
       { upgrade: 580, rent: 230 }
     ],
     type: 'card',
-    owner: 'Player 1',
+    owner: null,
     count: '22',
     img: 'reebok_img',
     sell: false,
     color: '#4D9FFF',
     rent: 56,
     price: 280,
-    upgrade: 2,
+    upgrade: 0,
     position: 'top',
     row: '1/2',
     column: '3/4',
@@ -180,14 +180,14 @@ const dataItem = ref([
       { upgrade: 400, rent: 200 }
     ],
     type: 'card',
-    owner: 'Player 1',
+    owner: null,
     count: '23',
     img: 'sea_terminal_img',
     sell: false,
     color: 'transparent',
     rent: 45,
     price: 225,
-    upgrade: 2,
+    upgrade: 0,
     position: 'top',
     row: '1/2',
     column: '4/5',
@@ -1676,7 +1676,9 @@ function performAction() {
       players.value[playerActiveIndex.value].money =
         players.value[playerActiveIndex.value].money + surpriseItem.value.getMoney
     }
-  } else if (surpriseItem.value.type === 'unprofitable') {
+  }
+
+  if (surpriseItem.value.type === 'unprofitable') {
     if (surpriseItem.value.id === 13) {
       const result = dataItem.value.filter(
         (el) => el.owner === players.value[playerActiveIndex.value].name
@@ -1694,13 +1696,23 @@ function performAction() {
       players.value[playerActiveIndex.value].money =
         players.value[playerActiveIndex.value].money - surpriseItem.value.payMoney
     }
-  } else {
-    players.value[playerActiveIndex.value].positionGoTo = Number(surpriseItem.value.goTo.count)
-    players.value[playerActiveIndex.value].row = surpriseItem.value.goTo.row
-    players.value[playerActiveIndex.value].column = surpriseItem.value.goTo.column
-    players.value[playerActiveIndex.value].direction = 'main'
-    itemsChoose.value=dataItem.value.filter(el=>el.count===surpriseItem.value.goTo.count&&el.direction==='main')
-    showChoose.value=true
+  }
+
+  if (surpriseItem.value.type === 'go') {
+    if (typeof surpriseItem.value.goTo === 'number') {
+      players.value[playerActiveIndex.value].positionGoTo =
+        players.value[playerActiveIndex.value].positionGoTo + surpriseItem.value.goTo
+      filterItem()
+    } else {
+      players.value[playerActiveIndex.value].positionGoTo = Number(surpriseItem.value.goTo.count)
+      players.value[playerActiveIndex.value].row = surpriseItem.value.goTo.row
+      players.value[playerActiveIndex.value].column = surpriseItem.value.goTo.column
+      players.value[playerActiveIndex.value].direction = 'main'
+      itemsChoose.value = dataItem.value.filter(
+        (el) => el.count === surpriseItem.value.goTo.count && el.direction === 'main'
+      )
+    }
+    showChoose.value = true
   }
   surpriseItem.value = null
 }
@@ -1804,7 +1816,6 @@ watch(players.value, () => {
 onMounted(() => {
   sortItems()
   getUpgradeItems()
-  // getSurprise()
 })
 </script>
 

@@ -77,6 +77,7 @@ function clickButton(){
   }
 
   &:disabled {
+    pointer-events: none;
     cursor: auto;
 
     color: white;
