@@ -70,7 +70,10 @@ const initInputs = ref([
   { name: null, color: '#F70000', active: false, label: null, token: null },
   { name: null, color: '#00DDEB', active: false, label: null, token: null },
   { name: null, color: '#00CC08', active: false, label: null, token: null },
-  { name: null, color: '#A300CC', active: false, label: null, token: null }
+  { name: null, color: '#A300CC', active: false, label: null, token: null },
+  { name: null, color: '#100CFD', active: false, label: null, token: null },
+  { name: null, color: '#DDDD00', active: false, label: null, token: null },
+  { name: null, color: '#FF9900', active: false, label: null, token: null }
 ])
 const playersNumber = ref(2)
 const showDropDown = ref(false)
@@ -115,7 +118,7 @@ function initPlayers() {
       dataPlayers.value.sort((a, b) => a.id - b.id)
     } else {
       const iterationNumber = dataPlayers.value.length - playersNumber.value
-      dataPlayers.value.splice(dataPlayers.value.length-iterationNumber, dataPlayers.value.length)
+      dataPlayers.value.splice(dataPlayers.value.length - iterationNumber, dataPlayers.value.length)
     }
 
     isValid()

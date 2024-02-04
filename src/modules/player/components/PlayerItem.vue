@@ -156,6 +156,28 @@ function getPlayerColors(bg, hover) {
   playerHover.value = hover
 }
 
+const typeColor = [
+  { color: '#F70000', name: 'red' },
+  { color: '#00DDEB', name: 'aqua' },
+  { color: '#00CC08', name: 'green' },
+  { color: '#A300CC', name: 'purple' },
+  { color: '#100CFD', name: 'blue' },
+  { color: '#DDDD00', name: 'yellow' },
+  { color: '#FF9900', name: 'orange' },
+  { color: '#7C7C7C', name: 'grey' }
+]
+
+const itemColor = {
+  red: { colorBorder: '#F70000', colorBg: '#FFF5F5', colorHover: '#F8E2E2' },
+  aqua: { colorBorder: '#00DDEB', colorBg: '#F5FEFF', colorHover: '#E2F7F8' },
+  green: { colorBorder: '#00CC08', colorBg: '#F5FFF5', colorHover: '#E2F8E3' },
+  purple: { colorBorder: '#A300CC', colorBg: '#FDF5FF', colorHover: '#F4E2F8' },
+  blue: { colorBorder: '#100CFD', colorBg: '#E9E9F5', colorHover: '#D2D2F6' },
+  yellow: { colorBorder: '#DDDD00', colorBg: '#F5F5E9', colorHover: '#F4F4D0' },
+  orange: { colorBorder: '#FF9900', colorBg: '#F5F0E8', colorHover: '#F6E7D0' },
+  grey: { colorBorder: '#7C7C7C', colorBg: '#FAFAFA', colorHover: '#FAFAFA' }
+}
+
 function getColor() {
   if (props.player.money > 700) {
     moneyColor.value = 'rgb(33, 158, 33)'
@@ -163,18 +185,11 @@ function getColor() {
     moneyColor.value = 'orange'
   } else moneyColor.value = 'rgb(240, 24, 24)'
 
+  let color
+  typeColor.forEach((el) => (el.color === props.player.color ? (color = el.name) : ''))
+
   if (!props.player.status) {
-    if (props.player.color === '#F70000') {
-      getPlayerColors('#FFF5F5', '#F8E2E2')
-    } else if (props.player.color === '#00DDEB') {
-      getPlayerColors('#F5FEFF', '#E2F7F8')
-    } else if (props.player.color === '#00CC08') {
-      getPlayerColors('#F5FFF5', '#E2F8E3')
-    } else if (props.player.color === '#A300CC') {
-      getPlayerColors('#FDF5FF', '#F4E2F8')
-    } else {
-      getPlayerColors('#FAFAFA', '#FAFAFA')
-    }
+    getPlayerColors(itemColor[color].colorBg,itemColor[color].colorHover)
   } else {
     getPlayerColors(' #646864', ' #646864')
   }
@@ -207,7 +222,7 @@ function toggleTrade() {
 }
 
 function closeAndDisabled() {
- toggleTrade()
+  toggleTrade()
   disabledTrade.value = props.active.id === props.player.id
 }
 
