@@ -189,11 +189,12 @@ onMounted(() => {
     &.small {
       width: 14px;
       height: 7px;
-      border-width: 1px 1px 8px 1px;
+      border-width: 1px 1px 7px 1px;
 
       &:before,
       &:after {
-        border-width: 2.6px;
+        content:'';
+        border-width: 2.5px;
         width: 2px;
         height: 2px;
       }

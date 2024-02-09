@@ -23,7 +23,7 @@ export const surprise = [
     id: 6,
     type: 'go',
     text: 'You don`t have time for your training session, so you take a taxi and go to "Fitness Dream"',
-    goTo: { row: '1/2', column: '5/6' }
+    goTo: {count: '24', row: '1/2', column: '5/6' }
   },
   {
     id: 7,

@@ -28,36 +28,41 @@
       </svg>
       <h3 class="modal-trade__title">{{ !showOffer ? 'Trade' : 'Offer' }}</h3>
 
-      <div class="modal-trade__header">
+      <!-- <div class="modal-trade__header">
         <p>{{ active.name }}</p>
         <p v-if="!showOffer">{{ active.money }}$</p>
-      </div>
+      </div> -->
       <div class="modal-trade__container">
         <div class="modal-trade__player">
-          <Slider
-            v-if="activeTradeItems.length"
-            :cards="activeTradeItems"
-            :trade="true"
-            @active="getActivePlayerItem"
-          />
-          <!-- <div v-else class="modal-trade__cards">
-            <SlideItem
-            class="modal-trade__card"
-            v-for="(card,index) in activeTradeItems"
-            :key="card.id"
-            :item="card"
-            :index="index"
-            :trade="true"
-            @active="chooseItem"
-          />
-          </div> -->
-          <p v-if="!showOffer || offer.money !== 0" class="modal-trade__plus">
-            {{ !showOffer ? '+' : offer.money !== 0 ? `+${offer.money}$` : '' }}
-          </p>
-          <label v-if="!showOffer" class="modal-trade__label">
-            Add money:
-            <input type="text" ref="inputMoney" @change="addMoney" />
-          </label>
+          <div class="modal-trade__player-content">
+            <div class="modal-trade__header">
+              <p>{{ active.name }}</p>
+              <span class="modal-trade__header-money" v-if="!showOffer">{{ active.money }}$</span>
+            </div>
+            <div v-if="!showOffer" class="modal-trade__label-wrap">
+              <label class="modal-trade__label"> Add money </label>
+              <input
+                type="text"
+                ref="inputGetMoney"
+                @change="getMoney"
+                :class="[{ error: active.money < offer.getMoney }, { disabled: disabledInputGet }]"
+              />
+            </div>
+            <p v-if="showOffer && offer.getMoney !== 0" class="modal-trade__plus">
+              {{ offer.getMoney }}$ +
+            </p>
+          </div>
+          <div class="modal-trade__slider">
+            <p v-if="!showOffer" class="modal-trade__slider-discription">
+              Select the item you want to give
+            </p>
+            <Slider
+              v-if="activeTradeItems.length"
+              :cards="activeTradeItems"
+              :trade="true"
+              @active="getActivePlayerItem"
+            />
+          </div>
         </div>
 
         <svg class="modal-trade__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
@@ -106,49 +111,69 @@
         </svg>
 
         <div class="modal-trade__player">
-          <p v-if="showOffer" class="modal-trade__header">{{ playersName }}</p>
+          <div class="modal-trade__player-content">
+            <p v-if="showOffer" class="modal-trade__header">{{ playersName }}</p>
 
-          <div v-if="!showOffer" class="modal-trade__header-item">
-            <p class="modal-trade__players-name" @click="openDropDown">
-              {{ playersName }}
-              <span class="modal-trade__arrow"></span>
-            </p>
-            <Transition name="drop-down">
-              <div v-if="showDropDown" class="modal-trade__drop-down">
-                <p
-                  v-for="(item, index) in tradePlayers"
-                  :key="index"
-                  class="modal-trade__drop-down-item"
-                  @click="chooseplayersName(index)"
-                >
-                  {{ item.name }}
+            <div v-if="!showOffer">
+              <div class="modal-trade__header-item">
+                <p class="modal-trade__players-name" @click="openDropDown">
+                  {{ playersName }}
+                  <!-- <span class="modal-trade__arrow"></span> -->
                 </p>
+                <img
+                  class="modal-trade__arrow"
+                  src="/images/double_arrow.svg"
+                  alt="arrow"
+                  @click="openDropDown"
+                />
+                <Transition name="drop-down">
+                  <div v-if="showDropDown" class="modal-trade__drop-down">
+                    <p
+                      v-for="(item, index) in tradePlayers"
+                      :key="index"
+                      class="modal-trade__drop-down-item"
+                      @click="choosePlayersName(index)"
+                    >
+                      {{ item.name }}
+                    </p>
+                  </div>
+                </Transition>
               </div>
-            </Transition>
+              <span class="modal-trade__header-money" v-if="!showOffer && playersName !== 'Choose'"
+                >{{ money }}$</span
+              >
+            </div>
+
+            <div v-if="!showOffer" class="modal-trade__label-wrap">
+              <label class="modal-trade__label"> Add money </label>
+              <input
+                type="text"
+                ref="inputPayMoney"
+                @change="payMoney"
+                :class="[{ error: money < offer.payMoney }, { disabled: disabledInputPay }]"
+              />
+            </div>
+            <p v-if="showOffer && offer.payMoney !== 0" class="modal-trade__plus pay">
+              {{ offer.payMoney }}$ +
+            </p>
           </div>
 
-          <Transition name="slider">
-            <Slider
-              v-if="showTradeItems && tradePlayerItems.length"
-              :cards="tradePlayerItems"
-              :trade="true"
-              @active="getPlayerItem"
-            />
-            <!-- <div v-else class="modal-trade__cards">
-            <SlideItem
-            class="modal-trade__card"
-            v-for="(card,index) in tradePlayerItems"
-            :key="card.id"
-            :item="card"
-            :index="index"
-            :trade="true"
-            @active="chooseItem"
-          />
-          </div> -->
-          </Transition>
-          <p v-if="!tradePlayerItems.length" class="modal-trade__slider-description">
-            {{ playersName === 'Choose player' ? playersName : `${playersName}  has no cards` }}
-          </p>
+          <div class="modal-trade__slider">
+            <p v-if="!showOffer" class="modal-trade__slider-discription">
+              Select the item you want to get
+            </p>
+            <Transition name="slider">
+              <Slider
+                v-if="showTradeItems && tradePlayerItems.length"
+                :cards="tradePlayerItems"
+                :trade="true"
+                @active="getPlayerItem"
+              />
+            </Transition>
+            <p v-if="!tradePlayerItems.length" class="modal-trade__slider-description">
+              {{ playersName === 'Choose player' ? playersName : `${playersName}  has no cards` }}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -157,7 +182,7 @@
       >
 
       <div v-else class="modal-trade__offer">
-        <Button @click="isDisagree" :transparent="true">Disagree</Button>
+        <Button @click="isDisagree" :type="'cansel'">Disagree</Button>
         <Button @click="isAgree">Agree</Button>
       </div>
     </div>
@@ -178,19 +203,25 @@ const props = defineProps({
 })
 const emit = defineEmits(['close', 'init', 'getItems', 'disagree', 'agree'])
 
-const inputMoney = ref(null)
+const inputPayMoney = ref(null)
+const inputGetMoney = ref(null)
+
+const disabledInputGet = ref(false)
+const disabledInputPay = ref(false)
 
 const disabled = ref(true)
 const showDropDown = ref(false)
 const showTradeItems = ref(false)
-const playersName = ref('Choose player')
+const playersName = ref('Choose')
 
 const tradePlayers = ref([])
 const tradePlayerItems = ref([])
 const activeTradeItems = ref([])
 
+const money = ref(0)
+
 const showOffer = ref(false)
-const offer = ref({ money: 0, chooseActiveItems: [], chooseItems: [] })
+const offer = ref({ getMoney: 0, chooseActiveItems: [], chooseItems: [], payMoney: 0 })
 
 function initActiveItems() {
   activeTradeItems.value = props.items.filter((el) => el.owner === props.active.name)
@@ -215,24 +246,48 @@ function initTradeItems() {
 }
 
 function getActivePlayerItem() {
-  // iteratingOverArray(offer.value.chooseActiveItems, activeTradeItems.value)
   offer.value.chooseActiveItems = activeTradeItems.value.filter((el) => el.sell)
 }
+
 function getPlayerItem() {
   offer.value.chooseItems = tradePlayerItems.value.filter((el) => el.sell)
 }
 
-function addMoney() {
-  inputMoney.value.value !== ''
-    ? (offer.value.money = Number(inputMoney.value.value))
-    : (offer.value.money = 0)
+function getMoney() {
+  if (inputGetMoney.value.value !== '') {
+    offer.value.getMoney = Number(inputGetMoney.value.value)
+    disabledInputPay.value = true
+  } else {
+    offer.value.getMoney = 0
+    disabledInputGet.value = false
+    disabledInputPay.value = false
+  }
+}
+
+function payMoney() {
+  if (inputPayMoney.value.value !== '') {
+    offer.value.payMoney = Number(inputPayMoney.value.value)
+    disabledInputGet.value = true
+  } else {
+    offer.value.payMoney = 0
+    disabledInputPay.value = false
+    disabledInputGet.value = false
+  }
 }
 
 function isValid() {
-  offer.value.chooseActiveItems.length > 0 ||
-  (offer.value.money > 0 && offer.value.chooseItems.length > 0)
-    ? (disabled.value = false)
-    : (disabled.value = true)
+  if (
+    (offer.value.chooseActiveItems.length > 0 && offer.value.chooseItems.length > 0) ||
+    (offer.value.getMoney > 0 && offer.value.chooseItems.length > 0)
+  ) {
+    offer.value.getMoney <= props.active.money && offer.value.payMoney <= money.value
+      ? (disabled.value = false)
+      : (disabled.value = true)
+  } else {
+    disabled.value = true
+  }
+
+  console.log(offer.value)
 }
 
 function makeOffer() {
@@ -247,37 +302,48 @@ function openDropDown() {
   initTradePlayers()
 }
 
-function chooseplayersName(index) {
+function choosePlayersName(index) {
   tradePlayers.value.forEach((el, i) => {
     i === index ? (el.active = true) : (el.active = false)
   })
   playersName.value = tradePlayers.value[index].name
   showDropDown.value = false
 
+  props.allPlayers.forEach((el) => (el.name === playersName.value ? (money.value = el.money) : ''))
   initTradeItems()
 }
 
 function closeTrade() {
   emit('close')
-  playersName.value = 'Choose player'
+  playersName.value = 'Choose'
   activeTradeItems.value.forEach((el) => (el.sell = false))
 }
 
 function isDisagree() {
   emit('disagree')
-  playersName.value = 'Choose player'
+  playersName.value = 'Choose'
   activeTradeItems.value.forEach((el) => (el.sell = false))
 }
 
 function isAgree() {
   emit('agree')
 
-  if (offer.value.money > 0) {
+  if (offer.value.getMoney > 0) {
     props.allPlayers.forEach((el) => {
       el.name === props.active.name
-        ? (el.money = el.money - offer.value.money)
+        ? (el.money = el.money - offer.value.getMoney)
         : el.name === playersName.value
-          ? (el.money = el.money + offer.value.money)
+          ? (el.money = el.money + offer.value.getMoney)
+          : ''
+    })
+  }
+
+  if (offer.value.payMoney > 0) {
+    props.allPlayers.forEach((el) => {
+      el.name === playersName.value
+        ? (el.money = el.money - offer.value.payMoney)
+        : el.name === props.active.name
+          ? (el.money = el.money + offer.value.payMoney)
           : ''
     })
   }
@@ -309,7 +375,7 @@ onMounted(() => {
   height: 100%;
 
   position: absolute;
-  z-index: 10;
+  z-index: 50;
   top: 0;
   left: 0;
 
@@ -322,7 +388,7 @@ onMounted(() => {
     left: 50%;
     transform: translate(-50%, -50%);
 
-    max-width: 510px;
+    // max-width: 510px;
     min-height: 240px;
     // min-height: 404px;
 
@@ -335,7 +401,7 @@ onMounted(() => {
     border-radius: 12px;
     box-shadow: 0px 0px 10px grey;
 
-    padding: 24px 44px;
+    padding: 40px;
 
     transition: all 0.4s ease-in-out;
   }
@@ -362,19 +428,19 @@ onMounted(() => {
   }
 
   &__header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-
     color: black;
-    font-size: 24px;
-    line-height: 28px;
+    font-size: 14px;
+    line-height: 24px;
     font-weight: 700;
 
     & p {
       font-weight: 700;
     }
+  }
+
+  &__header-money {
+    color: #008309;
+    font-weight: 700;
   }
 
   &__container {
@@ -396,17 +462,29 @@ onMounted(() => {
   // }
 
   &__player {
+    // display: flex;
+    // flex-direction: row;
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 20px;
+  }
+
+  &__player-content {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 20px;
   }
 
   &__plus {
-    height: 36px;
-    font-size: 36px;
-    line-height: 36px;
-    text-align: center;
+    height: 24px;
+    font-size: 24px;
+    line-height: 24px;
+    // text-align: center;
     color: green;
+
+    &.pay {
+      color: #ca5f63;
+    }
   }
 
   &__icon {
@@ -416,69 +494,104 @@ onMounted(() => {
     transform: rotate(270deg);
   }
 
-  &__label {
-    color: black;
-    // padding: 0px 44px;
-    margin: 0 auto;
+  &__label-wrap {
+    display: flex;
+    flex-direction: column;
+
+    color: #4c4c4c;
 
     & input {
-      width: 50px;
+      width: 75px;
+      height: 44px;
       border-radius: 4px;
-      border: 1px solid black;
+      border: 1px solid #a8bda8;
+
       padding: 6px 8px;
+
+      &:focus-visible {
+        outline: none;
+        border-color: #125417;
+      }
+      &.error {
+        border-color: red;
+      }
+
+      &.disabled {
+        cursor: auto;
+        pointer-events: none;
+
+        border-color: #646864;
+        background-color: #bdbdbd;
+      }
 
       // font-style: 18px;
     }
   }
 
-  &__header-item {
-    position: relative;
-    max-width: 240px;
-    width: 100%;
-
-    margin: 0 auto;
+  &__label {
+    font-size: 14px;
+    line-height: 24px;
   }
 
-  &__players-name {
+  &__slider {
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    padding: 12px 44px;
+  }
+
+  &__slider-discription {
+    text-align: center;
+  }
+
+  &__header-item {
     position: relative;
     cursor: pointer;
 
-    font-weight: 600;
-    color: black;
+    display: flex;
+    align-items: center;
 
     border-radius: 4px;
-    border: 1px solid #d1d1d1;
-
-    padding: 4px 8px;
+    border: 1px inset #6f906f;
 
     transition: border-color 0.3s ease-in-out;
+    // margin: 0 auto;
+
+    &:hover {
+      border-color: #125417;
+    }
+  }
+
+  &__players-name {
+    font-weight: 700;
+    color: black;
+    padding: 4px 8px;
   }
 
   &__arrow {
-    position: absolute;
-    z-index: 2;
-    top: 10px;
-    right: 13px;
+    // position: absolute;
+    // z-index: 2;
+    // top: 10px;
+    // right: 13px;
 
-    border: solid black;
-    border-width: 0 1px 1px 0;
+    // border: solid black;
+    // border-width: 0 1px 1px 0;
 
-    padding: 4px;
+    // padding: 4px;
 
-    transform: rotate(45deg);
+    // transform: rotate(45deg);
   }
 
   &__drop-down {
     position: absolute;
     z-index: 10;
-    top: 0px;
-    left: 0px;
+    top: -1px;
+    left: -1px;
 
-    width: 100%;
+    width: 120px;
 
     background-color: white;
     border-radius: 4px;
-    border: 1px solid #d1d1d1;
+    border: 1px solid #125417;
 
     overflow: hidden;
   }
@@ -489,10 +602,14 @@ onMounted(() => {
     z-index: 5;
 
     color: black;
+    font-weight: 700;
+
     padding: 4px 8px;
 
+    // padding: 10px 8px;
+
     &:first-of-type {
-      padding: 4px 8px;
+      padding: 10px 8px;
       border-radius: 3px 3px 0 0;
     }
 
@@ -501,13 +618,9 @@ onMounted(() => {
     }
 
     &:hover {
-      color: white;
-      background-color: #222429;
+      // color: white;
+      background-color: #e2e9e2;
     }
-  }
-
-  &__slider-description {
-    text-align: center;
   }
 
   // &__button-wrap {
@@ -567,14 +680,14 @@ onMounted(() => {
 }
 
 .drop-down-enter-from {
-  height: 34px;
+  height: 44px;
 }
 .drop-down-enter-to {
   height: 97px;
   transition: all 0.3s ease-in-out;
 }
 .drop-down-leave-to {
-  height: 34px;
+  height: 44px;
   opacity: 0;
   transition: all 0.3s ease-in-out;
 }

@@ -1,34 +1,37 @@
 <template>
   <div class="input">
-    <h3 class="input__title">
-      Player {{ player.id }}
-      <p>Choose params</p>
-    </h3>
-    <div class="input__header">
-      <label>Name :</label>
-      <input type="text" ref="inputName" @change="isCheckName" />
-    </div>
+    <h3 class="input__title">Player {{ player.id }}</h3>
     <div class="input__wrap">
-      <div class="input__color">
-        <span>Color :</span>
-        <span
-          class="input__radio"
-          :class="[
-            { active: data[index].active && player.id === data[index].label },
-            { disabled: data[index].active && player.id !== data[index].label }
-          ]"
-          v-for="(color, index) in data"
-          :key="index"
-          :value="color.color"
-          :style="{ '--color-radio': color.color }"
-          @click="isActiveColor(index)"
-        />
+      <div class="input__item">
+        <label class="input__item-title">Name</label>
+        <input type="text" ref="inputName" @change="isCheckName" />
       </div>
 
-      <div class="input__token token">
-        <p class="input__token-title">Token :</p>
+      <div class="input__item">
+        <p class="input__item-title">Color</p>
+        <div class="input__item-container">
+          <div
+            class="input__color"
+            v-for="(color, index) in data"
+            :key="index"
+            :class="[
+              { active: data[index].active && player.id === data[index].label },
+              { disabled: data[index].active && player.id !== data[index].label }
+            ]"
+          >
+            <span
+              class="input__radio"
+              :style="{ '--color-radio': color.color }"
+              @click="isActiveColor(index)"
+            />
+          </div>
+        </div>
+      </div>
 
-        <div class="token__wrap">
+      <div class="input__item token">
+        <p class="input__item-title">Token</p>
+
+        <div class="input__item-container">
           <div
             class="token__item-wrap"
             :class="{ active: tokens[index].active && player.id === tokens[index].label }"
@@ -78,18 +81,23 @@ const inputName = ref(null)
 function isActiveColor(index) {
   props.data.forEach((el, i) => {
     if (i === index) {
-      playerColor.value = el.color
-
       el.active = !el.active
-      el.label = props.player.id
-      el.name = inputName.value.value
+      if (el.active === true) {
+        playerColor.value = el.color
 
-      props.player.color = el.color
-      props.player.name = inputName.value.value
+        el.label = props.player.id
+        el.name = inputName.value.value
 
-      props.tokens.forEach((token) => {
-        if (token.active && token.label === el.label) el.token = token.name
-      })
+        props.player.color = el.color
+        props.player.name = inputName.value.value
+
+        props.tokens.forEach((token) => {
+          if (token.active && token.label === el.label) el.token = token.name
+        })
+      } else {
+        props.player.color = null
+        playerColor.value = 'grey'
+      }
     } else {
       if (el.label === props.player.id) {
         el.active = false
@@ -105,14 +113,20 @@ function isActiveToken(index) {
   props.tokens.forEach((el, i) => {
     if (i === index) {
       el.active = !el.active
-      el.label = props.player.id
+      if (el.active === true) {
+        el.label = props.player.id
 
-      props.player.img = el.name
-      props.player.name = inputName.value.value
+        props.player.img = el.name
+        props.player.name = inputName.value.value
 
-      props.data.forEach((item) =>
-        item.label == props.player.id ? (item.token = el.name) : (item.token = null)
-      )
+        props.data.forEach((item) =>
+          item.label == props.player.id ? (item.token = el.name) : (item.token = null)
+        )
+      } else {
+        el.token = null
+        props.player.img = null
+        props.data.forEach((item) => (item.token = null))
+      }
     } else {
       if (el.label === props.player.id) {
         el.active = false
@@ -136,21 +150,19 @@ watch(props.player, () => {
 .input {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 
-  border: 1px solid grey;
-  border-radius: 6px;
+  color: black;
 
-  padding: 16px;
+  border-radius: 8px;
+  background-color: white;
+
+  padding: 20px;
 
   &__title {
-    text-align: center;
-    font-weight: 600;
-  }
-
-  &__header {
-    display: flex;
-    gap: 12px;
+    font-size: 24px;
+    line-height: 28px;
+    font-weight: 700;
   }
 
   &__wrap {
@@ -159,45 +171,91 @@ watch(props.player, () => {
     gap: 16px;
   }
 
-  &__color {
+  &__item {
+    width: 200px;
+
     display: flex;
-    align-items: center;
-    gap: 6px;
+    flex-direction: column;
+    gap: 4px;
+
+    & input {
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 24px;
+
+      border-radius: 4px;
+      border: 2px solid #a8bda8;
+
+      padding: 8px 16px;
+
+      transition: border-color 0.3s ease-in-out;
+
+      &:hover {
+        border-color: #6f906f;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: #6f906f;
+      }
+    }
   }
 
-  &__radio {
-    --color-radio: grey;
-    cursor: pointer;
-    width: 24px;
-    height: 24px;
+  &__item-title {
+    font-style: 14px;
+    font-weight: 400;
+    line-height: 24px;
+  }
 
-    border: 2px solid var(--color-radio);
-    border-radius: 50%;
+  &__item-container {
+    width: 100%;
 
-    transition: background-color 0.3s ease-in-out;
+    display: grid;
+    grid-template-columns: repeat(4, 40px);
+    justify-items: center;
+    align-items: center;
+  }
+
+  &__color {
+    width: 40px;
+    height: 40px;
+
+    padding: 8px;
 
     &.active {
-      background-color: var(--color-radio);
+      border-bottom: 2px solid #6e916e;
     }
 
     &.disabled {
       cursor: auto;
       pointer-events: none;
-      border-color: grey;
-      background-color: grey;
+
+      & span {
+        border-color: grey;
+        background-color: grey;
+      }
     }
+  }
+
+  &__radio {
+    --color-radio: grey;
+    cursor: pointer;
+
+    display: block;
+    width: 24px;
+    height: 24px;
+
+    border: 2px solid var(--color-radio);
+    background-color: var(--color-radio);
+
+    border-radius: 50%;
+
+    transition: background-color 0.3s ease-in-out;
   }
 }
 
 .token {
   --color-token: grey;
-  &__wrap {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(52px, 80px));
-    justify-content: center;
-    justify-items: center;
-    gap: 8px;
-  }
 
   &__item-wrap {
     position: relative;
@@ -208,8 +266,7 @@ watch(props.player, () => {
       bottom: 0px;
       left: 0;
       width: 100%;
-      border: 1px solid var(--color-token);
-      box-shadow: 0px 2px 4px var(--color-token);
+      border: 1px solid #6e916e;
     }
 
     &.active span {
@@ -219,17 +276,12 @@ watch(props.player, () => {
 
   &__item {
     cursor: pointer;
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
 
-    margin: 10px;
+    margin: 8px;
 
     transition: all 0.4s linear;
-
-    &.tringle.active span {
-      bottom: 0;
-      left: 20px;
-    }
 
     &.disabled {
       cursor: auto;
@@ -245,49 +297,49 @@ watch(props.player, () => {
       border-radius: 50%;
     }
 
-    &.triangle {
-      width: 0;
-      height: 0;
-      border-left: 16px solid transparent;
-      border-right: 16px solid transparent;
-      background-color: transparent;
+    // &.triangle {
+    //   width: 0;
+    //   height: 0;
+    //   border-left: 16px solid transparent;
+    //   border-right: 16px solid transparent;
+    //   background-color: transparent;
 
-      border-bottom: 32px solid var(--color-token);
-    }
+    //   border-bottom: 32px solid var(--color-token);
+    // }
 
     &.pacman {
       position: relative;
       width: 0px;
       height: 0px;
-      border-left: 16px solid transparent;
-      border-top: 16px solid var(--color-token);
-      border-right: 16px solid var(--color-token);
-      border-bottom: 16px solid var(--color-token);
-      border-top-left-radius: 16px;
-      border-top-right-radius: 16px;
-      border-bottom-left-radius: 16px;
-      border-bottom-right-radius: 16px;
+      border-left: 12px solid transparent;
+      border-top: 12px solid var(--color-token);
+      border-right: 12px solid var(--color-token);
+      border-bottom: 12px solid var(--color-token);
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
 
       &::after {
         content: '';
         position: absolute;
-        top: -10px;
+        top: -8px;
         left: 0;
-        width: 4px;
-        height: 4px;
+        width: 3.5px;
+        height: 3.5px;
         border-radius: 50%;
         background-color: white;
       }
     }
 
     &.yin-yang {
-      width: 30px;
+      width: 24px;
       box-sizing: content-box;
-      height: 15px;
+      height: 12px;
       background: #eee;
       border-color: var(--color-token);
       border-style: solid;
-      border-width: 1px 1px 15px 1px;
+      border-width: 1px 1px 12px 1px;
       border-radius: 100%;
       position: relative;
 
@@ -297,7 +349,7 @@ watch(props.player, () => {
         top: 50%;
         left: 0;
         background: #eee;
-        border: 6px solid var(--color-token);
+        border: 4px solid var(--color-token);
         border-radius: 100%;
         width: 4px;
         height: 4px;
@@ -310,7 +362,7 @@ watch(props.player, () => {
         top: 50%;
         right: 0;
         background: var(--color-token);
-        border: 6px solid #eee;
+        border: 4px solid #eee;
         border-radius: 100%;
         width: 4px;
         height: 4px;
@@ -320,8 +372,8 @@ watch(props.player, () => {
 
     &.burst-8 {
       background: var(--color-token);
-      width: 28px;
-      height: 28px;
+      width: 20px;
+      height: 20px;
       position: relative;
       text-align: center;
       transform: rotate(20deg);
@@ -331,8 +383,8 @@ watch(props.player, () => {
         position: absolute;
         top: 0;
         left: 0;
-        height: 28px;
-        width: 28px;
+        height: 20px;
+        width: 20px;
         background: var(--color-token);
         transform: rotate(135deg);
       }
@@ -340,17 +392,17 @@ watch(props.player, () => {
 
     &.heart {
       position: relative;
-      width: 32px;
-      height: 32px;
+      width: 24px;
+      height: 24px;
 
       &:before,
       &:after {
         position: absolute;
         content: '';
-        left: 14px;
+        left: 12px;
         top: 0;
-        width: 20px;
-        height: 32px;
+        width: 14px;
+        height: 24px;
         background: var(--color-token);
         border-radius: 18px 18px 0 0;
         transform: rotate(-45deg);
@@ -358,7 +410,7 @@ watch(props.player, () => {
       }
 
       &:after {
-        left: -6px;
+        left: -2px;
         transform: rotate(45deg);
         transform-origin: 100% 100%;
       }

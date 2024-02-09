@@ -1,14 +1,6 @@
 <template>
   <section class="modal-item">
     <div class="modal-item__wrap" :class="{ go: items.length > 1 }">
-     <!-- <img
-        v-if="items.length === 1 && !items[0].owner"
-        src="/images/close.png"
-        alt="close"
-        class="modal-item__close"
-        @click="closeModal"
-        
-      /> -->
       <CardItem
         v-for="(item, index) in items"
         :key="index"

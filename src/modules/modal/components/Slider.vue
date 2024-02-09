@@ -2,10 +2,10 @@
   <div class="slider" ref="slider">
     <div class="slider__arrow-wrap">
       <div class="slider__wrap">
-        <div class="slider__slides" :class="{trade: cards.length<5}" ref="items">
+        <div class="slider__slides" :class="{ trade: cards.length < 5 }" ref="items">
           <SlideItem
             class="slider__slide"
-            v-for="(card,index) in cards"
+            v-for="(card, index) in cards"
             :key="card.id"
             :item="card"
             :index="index"
@@ -131,6 +131,7 @@ function nextSlide() {
       translateXVar.value = `-${translateX.value}px`
     }
   }
+  console.log('yes')
 }
 
 function prevSlide() {
@@ -172,23 +173,25 @@ onMounted(() => {
 
 onUpdated(() => {
   getSizeSlide()
-
 })
 </script>
 
 <style lang="scss" scoped>
 .slider {
-  max-width: 425px;
+  max-width: 513px;
+  // max-width: max-content;
   // width: 100%;
-
   // padding: 0px 44px;
 
   &__arrow-wrap {
     // width: 100%;
+    width: max-content;
     position: relative;
+    margin: auto;
   }
 
   &__wrap {
+    max-width: 425px;
     // width: 100%;
 
     display: flex;
@@ -197,7 +200,7 @@ onUpdated(() => {
     position: relative;
     overflow: hidden;
 
-  // padding: 0px 44px;
+    // padding: 0px 44px;
 
     // gap: 48px;
   }
@@ -205,7 +208,7 @@ onUpdated(() => {
   &__arrow {
     cursor: pointer;
     position: absolute;
-    z-index: 3;
+    z-index: 55;
     top: 50%;
 
     & rect,
@@ -265,8 +268,9 @@ onUpdated(() => {
 
     transition: transform 0.3s ease-in-out;
     transform: translateX(v-bind(translateXVar));
+    margin: auto;
 
-    &.trade{
+    &.trade {
       justify-content: center;
     }
   }

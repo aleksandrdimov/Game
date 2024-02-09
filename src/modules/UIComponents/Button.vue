@@ -34,7 +34,7 @@ function clickButton(){
   border-radius: 4px;
   padding: 8px 12px;
 
-  transition: background-color 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
 
   &.rent {
     background-color: #2598a7;
@@ -54,9 +54,29 @@ function clickButton(){
   }
 
   &.transparent {
+    color: #0D3B10;
+
+    background-color: white;
+    border-color: #0D3B10;
+
+   
+    &:hover {
+      background-color: #F0FAF1;
+      border-color: #125417;
+      color: #125417;
+    }
+
+    &:active {
+      background-color: #E0F5E2;
+      border-color: #1C7D22;
+      color: #1C7D22;
+    }
+  }
+
+  &.cansel {
     color: #ca5f63;
 
-    background-color: transparent;
+    background-color:white;
     border-color: #ca5f63;
 
    

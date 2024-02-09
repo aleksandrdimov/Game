@@ -4,11 +4,11 @@
       <h2 class="admin__title">Welcome to custom Monopoly</h2>
 
       <div class="admin__header">
-        <p class="admin__players">Choose Players number :</p>
+        <p class="admin__players">Select the number of players</p>
         <div class="admin__header-item">
           <p class="admin__players-number" @click="openDropDown">
             {{ playersNumber }}
-            <span class="admin__arrow"></span>
+            <img class="admin__arrow" src="/images/arrow_slider.svg" alt="arrow" />
           </p>
           <Transition name="drop-down">
             <div v-if="showDropDown" class="admin__drop-down">
@@ -34,7 +34,7 @@
         />
       </div>
 
-      <button class="admin__button" :disabled="!activeButton" @click="startGame">Start Game</button>
+      <button class="admin__button" :disabled="!activeButton" @click="startGame">Start</button>
     </div>
   </section>
   <Board v-else :data="dataPlayers" />
@@ -48,7 +48,7 @@ import InputPlayer from './components/InputPlayer.vue'
 const dataPlayers = ref([])
 const activeButton = ref(false)
 
-const adminShow = ref(true)
+const adminShow = ref(false)
 
 const players = ref([
   { value: 2, active: true },
@@ -59,10 +59,10 @@ const players = ref([
 const tokens = ref([
   { active: false, label: null, name: 'square' },
   { active: false, label: null, name: 'circle' },
-  { active: false, label: null, name: 'triangle' },
+  // { active: false, label: null, name: 'triangle' },
   { active: false, label: null, name: 'pacman' },
-  { active: false, label: null, name: 'yin-yang' },
-  { active: false, label: null, name: 'burst-8' },
+  // { active: false, label: null, name: 'yin-yang' },
+  // { active: false, label: null, name: 'burst-8' },
   { active: false, label: null, name: 'heart' }
 ])
 
@@ -70,10 +70,10 @@ const initInputs = ref([
   { name: null, color: '#F70000', active: false, label: null, token: null },
   { name: null, color: '#00DDEB', active: false, label: null, token: null },
   { name: null, color: '#00CC08', active: false, label: null, token: null },
-  { name: null, color: '#A300CC', active: false, label: null, token: null },
-  { name: null, color: '#100CFD', active: false, label: null, token: null },
-  { name: null, color: '#DDDD00', active: false, label: null, token: null },
-  { name: null, color: '#FF9900', active: false, label: null, token: null }
+  { name: null, color: '#A300CC', active: false, label: null, token: null }
+  // { name: null, color: '#100CFD', active: false, label: null, token: null },
+  // { name: null, color: '#DDDD00', active: false, label: null, token: null },
+  // { name: null, color: '#FF9900', active: false, label: null, token: null }
 ])
 const playersNumber = ref(2)
 const showDropDown = ref(false)
@@ -158,38 +158,44 @@ onBeforeUpdate(() => {
 .admin {
   width: 100vw;
   height: 100vh;
+  // height: 100%;
 
   display: flex;
   justify-content: center;
   align-items: center;
 
+  padding: 24px;
+
   &__wrap {
-    max-width: 850px;
-    width: 100%;
+    max-width: 1100px;
+    // width: 100%;
 
     display: flex;
     flex-direction: column;
 
-    gap: 16px;
+    gap: 24px;
 
     border-radius: 6px;
-    border: 1px solid grey;
+    background-color: #eef2ee;
+    // border: 1px solid grey;
 
-    padding: 24px;
+    padding: 40px;
   }
 
   &__title {
-    font-size: 26px;
-    font-weight: 600;
+    font-size: 32px;
+    font-weight: 700;
     line-height: 36px;
     text-align: center;
+    color: black;
   }
 
   &__header {
     display: flex;
+    flex-direction: column;
     align-items: center;
 
-    gap: 8px;
+    gap: 4px;
   }
 
   &__players {
@@ -200,33 +206,36 @@ onBeforeUpdate(() => {
 
   &__header-item {
     position: relative;
-    width: 50px;
+    width: 100px;
   }
 
   &__players-number {
-    position: relative;
     cursor: pointer;
+    position: relative;
+
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24px;
 
     border-radius: 4px;
-    border: 1px solid #d1d1d1;
+    border: 2px solid #6f906f;
 
-    padding: 4px 8px;
+    padding: 10px 26px;
 
     transition: border-color 0.3s ease-in-out;
+
+    &:hover{
+      border-color: #125417;
+    }
   }
 
   &__arrow {
     position: absolute;
     z-index: 2;
-    top: 10px;
-    right: 6px;
+    top: 0;
+    right: 0;
 
-    border: solid black;
-    border-width: 0 1px 1px 0;
-
-    padding: 4px;
-
-    transform: rotate(45deg);
+    transform: rotate(-90deg);
   }
 
   &__drop-down {
@@ -239,7 +248,7 @@ onBeforeUpdate(() => {
 
     background-color: white;
     border-radius: 4px;
-    border: 1px solid #d1d1d1;
+    border: 2px solid #125417;
 
     overflow: hidden;
   }
@@ -249,11 +258,15 @@ onBeforeUpdate(() => {
     position: relative;
     z-index: 5;
 
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24px;
     color: black;
-    padding: 4px 8px;
+
+    padding: 10px 26px;
 
     &:first-of-type {
-      padding: 4px 8px;
+      padding: 10px 26px;
       border-radius: 3px 3px 0 0;
     }
 
@@ -262,16 +275,16 @@ onBeforeUpdate(() => {
     }
 
     &:hover {
-      color: white;
-      background-color: #222429;
+      background-color: #E2E9E2;
     }
   }
 
   &__players-wrap {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    // direction:rtl;
-    gap: 24px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    gap: 20px;
   }
 
   &__button {
@@ -299,15 +312,18 @@ onBeforeUpdate(() => {
 }
 
 .drop-down-enter-from {
-  height: 34px;
+  height: 44px;
 }
 .drop-down-enter-to {
-  height: 97px;
+  height: 136px;
   transition: all 0.3s ease-in-out;
 }
+
+.drop-down-leave-from {
+  height: 136px;
+}
 .drop-down-leave-to {
-  height: 34px;
-  opacity: 0;
-  transition: all 0.3s ease-in-out;
+  height: 44px;
+  transition: all 0.2s ease-in-out;
 }
 </style>
