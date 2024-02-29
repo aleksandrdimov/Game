@@ -159,7 +159,7 @@
           </div>
 
           <div class="modal-trade__slider">
-            <p v-if="!showOffer" class="modal-trade__slider-discription">
+            <p v-if="!showOffer" class="modal-trade__slider-description">
               Select the item you want to get
             </p>
             <Transition name="slider">
@@ -170,7 +170,10 @@
                 @active="getPlayerItem"
               />
             </Transition>
-            <p v-if="!tradePlayerItems.length" class="modal-trade__slider-description">
+            <p
+              v-if="!tradePlayerItems.length && playersName !== 'Choose'"
+              class="modal-trade__slider-description"
+            >
               {{ playersName === 'Choose player' ? playersName : `${playersName}  has no cards` }}
             </p>
           </div>
@@ -286,8 +289,6 @@ function isValid() {
   } else {
     disabled.value = true
   }
-
-  console.log(offer.value)
 }
 
 function makeOffer() {
@@ -539,7 +540,7 @@ onMounted(() => {
     padding: 12px 44px;
   }
 
-  &__slider-discription {
+  &__slider-description {
     text-align: center;
   }
 

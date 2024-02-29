@@ -51,6 +51,14 @@ function clickButton(){
   &.surprise {
     background-color: rgb(126, 197, 245);
     letter-spacing: 1.5px;
+
+    &:hover{
+        background-color:rgb(69, 146, 197) ;
+    }
+
+    &:active{
+        background-color: rgb(24, 103, 156);
+    }
   }
 
   &.transparent {

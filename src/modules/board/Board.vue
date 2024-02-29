@@ -12,11 +12,13 @@
       <PlayerToken v-for="player in players" :key="player.id" :player="player"></PlayerToken>
 
       <div class="board__dice-wrap">
-        <p class="board__dice-item">{{ dice1 }}</p>
-        <p class="board__dice-item">{{ dice2 }}</p>
+        <BoardDice :dice="dice1" :roll="rollAnim" />
+        <BoardDice :dice="dice2" :roll="rollAnim" />
       </div>
-      <button v-if="buttonRoll" class="board__button" @click="rollDice">Roll Dice</button>
-      <button v-else class="board__button" @click="finishedRound">Finished Round</button>
+      <TransitionGroup name="button-roll">
+        <button v-if="buttonRoll" class="board__button" @click="rollDice">Roll Dice</button>
+        <button v-else class="board__button finished" @click="finishedRound">Finished Round</button>
+      </TransitionGroup>
 
       <TransitionGroup name="card">
         <ModalCard
@@ -97,6 +99,7 @@
 
 <script setup>
 import { onMounted, ref, watch } from 'vue'
+import BoardDice from './components/BoardDice.vue'
 import BoardItem from './components/BoardItem.vue'
 import ModalCard from '../modal/ModalCard.vue'
 import ModalError from '../modal/ModalError.vue'
@@ -186,6 +189,7 @@ const players = ref([
 
 // const players = ref(props.data)
 
+const rollAnim = ref(false)
 const buttonRoll = ref(true)
 const enoughMoney = ref(false)
 const jail = ref(false)
@@ -259,43 +263,47 @@ function sortItems() {
 }
 
 function rollDice() {
+  rollAnim.value = true
   directionTop.value = false
 
   dice1.value = Math.floor(Math.random() * 6) + 1
   dice2.value = Math.floor(Math.random() * 6) + 1
   const total = dice1.value + dice2.value
 
-  players.value[playerActiveIndex.value].positionStart =
-    players.value[playerActiveIndex.value].positionGoTo
+  setTimeout(() => {
+    rollAnim.value = false
+    players.value[playerActiveIndex.value].positionStart =
+      players.value[playerActiveIndex.value].positionGoTo
 
-  if (players.value[playerActiveIndex.value].positionGoTo + total >= 40) {
-    players.value[playerActiveIndex.value].positionGoTo =
-      players.value[playerActiveIndex.value].positionGoTo + total - 40
+    if (players.value[playerActiveIndex.value].positionGoTo + total >= 40) {
+      players.value[playerActiveIndex.value].positionGoTo =
+        players.value[playerActiveIndex.value].positionGoTo + total - 40
 
-    players.value[playerActiveIndex.value].money =
-      players.value[playerActiveIndex.value].money + 200
-  } else {
-    players.value[playerActiveIndex.value].positionGoTo =
-      players.value[playerActiveIndex.value].positionGoTo + total
-  }
+      players.value[playerActiveIndex.value].money =
+        players.value[playerActiveIndex.value].money + 200
+    } else {
+      players.value[playerActiveIndex.value].positionGoTo =
+        players.value[playerActiveIndex.value].positionGoTo + total
+    }
 
-  if (dice1.value === dice2.value) {
-    players.value[playerActiveIndex.value].doubleMove++
-    if (players.value[playerActiveIndex.value].doubleMove !== 2) {
-      buttonRoll.value = true
+    if (dice1.value === dice2.value) {
+      players.value[playerActiveIndex.value].doubleMove++
+      if (players.value[playerActiveIndex.value].doubleMove !== 2) {
+        buttonRoll.value = true
+        filterItem()
+
+        showChoose.value = true
+      } else {
+        goToJail()
+        isJail()
+      }
+    } else {
+      buttonRoll.value = false
       filterItem()
 
       showChoose.value = true
-    } else {
-      goToJail()
-      isJail()
     }
-  } else {
-    buttonRoll.value = false
-    filterItem()
-
-    showChoose.value = true
-  }
+  }, 1500)
 }
 
 function goTo() {
@@ -699,7 +707,7 @@ onMounted(() => {
     width: 108px;
     height: 40px;
     grid-column: 8/10;
-    grid-row: 9/10;
+    grid-row: 10/11;
 
     color: white;
 
@@ -707,11 +715,34 @@ onMounted(() => {
     border-radius: 4px;
 
     margin: 0 0 auto 0;
+
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+      background-color: #125417;
+    }
+    &:active {
+      background-color: #092a0b;
+    }
+
+    &.finished {
+      background-color: #ca5f63;
+      border-color: #a54a4d;
+
+      &:hover {
+        background-color: #972c31;
+      }
+
+      &:active {
+        background-color: #6b1e22;
+        border-color: #6b1e22;
+      }
+    }
   }
 
   &__dice-wrap {
     grid-column: 8/10;
-    grid-row: 8/9;
+    grid-row: 9/10;
 
     display: flex;
     flex-direction: row;
@@ -720,34 +751,10 @@ onMounted(() => {
     gap: 20px;
   }
 
-  &__dice-item {
-    width: 44px;
-    height: 44px;
-
-    text-align: center;
-    font-weight: 600;
-    font-size: 36px;
-    color: black;
-
-    background-color: white;
-    border: 1px solid black;
-  }
-
   &__players {
     grid-column: 2/6;
     grid-row: 2/7;
   }
-}
-
-.card-enter-from {
-  transform: scale(0);
-  opacity: 0;
-}
-
-.card-enter-to {
-  transform: scale(1);
-  opacity: 1;
-  transition: all 0.3s ease-in;
 }
 
 .direction-arrow {
@@ -782,5 +789,34 @@ onMounted(() => {
       transform: rotate(180deg);
     }
   }
+}
+
+.card-enter-from {
+  transform: scale(0);
+  opacity: 0;
+}
+
+.card-enter-to {
+  transform: scale(1);
+  opacity: 1;
+  transition: all 0.3s ease-in;
+}
+
+.button-roll-enter-from {
+  transform: rotateX(-90deg);
+}
+.button-roll-enter-to {
+  transform: rotateX(0deg);
+  transition: transform 0.5s ease-in-out .2s;
+}
+
+.button-roll-leave-from {
+  transform: rotateX(0deg);
+
+}
+.button-roll-leave-to {
+  transform : rotateX(90deg);
+  // height: 0;
+  transition: transform 0.5s ease-in-out;
 }
 </style>

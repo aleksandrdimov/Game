@@ -108,7 +108,7 @@
         v-if="showTrade"
         @close="toggleTrade"
         @disagree="closeAndDisabled"
-        @agree="closeAndDisabled"
+        @agree="agreeAndDisabled"
         :items="items"
         :allPlayers="allPlayers"
         :active="active"
@@ -189,7 +189,7 @@ function getColor() {
   typeColor.forEach((el) => (el.color === props.player.color ? (color = el.name) : ''))
 
   if (!props.player.status) {
-    getPlayerColors(itemColor[color].colorBg,itemColor[color].colorHover)
+    getPlayerColors(itemColor[color].colorBg, itemColor[color].colorHover)
   } else {
     getPlayerColors(' #646864', ' #646864')
   }
@@ -224,6 +224,13 @@ function toggleTrade() {
 function closeAndDisabled() {
   toggleTrade()
   disabledTrade.value = props.active.id === props.player.id
+  console.log(disabledTrade.value, props.active.id, props.player.id)
+}
+
+function agreeAndDisabled() {
+  toggleTrade()
+  disabledTrade.value = props.active.id === props.player.id
+  console.log(disabledTrade.value, props.active.id, props.player.id)
 }
 
 // watch(props.groups, () => {
@@ -242,6 +249,8 @@ onBeforeUpdate(() => {
 
 onUpdated(() => {
   getColor()
+  // getDisabledTrade()
+
   calcOwnerCard()
 })
 </script>
