@@ -30,7 +30,7 @@
           class="player__container"
           :class="{ bank: player.name === 'Bank' }"
         >
-          <div class="player__content">
+          <div class="player__content" @mouseleave="mouseHoverCard(null)">
             <div
               class="player__group"
               :class="`player__group-${index + 1}`"
@@ -44,6 +44,7 @@
                 v-for="(item, idx) in group.items"
                 :key="idx"
                 :style="{ '--color': item.color === 'transparent' ? '#B3B3B3' : item.color }"
+                @mouseover="mouseHoverCard(item)"
               >
                 <p
                   class="player__group-owner-line"
@@ -113,11 +114,14 @@
         :allPlayers="allPlayers"
         :active="active"
       />
+
+      <ModalCardHover v-if="showCardHover" :item="cardHover" :player-id="player.id" />
     </TransitionGroup>
   </div>
 </template>
 
 <script setup>
+import ModalCardHover from '@/modules/modal/ModalCardHover.vue'
 import PlayerToken from './PlayerToken.vue'
 import ModalUpgrade from '@/modules/modal/ModalUpgrade.vue'
 import ModalTrade from '@/modules/modal/ModalTrade.vue'
@@ -150,6 +154,9 @@ const showUpgrade = ref(false)
 const showTrade = ref(false)
 
 const disabledTrade = ref(false)
+
+const showCardHover = ref(false)
+const cardHover = ref(null)
 
 function getPlayerColors(bg, hover) {
   playerBg.value = bg
@@ -224,14 +231,24 @@ function toggleTrade() {
 function closeAndDisabled() {
   toggleTrade()
   disabledTrade.value = props.active.id === props.player.id
-  console.log(disabledTrade.value, props.active.id, props.player.id)
 }
 
 function agreeAndDisabled() {
   toggleTrade()
   disabledTrade.value = props.active.id === props.player.id
-  console.log(disabledTrade.value, props.active.id, props.player.id)
 }
+
+function mouseHoverCard(el) {
+  if (el !== null) {
+    cardHover.value = el
+    showCardHover.value = true
+  } else {
+    setTimeout(() => {
+      showCardHover.value = false
+    }, 1000)
+  }
+}
+
 
 // watch(props.groups, () => {
 //   isUpgrade()
@@ -404,6 +421,10 @@ onUpdated(() => {
         border-radius: 4px;
       }
     }
+
+    &:hover .card-item {
+      display: block;
+    }
   }
 
   &__group-owner-line {
@@ -476,6 +497,19 @@ onUpdated(() => {
   &__no-owner {
     color: #12a11b;
   }
+}
+
+.card-item {
+  display: none;
+  position: absolute;
+  z-index: 100;
+
+  top: 40px;
+  left: 0;
+
+  width: 70px;
+  height: 120px;
+  background-color: white;
 }
 
 .details-enter-from {

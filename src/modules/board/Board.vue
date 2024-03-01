@@ -807,16 +807,16 @@ onMounted(() => {
 }
 .button-roll-enter-to {
   transform: rotateX(0deg);
-  transition: transform 0.5s ease-in-out .2s;
+  transition: transform 0.5s ease-in-out .3s;
 }
 
 .button-roll-leave-from {
   transform: rotateX(0deg);
-
 }
 .button-roll-leave-to {
   transform : rotateX(90deg);
-  // height: 0;
   transition: transform 0.5s ease-in-out;
 }
+
+
 </style>

@@ -3,7 +3,7 @@
     <p
       class="dice__item"
       :class="[{ active: dot.active }, { anim: dot.anim }]"
-      :style="{ '--delay-anim': index * 0.1+'s' }"
+      :style="{ '--delay-anim': index * 0.05+'s' }"
       v-for="(dot, index) in diceDots"
       :key="index"
     ></p>
