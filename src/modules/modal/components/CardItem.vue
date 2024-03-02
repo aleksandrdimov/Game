@@ -24,7 +24,7 @@
         </Button>
         <Button
           v-if="item.price !== null && item.owner !== player.name"
-          :type="[item.owner !== null ? 'rent' : 'buy']"
+          :type="item.owner !== null ? 'rent' : 'buy'"
           @click="buyCard"
         >
           {{ item.owner !== null ? 'Pay rent' : 'Buy' }}

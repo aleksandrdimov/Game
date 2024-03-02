@@ -13,6 +13,12 @@
           <img v-if="player.active" src="/images/game_dice.svg" alt="dice" class="player__active" />
         </div>
 
+        <div v-if="playerCardNumber" class="player__card-number" :style="{ '--color': player.color }">
+          <p>{{ playerCardNumber }}</p>
+          <div class="player__group-item small active" :style="{ '--color': player.color }">
+            <p class="player__group-owner-line"></p>
+          </div>
+        </div>
         <div
           class="player__arrow"
           :class="[{ active: player.details }, { disabled: player.status }]"
@@ -157,6 +163,7 @@ const disabledTrade = ref(false)
 
 const showCardHover = ref(false)
 const cardHover = ref(null)
+const playerCardNumber = ref(0)
 
 function getPlayerColors(bg, hover) {
   playerBg.value = bg
@@ -243,12 +250,13 @@ function mouseHoverCard(el) {
     cardHover.value = el
     showCardHover.value = true
   } else {
-    setTimeout(() => {
-      showCardHover.value = false
-    }, 1000)
+    showCardHover.value = false
   }
 }
 
+function calcCardNumber() {
+  playerCardNumber.value = props.items.filter((el) => el.owner === props.player.name).length
+}
 
 // watch(props.groups, () => {
 //   isUpgrade()
@@ -258,6 +266,7 @@ onMounted(() => {
   getColor()
   getDisabledTrade()
   calcOwnerCard()
+  calcCardNumber()
 })
 
 onBeforeUpdate(() => {
@@ -269,6 +278,7 @@ onUpdated(() => {
   // getDisabledTrade()
 
   calcOwnerCard()
+  calcCardNumber()
 })
 </script>
 
@@ -287,7 +297,7 @@ onUpdated(() => {
   &__header {
     cursor: pointer;
     display: grid;
-    grid-template-columns: 24px 1fr 44px;
+    grid-template-columns: 24px 1fr 44px 44px;
     align-items: center;
 
     gap: 12px;
@@ -334,7 +344,7 @@ onUpdated(() => {
     width: 44px;
     height: 44px;
 
-    grid-column: 3/4;
+    grid-column: 4/5;
 
     display: flex;
     justify-content: center;
@@ -420,6 +430,15 @@ onUpdated(() => {
         background-color: white;
         border-radius: 4px;
       }
+      &.small {
+        height: 24px;
+        width: 16px;
+
+        & .player__group-owner-line {
+          width: 12px;
+          height: 4px;
+        }
+      }
     }
 
     &:hover .card-item {
@@ -438,6 +457,21 @@ onUpdated(() => {
     left: 0;
 
     background-color: var(--color);
+  }
+
+  &__card-number {
+    --color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+
+    & p {
+      color: var(--color);
+      font-weight: 600;
+      font-size: 18px;
+    }
   }
 
   &__footer {
