@@ -121,13 +121,18 @@
                   <!-- <span class="modal-trade__arrow"></span> -->
                 </p>
                 <img
+                  v-if="tradePlayers.length > 1"
                   class="modal-trade__arrow"
                   src="/images/double_arrow.svg"
                   alt="arrow"
                   @click="openDropDown"
                 />
                 <Transition name="drop-down">
-                  <div v-if="showDropDown" class="modal-trade__drop-down">
+                  <div
+                    v-if="showDropDown && tradePlayers.length > 1"
+                    class="modal-trade__drop-down"
+                    :style="{ '--height-drop-down': heightDropDown }"
+                  >
                     <p
                       v-for="(item, index) in tradePlayers"
                       :key="index"
@@ -204,7 +209,7 @@ const props = defineProps({
   allPlayers: { type: Array, required: false },
   active: { type: Object, required: true }
 })
-const emit = defineEmits(['close', 'init', 'getItems', 'disagree', 'agree'])
+const emit = defineEmits(['close', 'init', 'getItems', 'disabled'])
 
 const inputPayMoney = ref(null)
 const inputGetMoney = ref(null)
@@ -222,12 +227,21 @@ const tradePlayerItems = ref([])
 const activeTradeItems = ref([])
 
 const money = ref(0)
+const heightDropDown = ref(`0px`)
 
 const showOffer = ref(false)
 const offer = ref({ getMoney: 0, chooseActiveItems: [], chooseItems: [], payMoney: 0 })
 
 function initActiveItems() {
   activeTradeItems.value = props.items.filter((el) => el.owner === props.active.name)
+
+  initTradePlayers()
+  tradePlayers.value.length === 1 ? (playersName.value = tradePlayers.value[0].name) : ''
+  // choosePlayersName()
+  initTradeItems()
+
+  props.allPlayers.forEach((el) => (el.name === playersName.value ? (money.value = el.money) : ''))
+  heightDropDown.value= `${46+32*tradePlayers.length-1}px`
 }
 
 function initTradePlayers() {
@@ -321,13 +335,13 @@ function closeTrade() {
 }
 
 function isDisagree() {
-  emit('disagree')
+  emit('disabled')
   playersName.value = 'Choose'
   activeTradeItems.value.forEach((el) => (el.sell = false))
 }
 
 function isAgree() {
-  emit('agree')
+  emit('disabled')
 
   if (offer.value.getMoney > 0) {
     props.allPlayers.forEach((el) => {
@@ -359,6 +373,8 @@ function isAgree() {
       item.id == el.id ? (item.owner = props.active.name) : ''
     })
   })
+
+  activeTradeItems.value.forEach((el) => (el.sell = false))
 }
 
 watch(offer.value, () => {
@@ -466,7 +482,7 @@ onMounted(() => {
     // display: flex;
     // flex-direction: row;
     display: grid;
-    grid-template-columns: 120px 1fr;
+    grid-template-columns: 130px 1fr;
     gap: 20px;
   }
 
@@ -550,6 +566,7 @@ onMounted(() => {
 
     display: flex;
     align-items: center;
+    justify-content: space-between;
 
     border-radius: 4px;
     border: 1px inset #6f906f;
@@ -568,27 +585,13 @@ onMounted(() => {
     padding: 4px 8px;
   }
 
-  &__arrow {
-    // position: absolute;
-    // z-index: 2;
-    // top: 10px;
-    // right: 13px;
-
-    // border: solid black;
-    // border-width: 0 1px 1px 0;
-
-    // padding: 4px;
-
-    // transform: rotate(45deg);
-  }
-
   &__drop-down {
     position: absolute;
     z-index: 10;
     top: -1px;
     left: -1px;
 
-    width: 120px;
+    width: 130px;
 
     background-color: white;
     border-radius: 4px;
@@ -681,14 +684,19 @@ onMounted(() => {
 }
 
 .drop-down-enter-from {
-  height: 44px;
+  height: 46px;
 }
 .drop-down-enter-to {
-  height: 97px;
+  height: v-bind(heightDropDown);
   transition: all 0.3s ease-in-out;
 }
+
 .drop-down-leave-to {
-  height: 44px;
+  height: v-bind(heightDropDown);
+}
+
+.drop-down-leave-to {
+  height: 46px;
   opacity: 0;
   transition: all 0.3s ease-in-out;
 }

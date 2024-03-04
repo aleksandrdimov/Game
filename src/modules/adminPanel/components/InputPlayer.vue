@@ -4,7 +4,7 @@
     <div class="input__wrap">
       <div class="input__item">
         <label class="input__item-title">Name</label>
-        <input type="text" ref="inputName" @change="isCheckName" />
+        <input type="text" maxlength="8" ref="inputName" @change="isCheckName" :class="{error:error}" />
       </div>
 
       <div class="input__item">
@@ -64,19 +64,21 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { onBeforeUpdate, ref, watch } from 'vue'
 
 const props = defineProps({
   player: { type: Object, required: false },
   data: { type: Array, required: false },
-  tokens: { type: Array, required: false }
+  tokens: { type: Array, required: false },
+  errors: { type: Array, required: false }
 })
 
 const playerColor = ref('grey')
 
-const emit = defineEmits(['send'])
+const emit = defineEmits(['edit'])
 
 const inputName = ref(null)
+const error=ref(false)
 
 function isActiveColor(index) {
   props.data.forEach((el, i) => {
@@ -138,11 +140,23 @@ function isActiveToken(index) {
 }
 
 function isCheckName() {
+  emit('edit')
   props.player.name = inputName.value.value
+}
+
+function isError(){
+  if(props.errors){
+    error.value=false;
+    props.errors.forEach(el=>el.id===props.player.id? error.value=true:'')
+  }
 }
 
 watch(props.player, () => {
   isCheckName()
+})
+
+onBeforeUpdate(()=>{
+  isError()
 })
 </script>
 
@@ -197,6 +211,10 @@ watch(props.player, () => {
       &:focus {
         outline: none;
         border-color: #6f906f;
+      }
+
+      &.error{
+        border-color: red;
       }
     }
   }

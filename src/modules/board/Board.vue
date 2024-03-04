@@ -116,78 +116,78 @@ const props = defineProps({ data: { type: Array, required: true } })
 
 const dataItem = ref(cards)
 
-const players = ref([
-  {
-    id: 1,
-    name: 'Player 1',
-    money: 1500,
-    color: '#F70000',
-    img: 'pacman',
-    row: '11/12',
-    column: '11/12',
-    positionStart: 0,
-    positionGoTo: 0,
-    direction: 'main',
-    active: true,
-    details: true,
-    skipMove: false,
-    status: null,
-    doubleMove: 0
-  },
-  {
-    id: 2,
-    name: 'Player 2',
-    money: 1500,
-    color: '#00DDEB',
-    img: 'burst-8',
-    row: '11/12',
-    column: '11/12',
-    positionStart: 0,
-    positionGoTo: 0,
-    direction: 'main',
-    active: false,
-    details: false,
-    skipMove: false,
-    status: null,
-    doubleMove: 0
-  },
-  {
-    id: 3,
-    name: 'Player 3',
-    money: 1500,
-    color: '#00CC08',
-    img: 'yin-yang',
-    row: '11/12',
-    column: '11/12',
-    positionStart: 0,
-    positionGoTo: 0,
-    direction: 'main',
-    active: false,
-    details: false,
-    skipMove: false,
-    status: null,
-    doubleMove: 0
-  },
-  {
-    id: 4,
-    name: 'Player 4',
-    money: 1500,
-    color: '#A300CC',
-    img: 'heart',
-    row: '11/12',
-    column: '11/12',
-    positionStart: 0,
-    positionGoTo: 0,
-    direction: 'main',
-    active: false,
-    details: false,
-    skipMove: false,
-    status: null,
-    doubleMove: 0
-  }
-])
+// const players = ref([
+//   {
+//     id: 1,
+//     name: 'Player 1',
+//     money: 1500,
+//     color: '#F70000',
+//     img: 'pacman',
+//     row: '11/12',
+//     column: '11/12',
+//     positionStart: 0,
+//     positionGoTo: 0,
+//     direction: 'main',
+//     active: true,
+//     details: true,
+//     skipMove: false,
+//     status: null,
+//     doubleMove: 0
+//   },
+//   {
+//     id: 2,
+//     name: 'Player 2',
+//     money: 1500,
+//     color: '#00DDEB',
+//     img: 'burst-8',
+//     row: '11/12',
+//     column: '11/12',
+//     positionStart: 0,
+//     positionGoTo: 0,
+//     direction: 'main',
+//     active: false,
+//     details: false,
+//     skipMove: false,
+//     status: null,
+//     doubleMove: 0
+//   },
+//   {
+//     id: 3,
+//     name: 'Player 3',
+//     money: 1500,
+//     color: '#00CC08',
+//     img: 'yin-yang',
+//     row: '11/12',
+//     column: '11/12',
+//     positionStart: 0,
+//     positionGoTo: 0,
+//     direction: 'main',
+//     active: false,
+//     details: false,
+//     skipMove: false,
+//     status: null,
+//     doubleMove: 0
+//   },
+//   {
+//     id: 4,
+//     name: 'Player 4',
+//     money: 1500,
+//     color: '#A300CC',
+//     img: 'heart',
+//     row: '11/12',
+//     column: '11/12',
+//     positionStart: 0,
+//     positionGoTo: 0,
+//     direction: 'main',
+//     active: false,
+//     details: false,
+//     skipMove: false,
+//     status: null,
+//     doubleMove: 0
+//   }
+// ])
 
-// const players = ref(props.data)
+const players = ref(props.data)
 
 const rollAnim = ref(false)
 const buttonRoll = ref(true)
@@ -233,6 +233,7 @@ function finishedRound() {
   players.value.forEach((el) => {
     el.id === playerActiveIndex.value + 1 ? (el.active = true) : (el.active = false)
     el.id === playerActiveIndex.value + 1 ? (el.details = true) : (el.details = false)
+    el.finishedRound=false
   })
 }
 
@@ -299,6 +300,7 @@ function rollDice() {
       }
     } else {
       buttonRoll.value = false
+      players.value[playerActiveIndex.value].finishedRound=true
       filterItem()
 
       showChoose.value = true

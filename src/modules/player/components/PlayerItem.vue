@@ -114,8 +114,7 @@
       <ModalTrade
         v-if="showTrade"
         @close="toggleTrade"
-        @disagree="closeAndDisabled"
-        @agree="agreeAndDisabled"
+        @disabled="isDisabled"
         :items="items"
         :allPlayers="allPlayers"
         :active="active"
@@ -142,6 +141,7 @@ const props = defineProps({
   active: { type: Object, required: true }
 })
 
+
 const emit = defineEmits(['open', 'upgrade'])
 
 function clickArrow() {
@@ -159,7 +159,7 @@ const moneyColor = ref('')
 const showUpgrade = ref(false)
 const showTrade = ref(false)
 
-const disabledTrade = ref(false)
+const disabledTrade = ref(true)
 
 const showCardHover = ref(false)
 const cardHover = ref(null)
@@ -210,7 +210,7 @@ function getColor() {
 }
 
 function getDisabledTrade() {
-  disabledTrade.value = props.active.id !== props.player.id
+  disabledTrade.value = !props.player.finishedRound
 }
 
 const ownerNumber = ref(0)
@@ -235,14 +235,9 @@ function toggleTrade() {
   showTrade.value = !showTrade.value
 }
 
-function closeAndDisabled() {
-  toggleTrade()
-  disabledTrade.value = props.active.id === props.player.id
-}
-
-function agreeAndDisabled() {
-  toggleTrade()
-  disabledTrade.value = props.active.id === props.player.id
+function isDisabled() {
+  toggleTrade();
+  disabledTrade.value=true
 }
 
 function mouseHoverCard(el) {

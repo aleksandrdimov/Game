@@ -31,6 +31,8 @@
           :player="player"
           :data="initInputs"
           :tokens="tokens"
+          :errors="errors"
+          @edit="isValid"
         />
       </div>
 
@@ -48,7 +50,9 @@ import InputPlayer from './components/InputPlayer.vue'
 const dataPlayers = ref([])
 const activeButton = ref(false)
 
-const adminShow = ref(false)
+const adminShow = ref(true)
+const errors = ref([])
+// const errorInput=ref(false)
 
 const players = ref([
   { value: 2, active: true },
@@ -104,6 +108,7 @@ function initPlayers() {
     direction: 'main',
     active: false,
     details: false,
+    finishedRound: false,
     skipMove: false,
     status: null,
     doubleMove: 0
@@ -133,12 +138,32 @@ function startGame() {
   adminShow.value = false
 }
 
+
 function isValid() {
   let result = 0
-  dataPlayers.value.forEach((el) => {
+  const array = []
+  errors.value = []
+  dataPlayers.value.forEach((el, index) => {
     el.img !== null && el.name !== null && el.color !== null ? result++ : ''
+
+    array.push(el.name === '' ? `Player ${index + 1}` : el.name)
   })
-  result === playersNumber.value ? (activeButton.value = true) : (activeButton.value = false)
+
+  const unique = new Set(array)
+  const compression = result === unique.size
+
+  if(!compression){
+    unique.forEach((el) => {
+      if (el !== null && el !== '') {
+        const filtered = dataPlayers.value.filter((item) => item.name === el)
+        filtered.length > 1 ? errors.value.push(...filtered) : ''
+      }
+    })
+  }
+
+  result === playersNumber.value && compression
+    ? (activeButton.value = true)
+    : (activeButton.value = false)
 }
 
 watch(initInputs.value, () => {
@@ -224,7 +249,7 @@ onBeforeUpdate(() => {
 
     transition: border-color 0.3s ease-in-out;
 
-    &:hover{
+    &:hover {
       border-color: #125417;
     }
   }
@@ -275,7 +300,7 @@ onBeforeUpdate(() => {
     }
 
     &:hover {
-      background-color: #E2E9E2;
+      background-color: #e2e9e2;
     }
   }
 
