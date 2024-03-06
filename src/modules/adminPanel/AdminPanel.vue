@@ -135,6 +135,9 @@ function startGame() {
     if (el.name === '') return (el.name = `Player ${el.id}`)
   })
 
+  dataPlayers.value[0].active=true
+  dataPlayers.value[0].details=true
+
   adminShow.value = false
 }
 

@@ -35,8 +35,8 @@ function chooseCard(data) {
   emit('choose', data)
 }
 
-function getSurprise() {
-  emit('surprise')
+function getSurprise(data) {
+  emit('surprise',data)
 }
 
 function buyCard(data) {

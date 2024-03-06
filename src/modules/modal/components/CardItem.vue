@@ -56,7 +56,7 @@ const props = defineProps({
 const emit = defineEmits(['choose', 'buy', 'surprise'])
 
 function getSurprise() {
-  emit('surprise')
+  emit('surprise',props.item.id)
 }
 
 function chooseCard() {

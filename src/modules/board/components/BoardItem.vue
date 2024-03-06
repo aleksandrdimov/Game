@@ -1,5 +1,12 @@
 <template>
-  <div v-if="item.color === 'transparent'" class="board-item">
+  <div
+    v-if="item.color === 'transparent'"
+    class="board-item"
+    :class="{
+      active: activeItem
+    }"
+    :style="{ '--color-shadow': activePlayer.color }"
+  >
     <div v-if="stand" class="board-item__shadow"></div>
     <div
       v-if="null !== item.color"
@@ -25,7 +32,14 @@
     />
   </div>
 
-  <div v-else class="board-item" :style="{ '--color-border': item.color }">
+  <div
+    v-else
+    class="board-item"
+    :class="{
+      active: activeItem
+    }"
+    :style="[{ '--color-border': item.color }, { '--color-shadow': activePlayer.color }]"
+  >
     <div v-if="stand" class="board-item__shadow"></div>
 
     <div
@@ -34,7 +48,7 @@
       :class="classLabelPosition"
       :style="{ '--color-bg': item.color }"
     >
-      <div class="board-item__houses"  :class="classLabelPosition">
+      <div class="board-item__houses" :class="classLabelPosition">
         <img
           v-for="(icon, index) in houseNumbers"
           :key="index"
@@ -69,13 +83,16 @@ import { onMounted, onUpdated, ref, watch } from 'vue'
 
 const props = defineProps({
   item: { type: Object, required: false },
+  itemsChoose: { type: Array, required: false },
   players: { type: Array, required: false },
-  column: { type: Boolean, required: false }
+  column: { type: Boolean, required: false },
+  activePlayer: { type: Object, required: false }
 })
 
 const bgImage = ref('white')
 const classLabelPosition = ref(null)
 const indexPlayerOwner = ref(null)
+const activeItem = ref(false)
 
 const stand = ref(false)
 
@@ -83,6 +100,7 @@ const positionRow = ref('')
 const positionColumn = ref('')
 
 function getItemValues() {
+  activeItem.value = false
   bgImage.value = `url('../images/${props.item.img}.png')`
   positionColumn.value = props.item.column
   positionRow.value = props.item.row
@@ -92,6 +110,13 @@ function getItemValues() {
     props.players.forEach((el) => {
       el.name === props.item.owner ? (indexPlayerOwner.value = el.id - 1) : ''
     })
+  }
+
+  if (props.itemsChoose.length > 1) {
+    activeItem.value = props.item.count == props.activePlayer.positionGoTo
+  } else {
+    activeItem.value =
+      props.item.count == props.activePlayer.positionGoTo && props.item.direction === props.activePlayer.direction
   }
 }
 
@@ -122,9 +147,9 @@ onMounted(() => {
   isPlayerStand()
 })
 
-onUpdated(() => {
-  getItemValues()
-})
+// onUpdated(() => {
+//   getItemValues()
+// })
 </script>
 
 <style lang="scss" scoped>
@@ -142,6 +167,13 @@ onUpdated(() => {
 
   grid-column: v-bind(positionColumn);
   grid-row: v-bind(positionRow);
+
+  &.active {
+    --color-shadow: white;
+    animation: shadow 1.2s linear infinite;
+
+    box-shadow: 0 0 5px 4px var(--color-shadow);
+  }
 
   &__shadow {
     position: absolute;
@@ -204,27 +236,28 @@ onUpdated(() => {
     display: flex;
     gap: 2px;
 
-    &.right,&.left{
+    &.right,
+    &.left {
       flex-direction: column;
     }
 
-    &.right{
+    &.right {
       left: auto;
       right: -8px;
     }
 
-    &.left{
+    &.left {
       left: -8px;
     }
 
-    &.top{
+    &.top {
       top: -8px;
     }
   }
 
   &__houses-item {
     width: 18px;
-    height:18px;
+    height: 18px;
     padding: 1px;
   }
 
@@ -266,6 +299,19 @@ onUpdated(() => {
         right: -77px;
       }
     }
+  }
+}
+
+@keyframes shadow {
+  0% {
+    box-shadow: 0 0 0 0 var(--color-shadow);
+  }
+  50% {
+    box-shadow: 0 0 8px 2px var(--color-shadow);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 var(--color-shadow);
   }
 }
 </style>

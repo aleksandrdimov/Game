@@ -7,7 +7,9 @@
         :players="players"
         class="cell"
         :item="item"
+        :active-player="players[playerActiveIndex]"
         :class="`board__item-${index}`"
+        :items-choose="itemsChoose"
       />
       <PlayerToken v-for="player in players" :key="player.id" :player="player"></PlayerToken>
 
@@ -35,8 +37,10 @@
           v-if="enoughMoney"
           @trade="getTradeItems"
           @bankrupt="isGameOver"
+          @close="closeError"
           :player="players[playerActiveIndex]"
           :items="itemsChoose"
+          :card-item="cardItem"
         />
 
         <ModalSurprise v-if="surpriseItem !== null" :item="surpriseItem" @button="performAction" />
@@ -50,7 +54,7 @@
           @close="closeTradeBank"
           @bankrupt="isBankrupt"
         />
-
+        <ModalWinner v-if="winner" :player="winnerPlayer"/>
         <svg
           v-if="itemsChoose.length > 1"
           class="direction-arrow__gorizontal"
@@ -86,6 +90,7 @@
 
     <Players
       class="board__players"
+      :class="{ disabled: disabled }"
       :players="players"
       :groups="sortGroupItems"
       :upgradeItems="upgradeItems"
@@ -107,6 +112,7 @@ import ModalJail from '../modal/ModalJail.vue'
 import ModalTeleport from '../modal/ModalTeleport.vue'
 import ModalSurprise from '../modal/ModalSurprise.vue'
 import ModalTradeBank from '../modal/ModalTradeBank.vue'
+import ModalWinner from '../modal/ModalWinner.vue'
 import Players from '../player/Players.vue'
 import PlayerToken from '../player/components/PlayerToken.vue'
 import { surprise } from '../../data/surprise'
@@ -120,7 +126,7 @@ const dataItem = ref(cards)
 //   {
 //     id: 1,
 //     name: 'Player 1',
-//     money: 1500,
+//     money: 5,
 //     color: '#F70000',
 //     img: 'pacman',
 //     row: '11/12',
@@ -150,41 +156,41 @@ const dataItem = ref(cards)
 //     skipMove: false,
 //     status: null,
 //     doubleMove: 0
-//   },
-//   {
-//     id: 3,
-//     name: 'Player 3',
-//     money: 1500,
-//     color: '#00CC08',
-//     img: 'yin-yang',
-//     row: '11/12',
-//     column: '11/12',
-//     positionStart: 0,
-//     positionGoTo: 0,
-//     direction: 'main',
-//     active: false,
-//     details: false,
-//     skipMove: false,
-//     status: null,
-//     doubleMove: 0
-//   },
-//   {
-//     id: 4,
-//     name: 'Player 4',
-//     money: 1500,
-//     color: '#A300CC',
-//     img: 'heart',
-//     row: '11/12',
-//     column: '11/12',
-//     positionStart: 0,
-//     positionGoTo: 0,
-//     direction: 'main',
-//     active: false,
-//     details: false,
-//     skipMove: false,
-//     status: null,
-//     doubleMove: 0
 //   }
+//   // {
+//   //   id: 3,
+//   //   name: 'Player 3',
+//   //   money: 1500,
+//   //   color: '#00CC08',
+//   //   img: 'yin-yang',
+//   //   row: '11/12',
+//   //   column: '11/12',
+//   //   positionStart: 0,
+//   //   positionGoTo: 0,
+//   //   direction: 'main',
+//   //   active: false,
+//   //   details: false,
+//   //   skipMove: false,
+//   //   status: null,
+//   //   doubleMove: 0
+//   // },
+//   // {
+//   //   id: 4,
+//   //   name: 'Player 4',
+//   //   money: 1500,
+//   //   color: '#A300CC',
+//   //   img: 'heart',
+//   //   row: '11/12',
+//   //   column: '11/12',
+//   //   positionStart: 0,
+//   //   positionGoTo: 0,
+//   //   direction: 'main',
+//   //   active: false,
+//   //   details: false,
+//   //   skipMove: false,
+//   //   status: null,
+//   //   doubleMove: 0
+//   // }
 // ])
 
 const players = ref(props.data)
@@ -210,62 +216,15 @@ const sortGroupItems = ref([])
 const tradeItems = ref([])
 const upgradeItems = ref([])
 const surpriseItem = ref(null)
-
-function finishedRound() {
-  playerActiveIndex.value < players.value.length - 1
-    ? playerActiveIndex.value++
-    : (playerActiveIndex.value = 0)
-
-  players.value[playerActiveIndex.value].doubleMove = 0
-
-  if (!players.value[playerActiveIndex.value].status) {
-    players.value[playerActiveIndex.value].skipMove
-      ? (buttonRoll.value = false)
-      : (buttonRoll.value = true)
-
-    players.value[playerActiveIndex.value].skipMove = false
-  } else {
-    playerActiveIndex.value < players.value.length - 1
-      ? playerActiveIndex.value++
-      : (playerActiveIndex.value = 0)
-    buttonRoll.value = true
-  }
-  players.value.forEach((el) => {
-    el.id === playerActiveIndex.value + 1 ? (el.active = true) : (el.active = false)
-    el.id === playerActiveIndex.value + 1 ? (el.details = true) : (el.details = false)
-    el.finishedRound=false
-  })
-}
-
-function checkItemValue(el, array) {
-  const checkItem = (x) => x.items[0].color === el.color
-  const resultIndex = array.findIndex(checkItem)
-
-  resultIndex >= 0 ? array[resultIndex].items.push(el) : ''
-}
-
-function sortItems() {
-  sortGroupItems.value = []
-  const array = dataItem.value.filter((el) => el.color !== null)
-
-  array.forEach((el) => {
-    const newItem = {
-      items: [{ ...el }]
-    }
-
-    const result = sortGroupItems.value.find((item) => item.items[0].color == el.color)
-
-    result
-      ? checkItemValue(el, sortGroupItems.value)
-      : (sortGroupItems.value = [...sortGroupItems.value, { ...newItem }])
-  })
-
-  sortGroupItems.value.sort((a, b) => a.items.length - b.items.length)
-}
+const cardItem = ref()
+const disabled = ref(false)
+const winner = ref(false)
+const winnerPlayer=ref()
 
 function rollDice() {
   rollAnim.value = true
   directionTop.value = false
+  disabled.value = true
 
   dice1.value = Math.floor(Math.random() * 6) + 1
   dice2.value = Math.floor(Math.random() * 6) + 1
@@ -300,18 +259,72 @@ function rollDice() {
       }
     } else {
       buttonRoll.value = false
-      players.value[playerActiveIndex.value].finishedRound=true
-      filterItem()
-
+      players.value[playerActiveIndex.value].finishedRound = true
       showChoose.value = true
+      filterItem()
     }
   }, 1500)
+}
+
+function finishedRound() {
+  playerActiveIndex.value < players.value.length - 1
+    ? playerActiveIndex.value++
+    : (playerActiveIndex.value = 0)
+
+  players.value[playerActiveIndex.value].doubleMove = 0
+
+  if (!players.value[playerActiveIndex.value].status) {
+    players.value[playerActiveIndex.value].skipMove
+      ? (buttonRoll.value = false)
+      : (buttonRoll.value = true)
+
+    players.value[playerActiveIndex.value].skipMove = false
+  } else {
+    playerActiveIndex.value < players.value.length - 1
+      ? playerActiveIndex.value++
+      : (playerActiveIndex.value = 0)
+    buttonRoll.value = true
+  }
+  players.value.forEach((el) => {
+    el.id === playerActiveIndex.value + 1 ? (el.active = true) : (el.active = false)
+    el.id === playerActiveIndex.value + 1 ? (el.details = true) : (el.details = false)
+    el.finishedRound = false
+  })
+}
+
+function checkItemValue(el, array) {
+  const checkItem = (x) => x.items[0].color === el.color
+  const resultIndex = array.findIndex(checkItem)
+
+  resultIndex >= 0 ? array[resultIndex].items.push(el) : ''
+}
+
+function sortItems() {
+  sortGroupItems.value = []
+  const array = dataItem.value.filter((el) => el.color !== null)
+
+  array.forEach((el) => {
+    const newItem = {
+      items: [{ ...el }]
+    }
+
+    const result = sortGroupItems.value.find((item) => item.items[0].color == el.color)
+
+    result
+      ? checkItemValue(el, sortGroupItems.value)
+      : (sortGroupItems.value = [...sortGroupItems.value, { ...newItem }])
+  })
+
+  sortGroupItems.value.sort((a, b) => a.items.length - b.items.length)
 }
 
 function goTo() {
   if (itemsChoose.value[0].type === 'start') {
     showChoose.value = false
+    disabled.value = false
   }
+
+  itemsChoose.value[0].type === 'corner' ? (disabled.value = false) : ''
   // showChoose.value=true
   itemsChoose.value[0].type === 'jail' ? isJail() : ''
   players.value[playerActiveIndex.value].row = itemsChoose.value[0].row
@@ -325,6 +338,8 @@ function goTo() {
 
   if (itemsChoose.value[0].type === 'go') {
     showChoose.value = false
+    disabled.value = false
+
     setTimeout(() => {
       goToCasino()
     }, 300)
@@ -366,10 +381,13 @@ function filterItem() {
 function getCardById(id) {
   itemsChoose.value = dataItem.value.filter((el) => el.id === id)
   showChoose.value = true
+  disabled.value = true
 }
 
 function isJail() {
   showChoose.value = false
+  disabled.value = true
+
   jail.value = true
 }
 
@@ -400,6 +418,7 @@ function isTeleport() {
 
     setTimeout(() => {
       teleport.value = false
+      disabled.value = false
     }, 2000)
   }
 }
@@ -415,12 +434,14 @@ function goToCasino() {
 
 function closeModal() {
   showChoose.value = !showChoose.value
+  disabled.value = false
 }
 
 function isChooseCard(data) {
   itemsChoose.value = dataItem.value.filter((el) => el.id === data)
 
   showChoose.value = false
+  disabled.value = false
   goTo()
 }
 
@@ -441,6 +462,8 @@ function buyCard(data) {
       enoughMoney.value = true
       needMoney.value =
         dataItem.value[data - 1].price - players.value[playerActiveIndex.value].money
+
+      cardItem.value = dataItem.value[data - 1]
     }
   } else {
     if (players.value[playerActiveIndex.value].money >= dataItem.value[data - 1].rent) {
@@ -464,6 +487,7 @@ function buyCard(data) {
       showChoose.value = false
       enoughMoney.value = true
       needMoney.value = dataItem.value[data - 1].rent - players.value[playerActiveIndex.value].money
+      cardItem.value = dataItem.value[data - 1]
     }
   }
 }
@@ -486,30 +510,31 @@ function payMoney() {
     jail.value = false
     buttonRoll.value = false
     showChoose.value = false
+    disabled.value = false
   } else {
     jail.value = false
     enoughMoney.value = true
-
-    setTimeout(() => {
-      enoughMoney.value = false
-
-      jail.value = true
-    }, 3000)
+    disabled.value = true
+    cardItem.value = { owner: null }
   }
 }
 
 function skipMove() {
   players.value[playerActiveIndex.value].skipMove = true
   jail.value = false
+  disabled.value = false
   buttonRoll.value = false
 }
 
-function getSurprise() {
+function getSurprise(data) {
   surpriseItem.value = null
   showChoose.value = false
   const random = Math.floor(Math.random() * 24)
 
   surpriseItem.value = surprise[random]
+
+  itemsChoose.value = dataItem.value.filter((el) => el.id === data)
+  goTo()
 }
 
 function performAction() {
@@ -526,6 +551,7 @@ function performAction() {
       players.value[playerActiveIndex.value].money =
         players.value[playerActiveIndex.value].money + surpriseItem.value.getMoney
     }
+    disabled.value = false
   }
 
   if (surpriseItem.value.type === 'unprofitable') {
@@ -540,11 +566,23 @@ function performAction() {
 
       money = money * 50
 
-      players.value[playerActiveIndex.value].money =
-        players.value[playerActiveIndex.value].money - money
+      if (players.value[playerActiveIndex.value].money - money < 0) {
+        enoughMoney.value = true
+        cardItem.value = { owner: 'Owner' }
+      } else {
+        players.value[playerActiveIndex.value].money =
+          players.value[playerActiveIndex.value].money - money
+        disabled.value = false
+      }
     } else {
-      players.value[playerActiveIndex.value].money =
-        players.value[playerActiveIndex.value].money - surpriseItem.value.payMoney
+      if (players.value[playerActiveIndex.value].money - surpriseItem.value.payMoney < 0) {
+        enoughMoney.value = true
+        cardItem.value = { owner: 'Owner' }
+      } else {
+        players.value[playerActiveIndex.value].money =
+          players.value[playerActiveIndex.value].money - surpriseItem.value.payMoney
+        disabled.value = false
+      }
     }
   }
 
@@ -552,17 +590,26 @@ function performAction() {
     if (typeof surpriseItem.value.goTo === 'number') {
       players.value[playerActiveIndex.value].positionGoTo =
         players.value[playerActiveIndex.value].positionGoTo + surpriseItem.value.goTo
+      showChoose.value = true
+
       filterItem()
     } else {
       players.value[playerActiveIndex.value].positionGoTo = Number(surpriseItem.value.goTo.count)
       players.value[playerActiveIndex.value].row = surpriseItem.value.goTo.row
       players.value[playerActiveIndex.value].column = surpriseItem.value.goTo.column
       players.value[playerActiveIndex.value].direction = 'main'
-      itemsChoose.value = dataItem.value.filter(
-        (el) => el.count === surpriseItem.value.goTo.count && el.direction === 'main'
-      )
+      if (surpriseItem.value.id === 17) {
+        showChoose.value = false
+        players.value[playerActiveIndex.value].money =
+          players.value[playerActiveIndex.value].money + surpriseItem.value.getMoney
+      } else {
+        showChoose.value = true
+
+        itemsChoose.value = dataItem.value.filter(
+          (el) => el.count === surpriseItem.value.goTo.count && el.direction === 'main'
+        )
+      }
     }
-    showChoose.value = true
   }
   surpriseItem.value = null
 }
@@ -581,6 +628,11 @@ function closeTradeBank() {
   showChoose.value = true
 }
 
+function closeError() {
+  showChoose.value = !showChoose.value
+  enoughMoney.value = !enoughMoney.value
+}
+
 function isGameOver() {
   dataItem.value.forEach((el) =>
     el.owner === players.value[playerActiveIndex.value].name ? (el.owner = null) : ''
@@ -590,7 +642,11 @@ function isGameOver() {
 
   setTimeout(() => {
     enoughMoney.value = false
+    disabled.value = false
     finishedRound()
+
+    winnerPlayer.value = players.value.filter((el) => el.status !== 'game over')
+    winnerPlayer.value.length === 1 ? (winner.value = true) : (winner.value = false)
   }, 1500)
 }
 
@@ -756,6 +812,11 @@ onMounted(() => {
   &__players {
     grid-column: 2/6;
     grid-row: 2/7;
+
+    &.disabled {
+      cursor: auto;
+      pointer-events: none;
+    }
   }
 }
 
@@ -809,16 +870,14 @@ onMounted(() => {
 }
 .button-roll-enter-to {
   transform: rotateX(0deg);
-  transition: transform 0.5s ease-in-out .3s;
+  transition: transform 0.5s ease-in-out 0.3s;
 }
 
 .button-roll-leave-from {
   transform: rotateX(0deg);
 }
 .button-roll-leave-to {
-  transform : rotateX(90deg);
+  transform: rotateX(90deg);
   transition: transform 0.5s ease-in-out;
 }
-
-
 </style>

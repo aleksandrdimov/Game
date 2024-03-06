@@ -37,7 +37,7 @@ const props = defineProps({ player: { type: Object, required: true } })
     transform: translate(-50%, -50%);
 
     width: 300px;
-    height: 300px;
+    height: 350px;
 
     display: flex;
     flex-direction: column;
