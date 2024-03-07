@@ -13,7 +13,11 @@
           <img v-if="player.active" src="/images/game_dice.svg" alt="dice" class="player__active" />
         </div>
 
-        <div v-if="playerCardNumber" class="player__card-number" :style="{ '--color': player.color }">
+        <div
+          v-if="playerCardNumber"
+          class="player__card-number"
+          :style="{ '--color': player.color }"
+        >
           <p>{{ playerCardNumber }}</p>
           <div class="player__group-item small active" :style="{ '--color': player.color }">
             <p class="player__group-owner-line"></p>
@@ -141,7 +145,6 @@ const props = defineProps({
   active: { type: Object, required: true }
 })
 
-
 const emit = defineEmits(['open', 'upgrade'])
 
 function clickArrow() {
@@ -236,8 +239,8 @@ function toggleTrade() {
 }
 
 function isDisabled() {
-  toggleTrade();
-  disabledTrade.value=true
+  toggleTrade()
+  disabledTrade.value = true
 }
 
 function mouseHoverCard(el) {
@@ -429,8 +432,7 @@ onUpdated(() => {
         height: 24px;
         width: 16px;
         background-color: rgb(82, 82, 82);
-        border-color:  rgb(39, 39, 39);
-
+        border-color: rgb(39, 39, 39);
 
         & .player__group-owner-line {
           width: 12px;

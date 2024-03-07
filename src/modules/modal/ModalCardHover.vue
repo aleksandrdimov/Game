@@ -4,7 +4,7 @@
     :style="{ '--color': item.color !== 'transparent' ? item.color : '#b3b3b3' }"
   >
     <div class="card-item-hover__label"></div>
-    <img class="card-item-hover__picture" :src="`/images/${item.img}.png`" :alt="item.img" />
+    <div class="card-item-hover__picture"></div>
     <div class="card-item-hover__container">
         <p class="card-item-hover__params">
           Owner: <span>{{ item.owner !== null ? item.owner : 'Bank' }}</span>
@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, onUpdated, ref, watch } from 'vue';
 
 const props = defineProps({
   item: { type: Object, required: true },
@@ -28,8 +28,15 @@ const props = defineProps({
 })
 const positionCard=ref()
 
+const urlImage=ref()
+
 onMounted(()=>{
 positionCard.value=`${47*props.playerId+44+(props.playerId-1)*12}px`
+urlImage.value=`url('../images/${props.item.img}.png')`
+})
+
+onUpdated(()=>{
+  urlImage.value=`url('../images/${props.item.img}.png')`
 })
 </script>
 
@@ -60,6 +67,10 @@ positionCard.value=`${47*props.playerId+44+(props.playerId-1)*12}px`
   &__picture {
     width: 148px;
     height: 148px;
+
+    background:v-bind(urlImage) ;
+    background-size: cover;
+    background-repeat: no-repeat;
   }
 
   &__container{
