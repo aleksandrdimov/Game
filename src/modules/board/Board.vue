@@ -17,6 +17,10 @@
         <BoardDice :dice="dice1" :roll="rollAnim" />
         <BoardDice :dice="dice2" :roll="rollAnim" />
       </div>
+      <div class="board__rules-wrap" @click="toggleRules">
+        <p class="board__rules-icon">!</p>
+        <p class="board__rules-text">Rules</p>
+      </div>
       <TransitionGroup name="button-roll">
         <button v-if="buttonRoll" class="board__button" @click="rollDice">Roll Dice</button>
         <button v-else class="board__button finished" @click="finishedRound">Finished Round</button>
@@ -38,6 +42,7 @@
           @trade="getTradeItems"
           @bankrupt="isGameOver"
           @close="closeError"
+          @sell="getSell"
           :player="players[playerActiveIndex]"
           :items="itemsChoose"
           :card-item="cardItem"
@@ -51,10 +56,11 @@
           :cards="tradeItems"
           :player="players[playerActiveIndex]"
           :need-money="needMoney"
+          :sell="sell"
           @close="closeTradeBank"
           @bankrupt="isBankrupt"
         />
-        <ModalWinner v-if="winner" :player="winnerPlayer"/>
+        <ModalWinner v-if="winner" :player="winnerPlayer" />
         <svg
           v-if="itemsChoose.length > 1"
           class="direction-arrow__gorizontal"
@@ -99,6 +105,10 @@
       @open="openDetails"
       @upgrade="isUpgrade"
     />
+
+    <Transition name="card">
+      <ModalRules v-if="rules" @close="toggleRules" />
+    </Transition>
   </section>
 </template>
 
@@ -113,6 +123,7 @@ import ModalTeleport from '../modal/ModalTeleport.vue'
 import ModalSurprise from '../modal/ModalSurprise.vue'
 import ModalTradeBank from '../modal/ModalTradeBank.vue'
 import ModalWinner from '../modal/ModalWinner.vue'
+import ModalRules from '../modal/ModalRules.vue'
 import Players from '../player/Players.vue'
 import PlayerToken from '../player/components/PlayerToken.vue'
 import { surprise } from '../../data/surprise'
@@ -219,7 +230,9 @@ const surpriseItem = ref(null)
 const cardItem = ref()
 const disabled = ref(false)
 const winner = ref(false)
-const winnerPlayer=ref()
+const winnerPlayer = ref()
+const rules = ref(false)
+const sell = ref(false)
 
 function rollDice() {
   rollAnim.value = true
@@ -622,10 +635,15 @@ function getTradeItems() {
   )
 }
 
+function getSell() {
+  getTradeItems()
+  sell.value = true
+}
+
 function closeTradeBank() {
   tradeBank.value = false
-
   showChoose.value = true
+  sell.value = false
 }
 
 function closeError() {
@@ -642,11 +660,11 @@ function isGameOver() {
 
   setTimeout(() => {
     enoughMoney.value = false
-    disabled.value = false
     finishedRound()
 
     winnerPlayer.value = players.value.filter((el) => el.status !== 'game over')
     winnerPlayer.value.length === 1 ? (winner.value = true) : (winner.value = false)
+    disabled.value = winner.value
   }, 1500)
 }
 
@@ -691,6 +709,10 @@ function getUpgradeItems() {
       }
       return 0
     })
+}
+
+function toggleRules() {
+  rules.value = !rules.value
 }
 
 // function calc() {
@@ -807,6 +829,61 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
     gap: 20px;
+  }
+
+  &__rules-wrap {
+    cursor: pointer;
+
+    grid-column: 2/4;
+    grid-row: 2/3;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    color: rgb(168, 168, 168);
+
+    &:hover {
+      & .board__rules-icon {
+        color: #6ba56f;
+        border-color: #6ba56f;
+      }
+      & .board__rules-text {
+        color: #6ba56f;
+      }
+    }
+
+    &:active {
+      & .board__rules-icon {
+        color: #125417;
+        border-color: #125417;
+      }
+      & .board__rules-text {
+        color: #125417;
+      }
+    }
+  }
+
+  &__rules-icon {
+    width: 26px;
+    height: 26px;
+
+    text-align: center;
+    font-size: 20px;
+    line-height: 24px;
+
+    border-radius: 50%;
+    border: 1px solid rgb(168, 168, 168);
+
+    transition: all 0.4s ease-in-out;
+  }
+
+  &__rules-text {
+    font-size: 20px;
+    line-height: 24px;
+
+    transition: color 0.4s ease-in-out;
   }
 
   &__players {

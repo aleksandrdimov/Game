@@ -1,9 +1,10 @@
 <template>
   <section class="modal-trade-bank">
     <div class="modal-trade-bank__wrap">
+      <IconClose @close="closeModal" v-if="sell"/>
       <h3 class="modal-trade-bank__player">{{ player.name }}</h3>
       <p class="modal-trade-bank__money">You need {{ needMoney }}$</p>
-      <Slider v-if="cards.length" :cards="cards" @active="chooseItem"/>
+      <Slider v-if="cards.length" :cards="cards" @active="chooseItem" />
       <p class="modal-trade-bank__text">
         {{ cards.length ? 'Select the item you want to sell' : 'You don`t have any cards' }}
       </p>
@@ -24,14 +25,15 @@
 </template>
 
 <script setup>
-import Slider from './components/Slider.vue';
-import SlideItem from './components/SlideItem.vue'
-import { onMounted, onUpdated, ref } from 'vue'
+import Slider from './components/Slider.vue'
+import IconClose from '@/modules/UIComponents/IconClose.vue'
+import { ref } from 'vue'
 
 const props = defineProps({
   cards: { type: Array, required: true },
   player: { type: Object, required: true },
-  needMoney: { type: Number, required: true }
+  needMoney: { type: Number, required: true },
+  sell: { type: Boolean, required: false, default: false }
 })
 
 const emit = defineEmits(['close', 'bankrupt'])
@@ -40,8 +42,11 @@ function isBankrupt() {
   emit('bankrupt')
 }
 
-const getMoney = ref(0)
+function closeModal() {
+  emit('close')
+}
 
+const getMoney = ref(0)
 
 function chooseItem() {
   getMoney.value = 0
@@ -57,7 +62,6 @@ function sellItems() {
   props.cards.forEach((el) => (el.sell === true ? (el.sell = false) : ''))
   emit('close')
 }
-
 </script>
 
 <style lang="scss" scoped>

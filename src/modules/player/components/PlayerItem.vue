@@ -428,6 +428,9 @@ onUpdated(() => {
       &.small {
         height: 24px;
         width: 16px;
+        background-color: rgb(82, 82, 82);
+        border-color:  rgb(39, 39, 39);
+
 
         & .player__group-owner-line {
           width: 12px;
@@ -463,7 +466,7 @@ onUpdated(() => {
     gap: 4px;
 
     & p {
-      color: var(--color);
+      color: black;
       font-weight: 600;
       font-size: 18px;
     }
