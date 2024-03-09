@@ -184,9 +184,7 @@ onBeforeUpdate(() => {
 
 <style lang="scss" scoped>
 .admin {
-  width: 100vw;
   height: 100vh;
-  // height: 100%;
 
   display: flex;
   justify-content: center;
@@ -196,16 +194,13 @@ onBeforeUpdate(() => {
 
   &__wrap {
     max-width: 1100px;
-    // width: 100%;
 
     display: flex;
     flex-direction: column;
-
     gap: 24px;
 
     border-radius: 6px;
     background-color: #eef2ee;
-    // border: 1px solid grey;
 
     padding: 40px;
   }

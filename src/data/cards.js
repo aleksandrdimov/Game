@@ -1078,7 +1078,7 @@ export const cards = [
   },
   {
     id: 53,
-    title: 'Continantal Avenue',
+    title: 'Park Avenue',
     coefficient: [
       { upgrade: 135, rent: 40 },
       { upgrade: 170, rent: 60 },
@@ -1087,7 +1087,7 @@ export const cards = [
     type: 'card',
     owner: null,
     count: '3',
-    img: 'continantal_avenue_img',
+    img: 'park_avenue_img',
     sell: false,
     color: '#5CD6B6',
     rent: 20,
@@ -1100,7 +1100,7 @@ export const cards = [
   },
   {
     id: 54,
-    title: 'Old Avenue',
+    title: 'Midtown',
     coefficient: [
       { upgrade: 200, rent: 60 },
       { upgrade: 250, rent: 90 },
@@ -1109,7 +1109,7 @@ export const cards = [
     type: 'card',
     owner: null,
     count: '2',
-    img: 'old_avenue_img',
+    img: 'midtown_img',
     sell: false,
     color: '#5CD6B6',
     rent: 30,
